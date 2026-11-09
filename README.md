@@ -7,7 +7,12 @@ real, tested project, then reports exactly what was implemented.
 [![PySide6](https://img.shields.io/badge/PySide6-6.12-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qtforpython-6/)
 [![Tests](https://img.shields.io/badge/tests-84%20passed-brightgreen)](#testing)
 [![Windows build](https://github.com/TouchedOVO/touch-code/actions/workflows/windows-build.yml/badge.svg)](https://github.com/TouchedOVO/touch-code/actions/workflows/windows-build.yml)
+[![Download v1.0.0](https://img.shields.io/badge/Download-SpaceCodeAgent.exe-2ea44f?logo=github)](https://github.com/TouchedOVO/touch-code/releases/tag/v1.0.0)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+**Download:** [SpaceCodeAgent.exe v1.0.0](https://github.com/TouchedOVO/touch-code/releases/download/v1.0.0/SpaceCodeAgent.exe)
+(64,195,999 B; SHA-256 `1CD71031F6E2CEBCC9DA3ACC07570507DFF2111E36329010880677BF26D1B182`).
+No Python/Qt is required on the target machine.
 
 SpaceCode Agent reads `Architecture_Documentation.md` and `Architecture_View.md`, normalizes requirements
 and 13 PlantUML diagrams, plans a project, writes files through a confined tool layer, validates the result,

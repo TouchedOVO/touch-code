@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Space Fractions · 教师后台</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">✦</span>
+      <div>
+        <h1>教师后台</h1>
+        <p>题库维护 · Admin</p>
+      </div>
+    </div>
+    <a class="btn" href="./index.html">返回游戏</a>
+  </header>
+
+  <main id="main">
+    <section class="screen screen--active" aria-labelledby="admin-title">
+      <p class="eyebrow">Admin Console</p>
+      <h2 id="admin-title">题目管理</h2>
+      <p class="lead">使用管理员令牌读取、创建、修改和删除题目。令牌仅保存在当前标签页。</p>
+
+      <div class="admin-grid">
+        <div class="field field--wide">
+          <label for="token">管理员令牌</label>
+          <input id="token" type="password" autocomplete="off" placeholder="ADMIN_TOKEN">
+        </div>
+      </div>
+      <div class="actions" style="justify-content:flex-start;margin-top:16px">
+        <button id="load-btn" class="btn btn--primary" type="button">加载题库</button>
+        <span id="status" class="lead" role="status" aria-live="polite"></span>
+      </div>
+
+      <form id="question-form" class="admin-panel" hidden>
+        <h2 id="form-title">新增题目</h2>
+        <div class="admin-grid">
+          <div class="field field--wide">
+            <label for="prompt">题干</label>
+            <input id="prompt" required minlength="3" placeholder="例如：1/2 + 1/4 = ?">
+          </div>
+          <div class="field"><label for="opt-0">选项 A</label><input id="opt-0" required></div>
+          <div class="field"><label for="opt-1">选项 B</label><input id="opt-1" required></div>
+          <div class="field"><label for="opt-2">选项 C</label><input id="opt-2" required></div>
+          <div class="field"><label for="opt-3">选项 D</label><input id="opt-3" required></div>
+          <div class="field">
+            <label for="answer">正确答案</label>
+            <select id="answer">
+              <option value="0">A</option><option value="1">B</option>
+              <option value="2">C</option><option value="3">D</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="difficulty">难度</label>
+            <select id="difficulty">
+              <option value="easy">easy</option>
+              <option value="medium">medium</option>
+              <option value="hard">hard</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions" style="justify-content:flex-start;margin-top:16px">
+          <button id="save-btn" class="btn btn--primary" type="submit">保存题目</button>
+          <button id="cancel-btn" class="btn" type="button" hidden>取消编辑</button>
+        </div>
+      </form>
+
+      <table id="question-table" hidden>
+        <thead><tr><th>ID</th><th>题干</th><th>答案</th><th>难度</th><th>操作</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="./src/admin.js"></script>
+</body>
+</html>

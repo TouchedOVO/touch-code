@@ -1,0 +1,10 @@
+# SpaceCode Agent runtime (Python 3.14 / Windows x64 verified)
+PySide6==6.12.0
+openai==3.46.0
+pydantic==2.14.3
+markdown-it-py==4.0.0
+PyYAML==6.0.3
+
+# Development / packaging
+pytest==9.2.0
+pyinstaller==6.22.3

@@ -1,0 +1,68 @@
+name: Windows build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Agent test suite (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Run pytest (headless Qt)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m pytest tests -q
+
+  sample-tests:
+    name: Generated sample tests (Node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Unit and integration tests
+        working-directory: src/space_code_agent/samples/space_fractions
+        run: node --test tests/unit services/question-service/tests services/game-service/tests services/user-service/tests
+      - name: End-to-end test
+        working-directory: src/space_code_agent/samples/space_fractions
+        run: node --test tests/e2e
+
+  build-exe:
+    name: Build one-file EXE
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: Build with PyInstaller
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File .\scripts\build_windows.ps1 -Clean
+      - name: Smoke test
+        shell: powershell
+        run: |
+          $process = Start-Process -FilePath .\dist\SpaceCodeAgent.exe -ArgumentList '--smoke-test' -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Smoke test failed: $($process.ExitCode)" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpaceCodeAgent-windows-x64
+          path: dist/SpaceCodeAgent.exe
+          if-no-files-found: error
+          retention-days: 14

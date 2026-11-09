@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Space Fractions：六年级分数运算闯关游戏">
+  <title>Space Fractions · 分数闯关</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主内容</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">✦</span>
+      <div>
+        <h1>Space Fractions</h1>
+        <p>六年级 · 分数闯关</p>
+      </div>
+    </div>
+    <div id="score-chip" class="score-chip" hidden aria-live="polite">得分 0</div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="screen screen--active" data-screen="intro" aria-labelledby="intro-title">
+      <div class="hero">
+        <p class="eyebrow">Mission Brief</p>
+        <h2 id="intro-title">修复空间站的分数核心</h2>
+        <p class="lead">
+          空间站的分数核心发生故障。答对十道分数题，收集能量，帮助全体船员安全返航。
+        </p>
+        <ul class="hero__facts">
+          <li><strong>10</strong> 道题</li>
+          <li><strong>+10</strong> 分 / 题</li>
+          <li><strong>100</strong> 分满分</li>
+        </ul>
+        <button id="enter-btn" class="btn btn--primary" type="button">进入空间站</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="menu" aria-labelledby="menu-title" hidden>
+      <p class="eyebrow">Main Menu</p>
+      <h2 id="menu-title">准备就绪</h2>
+      <p class="lead">选择任务。答题过程中可以随时查看规则。</p>
+      <div class="actions">
+        <button class="btn btn--primary" type="button" data-action="start">开始答题</button>
+        <button class="btn" type="button" data-action="help">查看规则</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="game" aria-labelledby="question-title" hidden>
+      <div class="game-head">
+        <span id="progress-label">第 1 / 10 题</span>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progress">
+          <div id="progress-bar"></div>
+        </div>
+      </div>
+      <h2 id="question-title">载入题目…</h2>
+      <div id="options" class="options" role="group" aria-labelledby="question-title"></div>
+      <p id="feedback" class="feedback" aria-live="polite"></p>
+      <button id="next-btn" class="btn btn--primary" type="button" hidden>下一题</button>
+    </section>
+
+    <section class="screen" data-screen="help" aria-labelledby="help-title" hidden>
+      <p class="eyebrow">How to Play</p>
+      <h2 id="help-title">玩法说明</h2>
+      <ol class="rules">
+        <li>每局共 10 道分数单选题，题目从题库中随机抽取。</li>
+        <li>每题有 4 个选项，选出唯一正确答案；答对得 10 分，答错不得分。</li>
+        <li>每题提交后会立即显示对错与正确选项，然后进入下一题。</li>
+        <li>完成 10 题后显示总分与逐题结果，可以再玩一次。</li>
+        <li>键盘操作：Tab 切换选项，Enter 或空格提交；所有按钮都有可见焦点。</li>
+      </ol>
+      <button class="btn" type="button" data-action="menu">返回菜单</button>
+    </section>
+
+    <section class="screen" data-screen="result" aria-labelledby="result-title" hidden>
+      <p class="eyebrow">Mission Complete</p>
+      <h2 id="result-title">返航成功</h2>
+      <p id="result-score" class="result-score">0 / 100</p>
+      <p id="result-message" class="lead"></p>
+      <div class="actions">
+        <button id="again-btn" class="btn btn--primary" type="button">再玩一次</button>
+        <button class="btn" type="button" data-action="menu">返回菜单</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="error" aria-labelledby="error-title" hidden>
+      <p class="eyebrow">Connection Lost</p>
+      <h2 id="error-title">无法连接游戏服务</h2>
+      <p id="error-message" class="lead"></p>
+      <button id="retry-btn" class="btn btn--primary" type="button">重试</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Space Fractions · 教学演示</span>
+    <a href="./admin.html">教师入口</a>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

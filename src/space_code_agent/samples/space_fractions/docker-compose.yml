@@ -1,0 +1,59 @@
+# Optional local topology for Space Fractions.
+# The demo itself needs no Docker; this file documents how the services fit together.
+version: "3.9"
+
+services:
+  question-service:
+    image: node:22-alpine
+    working_dir: /app
+    command: node services/question-service/src/server.js
+    volumes:
+      - .:/app:ro
+    environment:
+      PORT: "4001"
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-dev-service-token}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-dev-admin-token}
+    ports:
+      - "4001:4001"
+
+  game-service:
+    image: node:22-alpine
+    working_dir: /app
+    command: node services/game-service/src/server.js
+    volumes:
+      - .:/app:ro
+    environment:
+      PORT: "4002"
+      QUESTION_SERVICE_URL: http://question-service:4001
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-dev-service-token}
+    depends_on:
+      - question-service
+    ports:
+      - "4002:4002"
+
+  user-service:
+    image: node:22-alpine
+    working_dir: /app
+    command: node services/user-service/src/server.js
+    volumes:
+      - .:/app:ro
+    environment:
+      PORT: "4003"
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-space-fractions}
+      AUTH_SECRET: ${AUTH_SECRET:-dev-only-secret}
+    ports:
+      - "4003:4003"
+
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: node apps/web/server.js
+    volumes:
+      - .:/app:ro
+    environment:
+      PORT: "4000"
+    depends_on:
+      - game-service
+    ports:
+      - "4000:4000"

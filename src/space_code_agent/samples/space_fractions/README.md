@@ -1,0 +1,149 @@
+# Space Fractions
+
+A web-based fraction learning game for sixth-grade students, generated from
+`Architecture_Documentation.md` and `Architecture_View.md` by **SpaceCode Agent**.
+
+Players move through an intro scene, a main menu, ten fraction questions, and a
+final score scene. Administrators can add, edit and delete questions through a
+token-protected REST endpoint.
+
+## Architecture
+
+The original document specifies a cloud-native microservices architecture.
+This demo keeps the three business service boundaries but removes heavyweight
+infrastructure so it can be run and tested on a single laptop:
+
+| Service | Port | Responsibility |
+|---|---:|---|
+| `question-service` | 4001 | Question bank, admin CRUD, internal answer lookup |
+| `game-service` | 4002 | Game rounds, answer validation, scoring |
+| `user-service` | 4003 | Guest sessions and minimal admin login |
+| `apps/web` | 4000 | Static student UI (intro → menu → game → result) |
+
+Services are plain Node.js HTTP servers with **zero runtime dependencies**
+(`node:http`, `node:crypto`, built-in `fetch`). PostgreSQL DDL is provided in
+`sql/init.sql` as an optional persistence adapter; the demo uses in-memory
+repositories so tests run without a database.
+
+The full rationale and deviations are recorded in
+[`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) and
+[`docs/architecture-summary.md`](docs/architecture-summary.md).
+
+## Requirements
+
+- Node.js **20 or newer** (verified on Node.js 26).
+- No npm install is required for the demo or its tests.
+
+## Run
+
+Open four terminals from the project root:
+
+```bash
+# 1. question bank
+node services/question-service/src/server.js
+
+# 2. game rounds and scoring
+node services/game-service/src/server.js
+
+# 3. users / admin login
+node services/user-service/src/server.js
+
+# 4. student web UI
+node apps/web/server.js
+```
+
+Then open <http://127.0.0.1:4000>.
+
+Environment variables (all have development defaults):
+
+| Variable | Default | Used by |
+|---|---|---|
+| `QUESTION_SERVICE_URL` | `http://127.0.0.1:4001` | game-service |
+| `SERVICE_TOKEN` | `dev-service-token` | question/game service |
+| `ADMIN_TOKEN` | `dev-admin-token` | question-service |
+| `ADMIN_USER` / `ADMIN_PASSWORD` | `admin` / `space-fractions` | user-service |
+| `AUTH_SECRET` | `dev-only-secret` | user-service |
+| `PORT` | service-specific | all services |
+
+Copy [`.env.example`](.env.example) for a checklist; **never commit real secrets**.
+
+## Test
+
+```bash
+# unit + integration tests (domain, REST, auth)
+npm test
+
+# cross-service end-to-end flow
+npm run test:e2e
+```
+
+The tests use `node:test` and `node:assert/strict`; each test starts services on
+an ephemeral port (`0`) and closes them afterwards. No external services or
+network access are needed.
+
+## API summary
+
+### question-service
+
+- `GET /health`
+- `GET /questions?count=10` — public questions (answers removed)
+- `GET /questions/:id`
+- `POST /questions` — admin token required
+- `PUT /questions/:id` — admin token required
+- `DELETE /questions/:id` — admin token required
+- `GET /internal/questions?count=10` — includes `answerIndex`, service token required
+
+### game-service
+
+- `GET /health`
+- `POST /games` — creates a round with ten questions
+- `GET /games/:id` — public state
+- `POST /games/:id/answers` — `{ "questionId": "q-001", "choiceIndex": 0 }`
+- `GET /games/:id/result` — final score and answer breakdown
+
+### user-service
+
+- `GET /health`
+- `POST /sessions` — `{ "username": "admin", "password": "space-fractions" }`
+- `POST /guests` — guest student session
+- `GET /me` — bearer token required
+
+Scoring: each correct answer is worth **10 points**; ten questions make a
+maximum of **100 points**.
+
+## Project layout
+
+```text
+space-fractions/
+├── apps/web/                  # student UI + static server
+├── docs/                      # architecture summary + assumptions
+├── lib/http.js                # tiny zero-dependency HTTP helpers
+├── services/
+│   ├── game-service/
+│   ├── question-service/
+│   └── user-service/
+├── sql/init.sql               # optional PostgreSQL schema
+├── tests/
+│   ├── e2e/flow.test.js
+│   └── unit/http.test.js
+├── docker-compose.yml         # optional local topology
+├── package.json
+└── README.md
+```
+
+## Assumptions and limits
+
+- Ten questions per round, +10 per correct answer, no timer.
+- Students are anonymous guests; admin auth is a minimal token flow, not full OAuth2.
+- Redis, RabbitMQ, Elasticsearch, Kubernetes, Istio, Vault and Terraform from the
+  architecture document are **not** deployed. This is a documented architectural
+  deviation, not a production-ready microservice deployment.
+- Animations are CSS transitions; no external media assets are bundled.
+- Accessibility: keyboard-operable controls, semantic landmarks, visible focus.
+
+## Traceability
+
+Requirement-to-file mapping is recorded in `run_manifest.json` and
+`traceability_matrix.csv` when this project is generated by SpaceCode Agent.
+
+<!-- Covers: FR-1, FR-DERIVED-1, FR-DERIVED-2, FR-DERIVED-3, NFR-1, ASR-1, ASR-2 -->

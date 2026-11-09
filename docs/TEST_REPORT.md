@@ -70,7 +70,7 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 | 最终状态可能不一致 | 单一 `final_status` 同时写入 UI/CLI、`GENERATION_REPORT.md`、`run_manifest.json`；manifest 另存 `agent_status` | 测试失败用例断言 `run.status=partial` 且 `agent_status=completed` |
 | 指定模型未锁定 | GUI 模型只读；`AppConfig.validate()` 强制 `deepseek-v4-pro`；CLI 需显式 `--allow-model-override`；`test_connection` 不再把“模型未确认”报成成功 | `test_config_validation` 新增锁定断言 |
 | README 安装步骤不可靠 | 改为 `python -m pip install -e ".[dev]"` 后再运行模块 | 元数据 dry-run + 源码运行 `--version` 通过 |
-| CI 无 EXE 产物 / 作业跳过 | `build-exe` 依赖 Python 与 Node 两个测试作业；仍上传 one-file EXE artifact | 本地 one-file 构建与 smoke 已验证；GitHub Actions 结果需以推送后的 run 为准 |
+| CI 无 EXE 产物 / 作业跳过 | `build-exe` 依赖 Python 与 Node 两个测试作业；仍上传 one-file EXE artifact | GitHub Actions [run #2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) 三作业全绿，artifact `SpaceCodeAgent-windows-x64`（63,659,139 B）可下载 |
 
 ## 5. 已知未覆盖项
 

@@ -1,0 +1,1783 @@
+{
+  "schema_version": "1.0",
+  "run": {
+    "status": "completed",
+    "agent_status": "completed",
+    "mode": "Mock（内置样例）",
+    "started_at": 1794237694.678383,
+    "finished_at": 1794237702.3008296,
+    "duration_s": 7.62,
+    "steps": 36,
+    "tool_calls": 36,
+    "models_used": [
+      "mock"
+    ],
+    "phases": [
+      {
+        "phase": "VALIDATING_INPUT",
+        "message": "校验输入文档与输出目录",
+        "at_s": 0.0
+      },
+      {
+        "phase": "NORMALIZING",
+        "message": "解析架构文档与 UML 视图",
+        "at_s": 0.0
+      },
+      {
+        "phase": "PLANNING",
+        "message": "生成结构化实施计划",
+        "at_s": 0.02
+      },
+      {
+        "phase": "IMPLEMENTING",
+        "message": "Agent 正在写入项目文件",
+        "at_s": 0.03
+      },
+      {
+        "phase": "VERIFYING",
+        "message": "静态检查与本地测试",
+        "at_s": 0.19
+      },
+      {
+        "phase": "REPORTING",
+        "message": "生成报告与追溯矩阵",
+        "at_s": 7.58
+      }
+    ],
+    "errors": [],
+    "missing": [],
+    "session_id": "20261109-152134-f45a21",
+    "output_dir": "t15-clean-output"
+  },
+  "model": {
+    "name": "deepseek-v4-pro",
+    "returned_models": [
+      "mock"
+    ],
+    "base_url": "https://api.deepseek.com",
+    "reasoning_effort": "high",
+    "mock": true
+  },
+  "inputs": [
+    {
+      "path": ".\\examples\\inputs\\Architecture_Documentation.md",
+      "kind": "architecture",
+      "sha256": "6855cebc7fe63f643172f9419540a0c8f74e5ee728766bc39006362734623e94",
+      "size_bytes": 10140,
+      "encoding": "utf-8",
+      "lines": 315,
+      "sections": 39,
+      "tables": 4,
+      "code_blocks": 10,
+      "plantuml_blocks": 0,
+      "requirements": 4,
+      "components": 3,
+      "warnings": 4
+    },
+    {
+      "path": ".\\examples\\inputs\\Architecture_View.md",
+      "kind": "view",
+      "sha256": "d8977790af9a015f26128021e89a76d60509923d424659fea95f9c91fc0da6e9",
+      "size_bytes": 4042,
+      "encoding": "utf-8",
+      "lines": 201,
+      "sections": 5,
+      "tables": 0,
+      "code_blocks": 13,
+      "plantuml_blocks": 13,
+      "requirements": 0,
+      "components": 8,
+      "warnings": 3
+    }
+  ],
+  "requirements": [
+    {
+      "id": "FR-1",
+      "kind": "FR",
+      "title": "Play game",
+      "description": "Play game",
+      "source": {
+        "document": "Architecture_Documentation.md",
+        "line": 33,
+        "section": "",
+        "sha256": "6855cebc7fe63f643172f9419540a0c8f74e5ee728766bc39006362734623e94"
+      },
+      "confidence": "explicit",
+      "diagrams": [
+        "UseCaseDiagram"
+      ],
+      "components": [
+        "GameComponent"
+      ],
+      "artifacts": [
+        "openapi.yaml"
+      ],
+      "test_types": [],
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "files": [
+        "apps/web/index.html",
+        "apps/web/server.js",
+        "apps/web/src/api.js",
+        "apps/web/src/main.js",
+        "apps/web/src/styles.css",
+        "lib/http.js",
+        "services/game-service/src/game.js",
+        "services/game-service/src/index.js",
+        "services/game-service/src/questionClient.js",
+        "services/game-service/src/server.js",
+        "services/game-service/tests/game.test.js",
+        "services/question-service/src/server.js",
+        "tests/e2e/flow.test.js",
+        "tests/unit/http.test.js"
+      ],
+      "tests": [
+        "services/game-service/tests/game.test.js",
+        "tests/e2e/flow.test.js",
+        "tests/unit/http.test.js"
+      ],
+      "evidence": "源码: apps/web/index.html, apps/web/server.js, apps/web/src/api.js, apps/web/src/main.js；测试: tests/e2e/flow.test.js, tests/unit/http.test.js, services/game-service/tests/game.test.js；验证: passed"
+    },
+    {
+      "id": "NFR-1",
+      "kind": "NFR",
+      "title": "Performance",
+      "description": "Performance",
+      "source": {
+        "document": "Architecture_Documentation.md",
+        "line": 34,
+        "section": "",
+        "sha256": "6855cebc7fe63f643172f9419540a0c8f74e5ee728766bc39006362734623e94"
+      },
+      "confidence": "explicit",
+      "diagrams": [
+        "SequenceDiagram1"
+      ],
+      "components": [
+        "GameComponent"
+      ],
+      "artifacts": [
+        "internal.proto"
+      ],
+      "test_types": [
+        "Load testing, Stress testing"
+      ],
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "files": [
+        "apps/web/server.js",
+        "docker-compose.yml",
+        "lib/http.js",
+        "services/game-service/src/questionClient.js",
+        "tests/unit/http.test.js"
+      ],
+      "tests": [
+        "tests/unit/http.test.js"
+      ],
+      "evidence": "源码: apps/web/server.js, docker-compose.yml, lib/http.js, services/game-service/src/questionClient.js；测试: tests/unit/http.test.js；验证: passed"
+    },
+    {
+      "id": "ASR-1",
+      "kind": "ASR",
+      "title": "Data durability",
+      "description": "Data durability",
+      "source": {
+        "document": "Architecture_Documentation.md",
+        "line": 35,
+        "section": "",
+        "sha256": "6855cebc7fe63f643172f9419540a0c8f74e5ee728766bc39006362734623e94"
+      },
+      "confidence": "explicit",
+      "diagrams": [
+        "DeploymentDiagram"
+      ],
+      "components": [
+        "QuestionComponent"
+      ],
+      "artifacts": [
+        "sql",
+        "question_ddl.sql"
+      ],
+      "test_types": [
+        "Unit testing, Integration testing"
+      ],
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "files": [
+        "docker-compose.yml",
+        "services/question-service/src/server.js",
+        "services/question-service/src/store.js",
+        "sql/init.sql",
+        "tests/unit/persistence.test.js",
+        "tests/unit/schema.test.js"
+      ],
+      "tests": [
+        "tests/unit/persistence.test.js",
+        "tests/unit/schema.test.js"
+      ],
+      "evidence": "源码: docker-compose.yml, services/question-service/src/server.js, services/question-service/src/store.js, sql/init.sql；测试: tests/unit/persistence.test.js, tests/unit/schema.test.js；验证: passed"
+    },
+    {
+      "id": "ASR-2",
+      "kind": "ASR",
+      "title": "Security",
+      "description": "文档中提及但未给出完整定义",
+      "source": {
+        "document": "Architecture_Documentation.md",
+        "line": 26,
+        "section": "",
+        "sha256": "6855cebc7fe63f643172f9419540a0c8f74e5ee728766bc39006362734623e94"
+      },
+      "confidence": "inferred",
+      "diagrams": [],
+      "components": [],
+      "artifacts": [],
+      "test_types": [
+        "Penetration testing, Vulnerability scanning"
+      ],
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "files": [
+        "apps/web/src/admin.js",
+        "services/game-service/src/index.js",
+        "services/question-service/src/index.js",
+        "services/question-service/tests/questions.test.js",
+        "services/user-service/src/auth.js",
+        "services/user-service/src/index.js",
+        "services/user-service/src/server.js",
+        "services/user-service/tests/auth.test.js",
+        "tests/e2e/flow.test.js"
+      ],
+      "tests": [
+        "services/user-service/tests/auth.test.js",
+        "tests/e2e/flow.test.js"
+      ],
+      "evidence": "源码: apps/web/src/admin.js, services/game-service/src/index.js, services/question-service/src/index.js, services/question-service/tests/questions.test.js；测试: tests/e2e/flow.test.js, services/user-service/tests/auth.test.js；验证: passed"
+    },
+    {
+      "id": "FR-DERIVED-1",
+      "kind": "FR",
+      "title": "View Score",
+      "description": "由用例图 UseCaseDiagram 推导：View Score",
+      "source": {
+        "document": "Architecture_View.md",
+        "line": 3,
+        "section": "",
+        "sha256": "d8977790af9a015f26128021e89a76d60509923d424659fea95f9c91fc0da6e9"
+      },
+      "confidence": "diagram-derived",
+      "diagrams": [
+        "UseCaseDiagram"
+      ],
+      "components": [
+        "GameComponent",
+        "UserComponent"
+      ],
+      "artifacts": [],
+      "test_types": [],
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "files": [
+        "apps/web/index.html",
+        "apps/web/src/api.js",
+        "apps/web/src/main.js",
+        "services/game-service/src/game.js",
+        "services/game-service/src/index.js",
+        "services/game-service/tests/game.test.js",
+        "services/question-service/src/server.js",
+        "tests/e2e/flow.test.js"
+      ],
+      "tests": [
+        "services/game-service/tests/game.test.js",
+        "tests/e2e/flow.test.js"
+      ],
+      "evidence": "源码: apps/web/index.html, apps/web/src/api.js, apps/web/src/main.js, services/game-service/src/game.js；测试: tests/e2e/flow.test.js, services/game-service/tests/game.test.js；验证: passed"
+    },
+    {
+      "id": "FR-DERIVED-2",
+      "kind": "FR",
+      "title": "Update Questions",
+      "description": "由用例图 UseCaseDiagram 推导：Update Questions",
+      "source": {
+        "document": "Architecture_View.md",
+        "line": 3,
+        "section": "",
+        "sha256": "d8977790af9a015f26128021e89a76d60509923d424659fea95f9c91fc0da6e9"
+      },
+      "confidence": "diagram-derived",
+      "diagrams": [
+        "UseCaseDiagram"
+      ],
+      "components": [
+        "QuestionComponent",
+        "AdminComponent"
+      ],
+      "artifacts": [],
+      "test_types": [],
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "files": [
+        "apps/web/admin.html",
+        "apps/web/src/admin.js",
+        "services/question-service/src/index.js",
+        "services/question-service/src/questions.js",
+        "services/question-service/src/server.js",
+        "services/question-service/src/store.js",
+        "services/question-service/tests/questions.test.js",
+        "sql/init.sql",
+        "tests/e2e/flow.test.js"
+      ],
+      "tests": [
+        "services/question-service/tests/questions.test.js",
+        "tests/e2e/flow.test.js"
+      ],
+      "evidence": "源码: apps/web/admin.html, apps/web/src/admin.js, services/question-service/src/index.js, services/question-service/src/questions.js；测试: tests/e2e/flow.test.js, services/question-service/tests/questions.test.js；验证: passed"
+    },
+    {
+      "id": "FR-DERIVED-3",
+      "kind": "FR",
+      "title": "View Help",
+      "description": "由用例图 UseCaseDiagram 推导：View Help",
+      "source": {
+        "document": "Architecture_View.md",
+        "line": 3,
+        "section": "",
+        "sha256": "d8977790af9a015f26128021e89a76d60509923d424659fea95f9c91fc0da6e9"
+      },
+      "confidence": "diagram-derived",
+      "diagrams": [
+        "UseCaseDiagram"
+      ],
+      "components": [
+        "UserComponent"
+      ],
+      "artifacts": [],
+      "test_types": [],
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "files": [
+        "apps/web/index.html",
+        "apps/web/server.js",
+        "apps/web/src/main.js",
+        "apps/web/src/styles.css",
+        "tests/e2e/flow.test.js"
+      ],
+      "tests": [
+        "tests/e2e/flow.test.js"
+      ],
+      "evidence": "源码: apps/web/index.html, apps/web/server.js, apps/web/src/main.js, apps/web/src/styles.css；测试: tests/e2e/flow.test.js；验证: passed"
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "UseCaseDiagram",
+      "kind": "use_case",
+      "source_doc": "Architecture_View.md",
+      "line_start": 3,
+      "elements": [
+        "EndUser",
+        "Admin",
+        "Play Game",
+        "View Score",
+        "Update Questions",
+        "View Help"
+      ],
+      "relation_count": 4,
+      "message_count": 0,
+      "warnings": [],
+      "raw_sha256": "46ae236d700c32fa4666800caaae334a01b47fd2c004caf5efbbb4703c3b1393"
+    },
+    {
+      "id": "ClassDiagram",
+      "kind": "class",
+      "source_doc": "Architecture_View.md",
+      "line_start": 23,
+      "elements": [
+        "Game",
+        "Question",
+        "User",
+        "Admin"
+      ],
+      "relation_count": 3,
+      "message_count": 0,
+      "warnings": [],
+      "raw_sha256": "bf3e017f11504d75c67cd9db7924096186aac25f42e230db35af942531e22697"
+    },
+    {
+      "id": "ObjectDiagram",
+      "kind": "object",
+      "source_doc": "Architecture_View.md",
+      "line_start": 55,
+      "elements": [
+        "game1",
+        "question1",
+        "user1",
+        "admin1"
+      ],
+      "relation_count": 3,
+      "message_count": 3,
+      "warnings": [
+        "ObjectDiagram: 对象图使用了 participant 记法（更接近序列图），已按对象语义提取，源语法不规范。"
+      ],
+      "raw_sha256": "056864503d4afcef7b8ae8362b17a363bf33b0521b4a0418271a6adc3b506d3d"
+    },
+    {
+      "id": "StateDiagram",
+      "kind": "state",
+      "source_doc": "Architecture_View.md",
+      "line_start": 67,
+      "elements": [
+        "Playing",
+        "Paused",
+        "GameOver"
+      ],
+      "relation_count": 4,
+      "message_count": 3,
+      "warnings": [],
+      "raw_sha256": "bbc06b56a3e932fd38008a0c7e6aff55aca609b742894d4ff973e34c4efb4732"
+    },
+    {
+      "id": "ActivityDiagram",
+      "kind": "activity",
+      "source_doc": "Architecture_View.md",
+      "line_start": 81,
+      "elements": [
+        "play game",
+        "game over",
+        "continue playing",
+        "calculate score",
+        "display score"
+      ],
+      "relation_count": 0,
+      "message_count": 0,
+      "warnings": [],
+      "raw_sha256": "b362b6326b8bdf77b9c4db6ed4362a5b60915027bcf3e92bf263ae8131d9aec5"
+    },
+    {
+      "id": "SequenceDiagram1",
+      "kind": "sequence",
+      "source_doc": "Architecture_View.md",
+      "line_start": 96,
+      "elements": [
+        "User",
+        "Game",
+        "Question"
+      ],
+      "relation_count": 8,
+      "message_count": 8,
+      "warnings": [],
+      "raw_sha256": "4b9e9dad4c6c19bfacfe6b0f8387f92bb4bf66cfb1bc72164cfcf93e07b55abf"
+    },
+    {
+      "id": "SequenceDiagram2",
+      "kind": "sequence",
+      "source_doc": "Architecture_View.md",
+      "line_start": 111,
+      "elements": [
+        "Admin",
+        "Question"
+      ],
+      "relation_count": 2,
+      "message_count": 2,
+      "warnings": [],
+      "raw_sha256": "4142c9cbb6a635c2c376d05b0306e69d453fad4de901dc7c47b63af38fcf0a1b"
+    },
+    {
+      "id": "CollaborationDiagram1",
+      "kind": "collaboration",
+      "source_doc": "Architecture_View.md",
+      "line_start": 120,
+      "elements": [
+        "User",
+        "Game",
+        "Question"
+      ],
+      "relation_count": 8,
+      "message_count": 8,
+      "warnings": [
+        "CollaborationDiagram1: 协作图使用了序列图消息记法（->>），已按协作语义提取。"
+      ],
+      "raw_sha256": "5254df423d1280b10c90dcaadab63d2a6dabe3f82474b471348e5fd92a5b91e9"
+    },
+    {
+      "id": "CollaborationDiagram2",
+      "kind": "collaboration",
+      "source_doc": "Architecture_View.md",
+      "line_start": 136,
+      "elements": [
+        "Admin",
+        "Question"
+      ],
+      "relation_count": 2,
+      "message_count": 2,
+      "warnings": [
+        "CollaborationDiagram2: 协作图使用了序列图消息记法（->>），已按协作语义提取。"
+      ],
+      "raw_sha256": "848e5535a60c30f4993d056bc4ebf6c9c9dd91a6933a70faa037536956f32da0"
+    },
+    {
+      "id": "PackageDiagram",
+      "kind": "package",
+      "source_doc": "Architecture_View.md",
+      "line_start": 148,
+      "elements": [
+        "Game",
+        "Question",
+        "User",
+        "Admin"
+      ],
+      "relation_count": 2,
+      "message_count": 0,
+      "warnings": [],
+      "raw_sha256": "f0ac11c41f4c0ad3d0e584f1caa36d6532f3803c6a78e9a1c7406c268e0759f6"
+    },
+    {
+      "id": "ComponentDiagram",
+      "kind": "component",
+      "source_doc": "Architecture_View.md",
+      "line_start": 165,
+      "elements": [
+        "GameComponent",
+        "QuestionComponent",
+        "UserComponent",
+        "AdminComponent"
+      ],
+      "relation_count": 3,
+      "message_count": 0,
+      "warnings": [],
+      "raw_sha256": "0486675d2b5ec08a6ec46a7b1c6aff7e2364bbd4c2aee2ce027a9340e191ba33"
+    },
+    {
+      "id": "DeploymentDiagram",
+      "kind": "deployment",
+      "source_doc": "Architecture_View.md",
+      "line_start": 179,
+      "elements": [
+        "GameServer",
+        "QuestionServer",
+        "UserClient",
+        "AdminClient"
+      ],
+      "relation_count": 3,
+      "message_count": 0,
+      "warnings": [],
+      "raw_sha256": "1e0490082a32d1bba7b81bb7c110ca8c421d5fae396ce22aec53b4ded265a536"
+    },
+    {
+      "id": "ContainerDiagram",
+      "kind": "container",
+      "source_doc": "Architecture_View.md",
+      "line_start": 191,
+      "elements": [
+        "GameContainer",
+        "QuestionContainer",
+        "UserContainer",
+        "AdminContainer"
+      ],
+      "relation_count": 3,
+      "message_count": 0,
+      "warnings": [],
+      "raw_sha256": "c0ff5708eb419e088be201037639ab89056da69ffca19cc812daafe6a1947ac6"
+    }
+  ],
+  "conflicts": [
+    {
+      "id": "C-001",
+      "severity": "medium",
+      "message": "架构文档声称 11 个 PlantUML 图，实际解析到 13 个代码块。",
+      "evidence": "Architecture_Documentation.md vs Architecture_View.md",
+      "resolution": "以实际解析结果 13 个视图为准，并在报告中记录差异。"
+    },
+    {
+      "id": "C-002",
+      "severity": "medium",
+      "message": "ASR-2（安全）在质量属性/测试表中被引用，但文档没有给出正式定义与验收指标。",
+      "evidence": "Architecture_Documentation.md",
+      "resolution": "按 NFR-2 级安全约束处理（输入校验、无明文密钥、最小权限），并标注来源为推断。"
+    },
+    {
+      "id": "C-003",
+      "severity": "high",
+      "message": "文档的测试矩阵为空（Unit/Integration/Contract/E2E/Chaos 均未填写覆盖组件）。",
+      "evidence": "H. Testing Strategy",
+      "resolution": "Agent 生成最小可用测试：领域单元测试 + REST 集成/端到端测试，并在报告中声明覆盖边界。"
+    },
+    {
+      "id": "C-004",
+      "severity": "low",
+      "message": "ObjectDiagram 使用 participant 语法描述对象图，与图类型不一致。",
+      "evidence": "ObjectDiagram, line 55",
+      "resolution": "按对象/参与者语义提取，不据此推断额外运行时行为。"
+    },
+    {
+      "id": "C-005",
+      "severity": "low",
+      "message": "CollaborationDiagram1 使用序列图消息记法描述协作图。",
+      "evidence": "CollaborationDiagram1, line 120",
+      "resolution": "按消息顺序提取协作语义，并在报告中标记语法偏差。"
+    },
+    {
+      "id": "C-006",
+      "severity": "low",
+      "message": "CollaborationDiagram2 使用序列图消息记法描述协作图。",
+      "evidence": "CollaborationDiagram2, line 136",
+      "resolution": "按消息顺序提取协作语义，并在报告中标记语法偏差。"
+    },
+    {
+      "id": "C-007",
+      "severity": "low",
+      "message": "序列图与协作图各有复数版本，信息高度重复。",
+      "evidence": "SequenceDiagram1, SequenceDiagram2, CollaborationDiagram1, CollaborationDiagram2",
+      "resolution": "合并为两条主流程（答题、题目维护），不重复实现。"
+    },
+    {
+      "id": "C-008",
+      "severity": "high",
+      "message": "文档推荐了 Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform 等重型组件，但没有给出对应的业务约束与运维预算。",
+      "evidence": "Redis, RabbitMQ, Elasticsearch, Kubernetes, Istio, Vault, Terraform",
+      "resolution": "保留微服务组件边界，但演示实现只使用业务必需的依赖；上述组件列入 ASSUMPTIONS.md 的可选扩展，明确标记为重大偏离，不声称生产就绪。"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "A1",
+      "text": "A1: The game will be played by 1000 users concurrently",
+      "category": "document",
+      "source": "Architecture_Documentation.md",
+      "impact": "容量/性能设计假设"
+    },
+    {
+      "id": "A2",
+      "text": "A2: The game will be played for 1 hour per session",
+      "category": "document",
+      "source": "Architecture_Documentation.md",
+      "impact": "容量/性能设计假设"
+    },
+    {
+      "id": "ASM-01",
+      "text": "每局固定 10 道分数题；答对 +10 分、答错 0 分，满分 100 分，无倒计时。",
+      "category": "gameplay",
+      "source": "agent",
+      "impact": "影响题库数量、计分逻辑与结束条件。"
+    },
+    {
+      "id": "ASM-02",
+      "text": "学生无需注册；会话开始时生成访客 ID，分数仅用于当前回合展示。管理员使用环境变量配置的令牌登录。",
+      "category": "identity",
+      "source": "agent",
+      "impact": "影响 user-service 的范围；不实现完整 OAuth2。"
+    },
+    {
+      "id": "ASM-03",
+      "text": "题目为六年级分数四则运算单选题（4 个选项），题目与答案由种子数据提供，管理员可增删改。",
+      "category": "gameplay",
+      "source": "agent",
+      "impact": "影响 question-service 的数据模型与校验。"
+    },
+    {
+      "id": "ASM-04",
+      "text": "开始/结束动画以 CSS 过渡和文本场景实现，不依赖外部图片或视频素材。",
+      "category": "ui",
+      "source": "agent",
+      "impact": "影响前端资源与打包体积；不阻塞核心流程。"
+    },
+    {
+      "id": "ASM-05",
+      "text": "无障碍要求：键盘可操作、语义化标签、可见焦点、颜色对比度不低于 4.5:1。",
+      "category": "quality",
+      "source": "agent",
+      "impact": "影响 UI 实现与验收清单。"
+    },
+    {
+      "id": "ASM-06",
+      "text": "保留 Game/Question/User 三个服务边界，使用 REST + 进程内仓库运行；PostgreSQL 以可选适配器提供，Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform 不纳入演示依赖。这是相对原文档微服务/云原生方案的重大偏离，必须在报告与 ASSUMPTIONS.md 中声明。",
+      "category": "architecture",
+      "source": "agent",
+      "impact": "这是相对原文档微服务/云原生方案的重大偏离，必须在报告与 ASSUMPTIONS.md 中声明。"
+    }
+  ],
+  "plan": {
+    "project_name": "Space Fractions",
+    "summary": "按架构文档的 Game/Question/User 组件边界实现 Space Fractions：三个零依赖 Node.js REST 服务、学生在浏览器完成答题与计分、教师后台维护题库，并提供单元/集成/端到端测试。",
+    "architecture_style": "microservices (3 services, reduced infrastructure)",
+    "stack": {
+      "language": "JavaScript (CommonJS)",
+      "runtime": "Node.js >= 20",
+      "framework": "node:http (zero-dependency REST)",
+      "persistence": "file-backed JSON store (atomic rewrite); PostgreSQL DDL optional",
+      "testing": "node:test + node:assert/strict",
+      "frontend": "semantic HTML + CSS + ES modules (no build step)"
+    },
+    "deviations": [
+      {
+        "decision": "以 node:http 替代 Express.js",
+        "reason": "让生成项目零运行时依赖、可离线安装与验证。",
+        "impact": "保留 REST 契约与中间件式路由，不使用 Express 生态中间件。"
+      },
+      {
+        "decision": "文件 JSON 持久化替代在线 PostgreSQL",
+        "reason": "演示环境不提供数据库；题库需要跨重启保留。",
+        "impact": "单机重启后数据保留；多实例/生产部署需切换 PostgreSQL 适配器。"
+      },
+      {
+        "decision": "不部署 Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform",
+        "reason": "架构文档未给出这些组件的业务约束与运维预算。",
+        "impact": "仅保留微服务边界，不声称生产可用；列入 ASSUMPTIONS 的重大偏离。"
+      },
+      {
+        "decision": "最小 HMAC 管理员令牌替代完整 OAuth2",
+        "reason": "教学演示的认证边界，避免引入外部身份提供商。",
+        "impact": "无刷新令牌、无第三方登录；令牌有过期时间与签名校验。"
+      }
+    ],
+    "tasks": [
+      {
+        "id": "T1",
+        "title": "文档与工程骨架",
+        "description": "README、依赖声明、假设、目录",
+        "depends_on": [],
+        "requirement_ids": [
+          "FR-1",
+          "NFR-1",
+          "ASR-1",
+          "ASR-2"
+        ],
+        "acceptance": [
+          "README 可读",
+          "package.json 有效",
+          "ASSUMPTIONS 列出偏离"
+        ]
+      },
+      {
+        "id": "T2",
+        "title": "共享 HTTP 工具",
+        "description": "路由、JSON、CORS、服务器生命周期",
+        "depends_on": [
+          "T1"
+        ],
+        "requirement_ids": [
+          "NFR-1"
+        ],
+        "acceptance": [
+          "单元测试覆盖路由与 JSON 错误"
+        ]
+      },
+      {
+        "id": "T3",
+        "title": "题库服务",
+        "description": "种子题库、校验、公开/内部/管理员接口",
+        "depends_on": [
+          "T2"
+        ],
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-1",
+          "ASR-2"
+        ],
+        "acceptance": [
+          "公开接口隐藏答案",
+          "管理员 CRUD 通过测试"
+        ]
+      },
+      {
+        "id": "T4",
+        "title": "游戏服务",
+        "description": "回合创建、顺序答题、计分、结果",
+        "depends_on": [
+          "T3"
+        ],
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "NFR-1"
+        ],
+        "acceptance": [
+          "满分流程与错题流程通过测试"
+        ]
+      },
+      {
+        "id": "T5",
+        "title": "用户服务",
+        "description": "访客会话、管理员登录、令牌校验",
+        "depends_on": [
+          "T2"
+        ],
+        "requirement_ids": [
+          "ASR-2"
+        ],
+        "acceptance": [
+          "登录/过期/篡改令牌测试通过"
+        ]
+      },
+      {
+        "id": "T6",
+        "title": "学生端与教师后台",
+        "description": "引导、菜单、答题、得分、帮助、题库管理",
+        "depends_on": [
+          "T4",
+          "T5"
+        ],
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-2",
+          "FR-DERIVED-3"
+        ],
+        "acceptance": [
+          "页面可静态访问",
+          "无外部前端依赖"
+        ]
+      },
+      {
+        "id": "T7",
+        "title": "测试、端到端与部署资料",
+        "description": "跨服务流程测试、SQL、compose",
+        "depends_on": [
+          "T6"
+        ],
+        "requirement_ids": [
+          "FR-1",
+          "ASR-1",
+          "NFR-1"
+        ],
+        "acceptance": [
+          "node --test 全绿",
+          "e2e 满分流程通过"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "path": "README.md",
+        "purpose": "项目说明、运行方式、API 与假设",
+        "task_id": "T1",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-2",
+          "FR-DERIVED-3",
+          "NFR-1",
+          "ASR-1",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "package.json",
+        "purpose": "依赖声明与测试脚本",
+        "task_id": "T1",
+        "requirement_ids": []
+      },
+      {
+        "path": ".gitignore",
+        "purpose": "忽略依赖与本地密钥",
+        "task_id": "T1",
+        "requirement_ids": []
+      },
+      {
+        "path": ".env.example",
+        "purpose": "环境变量样例（仅占位符）",
+        "task_id": "T1",
+        "requirement_ids": []
+      },
+      {
+        "path": "docs/ASSUMPTIONS.md",
+        "purpose": "假设、冲突与重大偏离",
+        "task_id": "T1",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-2",
+          "FR-DERIVED-3",
+          "NFR-1",
+          "ASR-1",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "docs/architecture-summary.md",
+        "purpose": "架构摘要与组件边界",
+        "task_id": "T1",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-2",
+          "FR-DERIVED-3",
+          "NFR-1",
+          "ASR-1",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "lib/http.js",
+        "purpose": "零依赖 HTTP 路由与 JSON 工具",
+        "task_id": "T2",
+        "requirement_ids": [
+          "FR-1",
+          "NFR-1"
+        ]
+      },
+      {
+        "path": "tests/e2e/flow.test.js",
+        "purpose": "跨服务端到端流程测试",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-2",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "tests/unit/http.test.js",
+        "purpose": "HTTP 工具单元测试",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "NFR-1"
+        ]
+      },
+      {
+        "path": "tests/unit/persistence.test.js",
+        "purpose": "题库重启恢复持久化测试",
+        "task_id": "T7",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "tests/unit/schema.test.js",
+        "purpose": "持久化 DDL 结构与约束测试",
+        "task_id": "T7",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "sql/init.sql",
+        "purpose": "PostgreSQL 可选表结构",
+        "task_id": "T7",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "docker-compose.yml",
+        "purpose": "可选本地拓扑",
+        "task_id": "T7",
+        "requirement_ids": [
+          "NFR-1",
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "apps/web/admin.html",
+        "purpose": "教师后台页面",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-DERIVED-2"
+        ]
+      },
+      {
+        "path": "apps/web/index.html",
+        "purpose": "学生端页面结构",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-3"
+        ]
+      },
+      {
+        "path": "apps/web/server.js",
+        "purpose": "静态站点服务器",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "NFR-1"
+        ]
+      },
+      {
+        "path": "apps/web/src/admin.js",
+        "purpose": "题目增删改管理",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "apps/web/src/api.js",
+        "purpose": "游戏服务客户端",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1"
+        ]
+      },
+      {
+        "path": "apps/web/src/main.js",
+        "purpose": "学生端状态机与交互",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-3"
+        ]
+      },
+      {
+        "path": "apps/web/src/styles.css",
+        "purpose": "响应式太空主题样式",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-3"
+        ]
+      },
+      {
+        "path": "services/game-service/src/game.js",
+        "purpose": "回合、判分领域逻辑",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1"
+        ]
+      },
+      {
+        "path": "services/game-service/src/index.js",
+        "purpose": "游戏 REST 接口",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "services/game-service/src/questionClient.js",
+        "purpose": "题库服务客户端",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "NFR-1"
+        ]
+      },
+      {
+        "path": "services/game-service/src/server.js",
+        "purpose": "游戏服务入口",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1"
+        ]
+      },
+      {
+        "path": "services/game-service/tests/game.test.js",
+        "purpose": "游戏领域与 API 测试",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1"
+        ]
+      },
+      {
+        "path": "services/question-service/src/index.js",
+        "purpose": "题库 REST 接口",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "services/question-service/src/questions.js",
+        "purpose": "题库种子数据",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-DERIVED-2"
+        ]
+      },
+      {
+        "path": "services/question-service/src/server.js",
+        "purpose": "题库服务入口",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-DERIVED-2"
+        ]
+      },
+      {
+        "path": "services/question-service/src/store.js",
+        "purpose": "题目仓库与校验",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "services/question-service/tests/questions.test.js",
+        "purpose": "题库接口测试",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "services/user-service/src/auth.js",
+        "purpose": "HMAC 令牌与访客会话",
+        "task_id": "T7",
+        "requirement_ids": [
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "services/user-service/src/index.js",
+        "purpose": "用户 REST 接口",
+        "task_id": "T7",
+        "requirement_ids": [
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "services/user-service/src/server.js",
+        "purpose": "用户服务入口",
+        "task_id": "T7",
+        "requirement_ids": [
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "services/user-service/tests/auth.test.js",
+        "purpose": "认证测试",
+        "task_id": "T7",
+        "requirement_ids": [
+          "ASR-2"
+        ]
+      }
+    ],
+    "verification_steps": [
+      "node --check 所有 JS 文件（由 Agent 静态检查执行）",
+      "node --test 单元/集成测试",
+      "node --test tests/e2e 跨服务流程",
+      "检查公开题目接口不泄露 answerIndex"
+    ],
+    "assumptions": [
+      "A1: The game will be played by 1000 users concurrently",
+      "A2: The game will be played for 1 hour per session",
+      "每局固定 10 道分数题；答对 +10 分、答错 0 分，满分 100 分，无倒计时。",
+      "学生无需注册；会话开始时生成访客 ID，分数仅用于当前回合展示。管理员使用环境变量配置的令牌登录。",
+      "题目为六年级分数四则运算单选题（4 个选项），题目与答案由种子数据提供，管理员可增删改。",
+      "开始/结束动画以 CSS 过渡和文本场景实现，不依赖外部图片或视频素材。",
+      "无障碍要求：键盘可操作、语义化标签、可见焦点、颜色对比度不低于 4.5:1。",
+      "保留 Game/Question/User 三个服务边界，使用 REST + 进程内仓库运行；PostgreSQL 以可选适配器提供，Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform 不纳入演示依赖。这是相对原文档微服务/云原生方案的重大偏离，必须在报告与 ASSUMPTIONS.md 中声明。"
+    ],
+    "risks": [
+      "单机 JSON 文件的并发写入能力有限，生产部署需 PostgreSQL。",
+      "完整 OAuth2、PostgreSQL 集群与云原生组件未实现，已在 ASM-06 记录。"
+    ],
+    "source": "sample"
+  },
+  "coverage": {
+    "total": 7,
+    "mapped": 7,
+    "implemented": 7,
+    "verified": 7,
+    "unverified": 0,
+    "failed": 0,
+    "partial": 0,
+    "missing": 0,
+    "tests_ran": true,
+    "tests_passed": true,
+    "percent": 100.0,
+    "verified_percent": 100.0
+  },
+  "traceability": [
+    {
+      "requirement_id": "FR-1",
+      "kind": "FR",
+      "title": "Play game",
+      "confidence": "explicit",
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "components": "GameComponent",
+      "files": "apps/web/index.html; apps/web/server.js; apps/web/src/api.js; apps/web/src/main.js; apps/web/src/styles.css; lib/http.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/src/questionClient.js; services/game-service/src/server.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js; tests/unit/http.test.js",
+      "tests": "services/game-service/tests/game.test.js; tests/e2e/flow.test.js; tests/unit/http.test.js",
+      "evidence": "源码: apps/web/index.html, apps/web/server.js, apps/web/src/api.js, apps/web/src/main.js；测试: tests/e2e/flow.test.js, tests/unit/http.test.js, services/game-service/tests/game.test.js；验证: passed",
+      "source": "Architecture_Documentation.md:33"
+    },
+    {
+      "requirement_id": "NFR-1",
+      "kind": "NFR",
+      "title": "Performance",
+      "confidence": "explicit",
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "components": "GameComponent",
+      "files": "apps/web/server.js; docker-compose.yml; lib/http.js; services/game-service/src/questionClient.js; tests/unit/http.test.js",
+      "tests": "tests/unit/http.test.js",
+      "evidence": "源码: apps/web/server.js, docker-compose.yml, lib/http.js, services/game-service/src/questionClient.js；测试: tests/unit/http.test.js；验证: passed",
+      "source": "Architecture_Documentation.md:34"
+    },
+    {
+      "requirement_id": "ASR-1",
+      "kind": "ASR",
+      "title": "Data durability",
+      "confidence": "explicit",
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "components": "QuestionComponent",
+      "files": "docker-compose.yml; services/question-service/src/server.js; services/question-service/src/store.js; sql/init.sql; tests/unit/persistence.test.js; tests/unit/schema.test.js",
+      "tests": "tests/unit/persistence.test.js; tests/unit/schema.test.js",
+      "evidence": "源码: docker-compose.yml, services/question-service/src/server.js, services/question-service/src/store.js, sql/init.sql；测试: tests/unit/persistence.test.js, tests/unit/schema.test.js；验证: passed",
+      "source": "Architecture_Documentation.md:35"
+    },
+    {
+      "requirement_id": "ASR-2",
+      "kind": "ASR",
+      "title": "Security",
+      "confidence": "inferred",
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "components": "",
+      "files": "apps/web/src/admin.js; services/game-service/src/index.js; services/question-service/src/index.js; services/question-service/tests/questions.test.js; services/user-service/src/auth.js; services/user-service/src/index.js; services/user-service/src/server.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js",
+      "tests": "services/user-service/tests/auth.test.js; tests/e2e/flow.test.js",
+      "evidence": "源码: apps/web/src/admin.js, services/game-service/src/index.js, services/question-service/src/index.js, services/question-service/tests/questions.test.js；测试: tests/e2e/flow.test.js, services/user-service/tests/auth.test.js；验证: passed",
+      "source": "Architecture_Documentation.md:26"
+    },
+    {
+      "requirement_id": "FR-DERIVED-1",
+      "kind": "FR",
+      "title": "View Score",
+      "confidence": "diagram-derived",
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "components": "GameComponent; UserComponent",
+      "files": "apps/web/index.html; apps/web/src/api.js; apps/web/src/main.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js",
+      "tests": "services/game-service/tests/game.test.js; tests/e2e/flow.test.js",
+      "evidence": "源码: apps/web/index.html, apps/web/src/api.js, apps/web/src/main.js, services/game-service/src/game.js；测试: tests/e2e/flow.test.js, services/game-service/tests/game.test.js；验证: passed",
+      "source": "Architecture_View.md:3"
+    },
+    {
+      "requirement_id": "FR-DERIVED-2",
+      "kind": "FR",
+      "title": "Update Questions",
+      "confidence": "diagram-derived",
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "components": "QuestionComponent; AdminComponent",
+      "files": "apps/web/admin.html; apps/web/src/admin.js; services/question-service/src/index.js; services/question-service/src/questions.js; services/question-service/src/server.js; services/question-service/src/store.js; services/question-service/tests/questions.test.js; sql/init.sql; tests/e2e/flow.test.js",
+      "tests": "services/question-service/tests/questions.test.js; tests/e2e/flow.test.js",
+      "evidence": "源码: apps/web/admin.html, apps/web/src/admin.js, services/question-service/src/index.js, services/question-service/src/questions.js；测试: tests/e2e/flow.test.js, services/question-service/tests/questions.test.js；验证: passed",
+      "source": "Architecture_View.md:3"
+    },
+    {
+      "requirement_id": "FR-DERIVED-3",
+      "kind": "FR",
+      "title": "View Help",
+      "confidence": "diagram-derived",
+      "status": "verified",
+      "mapped": true,
+      "verified": true,
+      "verification": "passed",
+      "components": "UserComponent",
+      "files": "apps/web/index.html; apps/web/server.js; apps/web/src/main.js; apps/web/src/styles.css; tests/e2e/flow.test.js",
+      "tests": "tests/e2e/flow.test.js",
+      "evidence": "源码: apps/web/index.html, apps/web/server.js, apps/web/src/main.js, apps/web/src/styles.css；测试: tests/e2e/flow.test.js；验证: passed",
+      "source": "Architecture_View.md:3"
+    }
+  ],
+  "validation": {
+    "static": [
+      {
+        "id": "structure",
+        "status": "pass",
+        "details": {
+          "files": 34,
+          "sources": 28,
+          "readme": true,
+          "manifest": true,
+          "tests": true,
+          "issues": [],
+          "notes": []
+        }
+      },
+      {
+        "id": "json_syntax",
+        "status": "pass",
+        "details": {
+          "checked": 1,
+          "errors": []
+        }
+      },
+      {
+        "id": "python_syntax",
+        "status": "pass",
+        "details": {
+          "checked": 0,
+          "errors": []
+        }
+      },
+      {
+        "id": "js_syntax",
+        "status": "pass",
+        "details": {
+          "checked": 23,
+          "errors": [],
+          "runtime": "node"
+        }
+      },
+      {
+        "id": "readme_links",
+        "status": "pass",
+        "details": {
+          "checked": 3,
+          "missing": []
+        }
+      },
+      {
+        "id": "requirement_traceability",
+        "status": "pass",
+        "details": {
+          "total": 7,
+          "covered": 7,
+          "rows": [
+            {
+              "id": "FR-1",
+              "files": [
+                "apps/web/server.js",
+                "apps/web/src/api.js",
+                "apps/web/src/main.js",
+                "lib/http.js",
+                "services/game-service/src/game.js",
+                "services/game-service/src/index.js",
+                "services/game-service/src/questionClient.js",
+                "services/game-service/src/server.js",
+                "services/game-service/tests/game.test.js",
+                "services/question-service/src/server.js"
+              ],
+              "tests": [
+                "services/game-service/tests/game.test.js",
+                "tests/e2e/flow.test.js",
+                "tests/unit/http.test.js"
+              ],
+              "evidence": true
+            },
+            {
+              "id": "NFR-1",
+              "files": [
+                "apps/web/server.js",
+                "lib/http.js",
+                "services/game-service/src/questionClient.js",
+                "tests/unit/http.test.js"
+              ],
+              "tests": [
+                "tests/unit/http.test.js"
+              ],
+              "evidence": true
+            },
+            {
+              "id": "ASR-1",
+              "files": [
+                "services/question-service/src/server.js",
+                "services/question-service/src/store.js",
+                "sql/init.sql",
+                "tests/unit/persistence.test.js",
+                "tests/unit/schema.test.js"
+              ],
+              "tests": [
+                "tests/unit/persistence.test.js",
+                "tests/unit/schema.test.js"
+              ],
+              "evidence": true
+            },
+            {
+              "id": "ASR-2",
+              "files": [
+                "apps/web/src/admin.js",
+                "services/game-service/src/index.js",
+                "services/question-service/src/index.js",
+                "services/user-service/src/auth.js",
+                "services/user-service/src/index.js",
+                "services/user-service/src/server.js",
+                "services/user-service/tests/auth.test.js",
+                "tests/e2e/flow.test.js"
+              ],
+              "tests": [
+                "services/user-service/tests/auth.test.js",
+                "tests/e2e/flow.test.js"
+              ],
+              "evidence": true
+            },
+            {
+              "id": "FR-DERIVED-1",
+              "files": [
+                "apps/web/src/api.js",
+                "apps/web/src/main.js",
+                "services/game-service/src/game.js",
+                "services/game-service/src/index.js",
+                "services/game-service/tests/game.test.js",
+                "services/question-service/src/server.js",
+                "tests/e2e/flow.test.js"
+              ],
+              "tests": [
+                "services/game-service/tests/game.test.js",
+                "tests/e2e/flow.test.js"
+              ],
+              "evidence": true
+            },
+            {
+              "id": "FR-DERIVED-2",
+              "files": [
+                "apps/web/src/admin.js",
+                "services/question-service/src/index.js",
+                "services/question-service/src/questions.js",
+                "services/question-service/src/store.js",
+                "services/question-service/tests/questions.test.js",
+                "sql/init.sql",
+                "tests/e2e/flow.test.js"
+              ],
+              "tests": [
+                "services/question-service/tests/questions.test.js",
+                "tests/e2e/flow.test.js"
+              ],
+              "evidence": true
+            },
+            {
+              "id": "FR-DERIVED-3",
+              "files": [
+                "apps/web/server.js",
+                "apps/web/src/main.js",
+                "tests/e2e/flow.test.js"
+              ],
+              "tests": [
+                "tests/e2e/flow.test.js"
+              ],
+              "evidence": true
+            }
+          ]
+        }
+      }
+    ],
+    "tests": [
+      {
+        "profile": "node",
+        "exit_code": 0,
+        "passed": true,
+        "duration_s": 1.3,
+        "output": "TAP version 13\n# Subtest: correct answers accumulate ten points each and finish the game\nok 1 - correct answers accumulate ten points each and finish the game\n  ---\n  duration_ms: 2.6733\n  type: 'test'\n  ...\n# Subtest: wrong answers do not add points and reveal the correct index\nok 2 - wrong answers do not add points and reveal the correct index\n  ---\n  duration_ms: 0.359\n  type: 'test'\n  ...\n# Subtest: answers must be submitted in order\nok 3 - answers must be submitted in order\n  ---\n  duration_ms: 0.6454\n  type: 'test'\n  ...\n# Subtest: finished games reject further answers\nok 4 - finished games reject further answers\n  ---\n  duration_ms: 0.2393\n  type: 'test'\n  ...\n# Subtest: public state never leaks answerIndex\nok 5 - public state never leaks answerIndex\n  ---\n  duration_ms: 0.3173\n  type: 'test'\n  ...\n# Subtest: public question list hides answers and respects count\nok 6 - public question list hides answers and respects count\n  ---\n  duration_ms: 351.3841\n  type: 'test'\n  ...\n# Subtest: internal endpoint requires service token and includes answers\nok 7 - internal endpoint requires service token and includes answers\n  ---\n  duration_ms: 25.1867\n  type: 'test'\n  ...\n# Subtest: admin can create, update and delete a question\nok 8 - admin can create, update and delete a question\n  ---\n  duration_ms: 41.626\n  type: 'test'\n  ...\n# Subtest: invalid question payload is rejected\nok 9 - invalid question payload is rejected\n  ---\n  duration_ms: 13.5282\n  type: 'test'\n  ...\n# Subtest: admin login, /me and guest sessions\nok 10 - admin login, /me and guest sessions\n  ---\n  duration_ms: 363.7286\n  type: 'test'\n  ...\n# Subtest: expired tokens are rejected\nok 11 - expired tokens are rejected\n  ---\n  duration_ms: 0.892\n  type: 'test'\n  ...\n# Subtest: student can play a full round and admin can add a question\nok 12 - student can play a full round and admin can add a question\n  ---\n  duration_ms: 399.8654\n  type: 'test'\n  ...\n# Subtest: router matches path parameters and returns 404 JSON\nok 13 - router matches path parameters and returns 404 JSON\n  ---\n  duration_ms: 92.7019\n  type: 'test'\n  ...\n# Subtest: readJson rejects invalid JSON and preserves bearer tokens\nok 14 - readJson rejects invalid JSON and preserves bearer tokens\n  ---\n  duration_ms: 21.1882\n  type: 'test'\n  ...\n# Subtest: admin edits survive a store restart\nok 15 - admin edits survive a store restart\n  ---\n  duration_ms: 8.5115\n  type: 'test'\n  ...\n# Subtest: deleted questions stay deleted after restart\nok 16 - deleted questions stay deleted after restart\n  ---\n  duration_ms: 3.6527\n  type: 'test'\n  ...\n# Subtest: invalid persistence file fails loudly instead of silently resetting\nok 17 - invalid persistence file fails loudly instead of silently resetting\n  ---\n  duration_ms: 2.5518\n  type: 'test'\n  ...\n# Subtest: durable schema defines the core tables and constraints\nok 18 - durable schema defines the core tables and constraints\n  ---\n  duration_ms: 1.893\n  type: 'test'\n  ...\n# Subtest: schema keeps secrets out and documents role boundaries\nok 19 - schema keeps secrets out and documents role boundaries\n  ---\n  duration_ms: 0.3885\n  type: 'test'\n  ...\n1..19\n# tests 19\n# suites 0\n# pass 19\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 979.2598\n",
+        "timed_out": false
+      }
+    ],
+    "delivery": {
+      "ok": true,
+      "missing": [],
+      "checks": [
+        {
+          "id": "deliverables",
+          "status": "pass",
+          "details": {
+            "readme": true,
+            "manifest": [
+              "package.json"
+            ],
+            "assumptions": true,
+            "tests": 7,
+            "sources": 27,
+            "empty_sources": []
+          }
+        },
+        {
+          "id": "json_manifest",
+          "status": "pass",
+          "details": {
+            "errors": []
+          }
+        },
+        {
+          "id": "requirement_traceability",
+          "status": "pass",
+          "details": {
+            "coverage": {
+              "total": 7,
+              "mapped": 7,
+              "implemented": 7,
+              "verified": 7,
+              "unverified": 0,
+              "failed": 0,
+              "partial": 0,
+              "missing": 0,
+              "tests_ran": true,
+              "tests_passed": true,
+              "percent": 100.0,
+              "verified_percent": 100.0
+            },
+            "unmapped_fr": []
+          }
+        },
+        {
+          "id": "web_ui",
+          "status": "pass",
+          "details": {
+            "html": [
+              "apps/web/admin.html",
+              "apps/web/index.html"
+            ],
+            "scripts": 23,
+            "styles": 1,
+            "scene_markers": {
+              "intro": true,
+              "menu": true,
+              "question": true,
+              "score": true,
+              "result": true,
+              "help": true
+            },
+            "issues": []
+          }
+        },
+        {
+          "id": "persistence",
+          "status": "pass",
+          "details": {
+            "source_evidence": [
+              "tests/unit/persistence.test.js",
+              "services/question-service/src/store.js",
+              "tests/unit/schema.test.js"
+            ],
+            "test_evidence": [
+              "tests/unit/persistence.test.js",
+              "tests/unit/schema.test.js"
+            ],
+            "issues": []
+          }
+        }
+      ],
+      "coverage": {
+        "total": 7,
+        "mapped": 7,
+        "implemented": 7,
+        "verified": 7,
+        "unverified": 0,
+        "failed": 0,
+        "partial": 0,
+        "missing": 0,
+        "tests_ran": true,
+        "tests_passed": true,
+        "percent": 100.0,
+        "verified_percent": 100.0
+      },
+      "files": 34
+    }
+  },
+  "usage": {
+    "input_tokens": 3600,
+    "output_tokens": 720,
+    "cached_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 4320,
+    "requests": 36,
+    "estimated_cost_usd": 0.00131
+  },
+  "files": [
+    {
+      "path": ".env.example",
+      "bytes": 425,
+      "sha256": "412d2b26b7d16c427324ca9ba46bd4cd9803aadfe764f64d2c4a4d1580b41876"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 65,
+      "sha256": "17996a7a505c9ef361abc5a5211884c94bf94e2ebafae37b65709e53952ca774"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5200,
+      "sha256": "9910517463ee096d59c895ffb774b374c6be15cafc5c40bb01e01360d349ba31"
+    },
+    {
+      "path": "apps/web/admin.html",
+      "bytes": 3273,
+      "sha256": "b9125b96a250938924b63bd365adab1cbe2621fc190466754df21b28258dd796"
+    },
+    {
+      "path": "apps/web/index.html",
+      "bytes": 4480,
+      "sha256": "b5a76f3bdb6cbbbb4f0e08527f4236638640f178a3360e72af49ed78d33816e0"
+    },
+    {
+      "path": "apps/web/server.js",
+      "bytes": 1652,
+      "sha256": "3e18a21edc5bcc8acab1ea0d3251df9a0d67e92aa7a63cedf069f33b7dedb791"
+    },
+    {
+      "path": "apps/web/src/admin.js",
+      "bytes": 4927,
+      "sha256": "9b6c7718260269089244b80ebee084a4a32dd05e77e04a218efe80c330bc90ee"
+    },
+    {
+      "path": "apps/web/src/api.js",
+      "bytes": 1504,
+      "sha256": "b580df2ccc28f2f79c51eae3b7eb1c374171fd7ecf64fbf482af368d9fc582df"
+    },
+    {
+      "path": "apps/web/src/main.js",
+      "bytes": 5929,
+      "sha256": "b6be5f0e663534592ccf780a52feff51612a3045f220fba7c8256e6b18b06780"
+    },
+    {
+      "path": "apps/web/src/styles.css",
+      "bytes": 7943,
+      "sha256": "35d0491e127696fedbed3092221dc1a696d4ff5e2bc6cfd95a4dae5450b2a062"
+    },
+    {
+      "path": "docker-compose.yml",
+      "bytes": 1455,
+      "sha256": "af970964accabaf3cb71d2ba669d99f3273af986bfa9ef9b39412dd2ce7a43ce"
+    },
+    {
+      "path": "docs/ASSUMPTIONS.md",
+      "bytes": 3442,
+      "sha256": "e53be3755b9195935867a7164792aa261a3c0b853523b1cd9d230609c35381da"
+    },
+    {
+      "path": "docs/architecture-summary.md",
+      "bytes": 3162,
+      "sha256": "b4f679d5ba86ba5b06a39a44223f181c1be1c531e0a6dd123acd14a2da19d674"
+    },
+    {
+      "path": "lib/http.js",
+      "bytes": 5074,
+      "sha256": "0f29640df7e8dd349b6cedf2fc24f499277661c3e0672bb0602f1353ecde947f"
+    },
+    {
+      "path": "package.json",
+      "bytes": 774,
+      "sha256": "c9513ec2f60d1f9e5236782b56c6d3554d8abb0cb901adcf50e725b2e89c006e"
+    },
+    {
+      "path": "services/game-service/src/game.js",
+      "bytes": 4127,
+      "sha256": "a344bf2cdb149fb3f290cf2937e780943be6fbd0e36cf8bf37e1d8fbfe1b91ea"
+    },
+    {
+      "path": "services/game-service/src/index.js",
+      "bytes": 2787,
+      "sha256": "dd6ff96fd385b6c4c17b615ea0f495e839a97025caaabcbf1b3262c3c4c07dc7"
+    },
+    {
+      "path": "services/game-service/src/questionClient.js",
+      "bytes": 1404,
+      "sha256": "cc2d35573bf59399719507048964ee7d666c2339c6b63dd0af29d64a3e9c668d"
+    },
+    {
+      "path": "services/game-service/src/server.js",
+      "bytes": 888,
+      "sha256": "9e68aad56db81ae3c484c8bae85b4bfb9fcf515c2019e499927a82fbecc9b3d0"
+    },
+    {
+      "path": "services/game-service/tests/game.test.js",
+      "bytes": 2507,
+      "sha256": "2ac81dd5fdab027824c1758ae70d0fe99669ddb3e715e0dbe4ff60fa65a6c0df"
+    },
+    {
+      "path": "services/question-service/src/index.js",
+      "bytes": 3405,
+      "sha256": "9940595773d490a2a5e2bc011953b4062c6f06f8cfe9e2d1a6e95d2fcfb6b641"
+    },
+    {
+      "path": "services/question-service/src/questions.js",
+      "bytes": 1972,
+      "sha256": "6182de8a7af5b28ee8c2974885c44f3eb355e18c67595a35058686b3d01b0617"
+    },
+    {
+      "path": "services/question-service/src/server.js",
+      "bytes": 1054,
+      "sha256": "25c41eb646bd5254ab04fa733649a2a836273b938e0e2600b53e86240c1b46ee"
+    },
+    {
+      "path": "services/question-service/src/store.js",
+      "bytes": 4715,
+      "sha256": "43f4cb6ff8bc5b5f1d9a77e583b1eb097ebf58eddb2b69aba775d6eba8f595e8"
+    },
+    {
+      "path": "services/question-service/tests/questions.test.js",
+      "bytes": 3590,
+      "sha256": "b016dc35db7fb98881038f2c973dd28e48c443fb31b8c8655e3622df59235642"
+    },
+    {
+      "path": "services/user-service/src/auth.js",
+      "bytes": 2265,
+      "sha256": "6db22acbf6aedb8506c717867eae625b8b6f22fe1c1975204d6010ad22c5d568"
+    },
+    {
+      "path": "services/user-service/src/index.js",
+      "bytes": 1533,
+      "sha256": "c8432ae334295d632d8a4b24c7969f0cd7d5992e48834950d3e0bc046e1e9400"
+    },
+    {
+      "path": "services/user-service/src/server.js",
+      "bytes": 634,
+      "sha256": "ca2ce95605d663af24d3b7ff6a4495f25cfa92ab08121b7b4f49f8877b32f81d"
+    },
+    {
+      "path": "services/user-service/tests/auth.test.js",
+      "bytes": 2042,
+      "sha256": "ca7c4d385e730ecee128a40666cc90d6b5935456583587e72220f453db20bad5"
+    },
+    {
+      "path": "sql/init.sql",
+      "bytes": 2312,
+      "sha256": "ce49cce9e9ca982134302bddd323fc6ebe65ed4f94761ebd9f788687bec5bfa3"
+    },
+    {
+      "path": "tests/e2e/flow.test.js",
+      "bytes": 5043,
+      "sha256": "513da726b1bec1582a5a7fd71764e47cf2005a4db58e3d348aa4a6339e6a2cb2"
+    },
+    {
+      "path": "tests/unit/http.test.js",
+      "bytes": 1725,
+      "sha256": "24176fb22a645e07c5d4ecba2798ccb1b97db787147ad49210e5fec4ae52bd65"
+    },
+    {
+      "path": "tests/unit/persistence.test.js",
+      "bytes": 1978,
+      "sha256": "ae6e78e0f6ea501c0b751ea5952c1ac15e073bd93e37c5393cd0c4b1582b38a1"
+    },
+    {
+      "path": "tests/unit/schema.test.js",
+      "bytes": 1047,
+      "sha256": "925d12810cfbaf5df7a93f21d7d8a59cbf47669640052a4d998b3e8b92abbfbe"
+    }
+  ],
+  "artifacts": {
+    "report": "GENERATION_REPORT.md",
+    "traceability": "traceability_matrix.csv",
+    "manifest": "run_manifest.json"
+  }
+}

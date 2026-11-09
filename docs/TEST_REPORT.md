@@ -56,6 +56,24 @@ T14 证据提交 `9bfa376` 的运行 [#5](https://github.com/TouchedOVO/touch-co
 第一次因引用 `ASM-04/ASM-05` 被拒绝，第二次生成成功（9 任务 / 31 文件），未回退到确定性计划。
 重大偏离（模块化单体、可选 PostgreSQL/重型中间件）已在生成项目的 ASSUMPTIONS 中声明。
 
+### 1.3 T15 干净 Windows runner
+
+运行：[T15 clean Windows runner #1](https://github.com/TouchedOVO/touch-code/actions/runs/42643238074) — **success**  
+证据目录：[`docs/evidence/t15-clean-run/`](evidence/t15-clean-run/README.md)
+
+| 步骤 | 结果 |
+|---|---|
+| 构建 one-file EXE | success |
+| 删除 Python 工具缓存 / Program Files Python* / 项目 `.venv` / 启动器 | success |
+| 验证 `python`、`pip` 均不可用，无残留 Python 目录 | success |
+| EXE `--smoke-test`（headless Qt） | exit 0 |
+| GUI 进程启动后存活 | 6 s 后仍存活 |
+| 无 Python 环境下完整 `--mock-run --allow-tests` | `completed`，映射/验证 100%，生成测试通过 |
+| EXE SHA-256 | `A5E23A34D25197017056002930457FC7E27707A9A846C0DE3D82E0C3DB92C561` |
+
+> 这是 GitHub 托管的 fresh Windows runner，Python/Qt 在运行 EXE 前已移除；不是人工桌面双击，
+> 但已独立证明 EXE 不依赖 Python/Qt 安装。Node 22 保留用于生成项目测试，符合“目标机无需 Python”的要求。
+
 ## 2. 验收用例矩阵（对应方案 §12）
 
 | 编号 | 测试内容 | 结果 | 证据 |
@@ -74,8 +92,7 @@ T14 证据提交 `9bfa376` 的运行 [#5](https://github.com/TouchedOVO/touch-co
 | T12 | 无 Node/npm 机器 | ✅ PASS | `js_syntax=skipped`、`run_tests=not_available`，报告写 `not run`；生成完成但状态为 `partial`，不误报成功；`test_tool_registry.py` / `test_mock_e2e.py`；EXE 在仅含 System32 的 PATH 下同样如此 |
 | T13 | Mock 模型端到端 | ✅ PASS | 完整文件树、README、依赖、测试、报告；84 项测试中的 `test_mock_e2e.py` |
 | T14 | 真实 DeepSeek 端到端 | ✅ **PASS** | 真实 `deepseek-v4-pro`（75 步 / 114 工具 / 2,616,750 tokens / $0.1481）生成浏览器 UI + 持久化；27/27 测试、7/7 验证、Edge 浏览器 E2E 均通过；含 1 轮自动修复。证据：`docs/evidence/t14-real/` |
-| T15 | 干净 Windows 双击 EXE | ✅ 本机 PASS / ⚠ 未做全新 VM | CI 构建 + smoke 成功并上传 artifact；本机 one-file `--smoke-test`、GUI 启动（窗口标题可见）、Mock 全流程、最小 PATH 无 Node 生成均通过；未在未安装 Python 的全新虚拟机复测 |
-| T15 | 干净 Windows 双击 EXE | ✅ 本机 PASS / ⚠ 未做全新 VM | CI 构建 + smoke 成功并上传 artifact；本机 one-file `--smoke-test`、GUI 启动（窗口标题可见）、Mock 全流程、最小 PATH 无 Node 生成均通过；未在未安装 Python 的全新虚拟机复测 |
+| T15 | 干净 Windows 双击 EXE | ✅ **PASS（自动化干净 runner）** / ⚠ 未手动双击 | GitHub fresh Windows runner：构建后删除 Python/Qt/venv 与启动器，`Get-Command python` 失败；EXE smoke、GUI 启动、Mock 全流程、生成测试均通过（EXE SHA-256 `A5E23A34…C561`）。证据：`docs/evidence/t15-clean-run/`；手动桌面 VM 双击未做 |
 
 ## 3. 验收门槛核对（方案 §12）
 
@@ -106,8 +123,10 @@ T14 证据提交 `9bfa376` 的运行 [#5](https://github.com/TouchedOVO/touch-co
 
 ## 5. 已知未覆盖项
 
-- **全新 Windows 虚拟机（T15 严格版）**：本机已用 one-file EXE 验证，CI artifact 与 smoke 通过，
-  但未做完全未安装 Python/Qt 的干净 VM 快照。
+- **T15 手动桌面 VM**：已在 fresh GitHub Windows runner 上删除 Python/Qt 后通过 smoke、GUI 启动与
+  Mock 全流程；尚未做人工双击的桌面 VM 截图。
+- **微服务/云原生拓扑**：T14 生成的是模块化单体 + 文件持久化，已在 ASSUMPTIONS 中记录为重大偏离；
+  若要求独立微服务 + PostgreSQL/K8s 严格一致，仍需另一轮实现。
 - **T14 功能复核**：27/27 测试、UI/持久化契约与浏览器 E2E 已通过；人工视觉/多浏览器兼容性未覆盖。
 - **GUI 交互的自动化点击**：已用无头 Qt 驱动完整一次生成并截图；未覆盖真人拖拽/缩放/多显示器。
 - **可取消的 HTTP 请求**：取消在模型调用/工具调用之间生效；单次 HTTP 请求无法中断，

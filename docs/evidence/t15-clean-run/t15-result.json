@@ -1,0 +1,10 @@
+﻿{
+    "exe_sha256":  "A5E23A34D25197017056002930457FC7E27707A9A846C0DE3D82E0C3DB92C561",
+    "coverage_percent":  100.0,
+    "runner":  "Windows",
+    "mock_status":  "completed",
+    "github_run":  "42643238074",
+    "generated_tests_passed":  true,
+    "node_version":  "v22.23.4",
+    "python_available":  false
+}

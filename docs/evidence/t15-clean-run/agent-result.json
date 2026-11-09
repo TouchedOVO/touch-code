@@ -1,0 +1,45 @@
+{
+  "status": "completed",
+  "output_dir": "t15-clean-output",
+  "report_paths": {
+    "report": "GENERATION_REPORT.md",
+    "traceability": "traceability_matrix.csv",
+    "manifest": "run_manifest.json"
+  },
+  "error": "",
+  "coverage": {
+    "total": 7,
+    "mapped": 7,
+    "implemented": 7,
+    "verified": 7,
+    "unverified": 0,
+    "failed": 0,
+    "partial": 0,
+    "missing": 0,
+    "tests_ran": true,
+    "tests_passed": true,
+    "percent": 100.0,
+    "verified_percent": 100.0
+  },
+  "outcome": {
+    "status": "completed",
+    "steps": 36,
+    "tool_calls": 36,
+    "usage": {
+      "input_tokens": 3600,
+      "output_tokens": 720,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 4320,
+      "requests": 36
+    },
+    "finish_summary": "已生成 Space Fractions：3 个零依赖 Node.js 服务（题库/游戏/用户）、学生端与教师后台、单元/集成/端到端测试、JSON 文件持久化、PostgreSQL 可选 DDL 与 Docker Compose。架构偏离：node:http 替代 Express，文件 JSON 持久化替代在线 PostgreSQL，未部署 Redis/RabbitMQ/ES/K8s/Istio/Vault/Terraform，详见 docs/ASSUMPTIONS.md。",
+    "errors": [],
+    "missing": [],
+    "elapsed_s": 0.16,
+    "compactions": 0,
+    "models_used": [
+      "mock"
+    ]
+  }
+}

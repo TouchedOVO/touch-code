@@ -26,7 +26,7 @@
 | M4 规划与生成 | ✅ | Planner、Controller、内置 Space Fractions 样例 | 完整工程文件结构 + README/依赖/测试 | 样例 34 文件 / 2632 行；Mock 36 步 / 36 工具调用；文件映射 100%，测试验证 100%（有 Node 时）；19 项 Node 测试 |
 | M5 校验与修复 | ✅ | 静态校验、测试运行器、验收器、修复回路 | 人为失败可修复或如实报告 | 6 类静态检查 + Web UI/持久化契约；node/pytest 白名单；3 轮修复上限；测试失败→反馈→重测 |
 | M6 GUI 与发布 | ✅ | Worker/审批桥、进度/日志/文件/报告、EXE | 双击 EXE 完成生成 | one-file 61.0 MB；冷启动 3.1 s；EXE 全流程 14.2 s；GitHub Actions 构建与 smoke 通过 |
-| M7 验收与收尾 | ✅（T15 待干净 VM） | 测试报告、用户手册、样例输出、风险清单 | T01–T15 可复现 | 84 项 pytest 全绿；CI 三作业全绿、EXE artifact 已上传；T14 真实模型生成 UI + 持久化，27/27 测试 + 浏览器 E2E 通过 |
+| M7 验收与收尾 | ✅（手动 VM 双击待补） | 测试报告、用户手册、样例输出、风险清单 | T01–T15 可复现 | 84 项 pytest 全绿；CI 全绿、EXE artifact 已上传；T14 真实模型生成 UI + 持久化，27/27 测试 + 浏览器 E2E；T15 在删除 Python/Qt 的 fresh runner 通过 |
 
 ## 2. 各阶段详情
 

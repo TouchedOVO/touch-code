@@ -31,5 +31,6 @@ Initial public release.
   restart-safe question/score persistence and 27/27 passing tests, with one automatic repair round.
 - The generated demo uses a modular monolith, `node:http` and file-backed JSON persistence instead of
   deployed microservices and a PostgreSQL cluster; see the generated `ASSUMPTIONS.md` (major deviation).
-- T15 still needs a completely clean Windows VM without Python/Qt preinstalled.
+- T15 clean-runner job removes Python/Qt and runs the EXE smoke, GUI launch and full Mock generation
+  with generated tests; manual double-click on a desktop VM remains optional.
 - Session-resume UI, diff preview and streaming reasoning display are not implemented.

@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](README.zh-CN.md)
+
 # T14 — Real DeepSeek-V4-Pro run (browser UI + persistence)
 
 **Date:** 2026-11-09  

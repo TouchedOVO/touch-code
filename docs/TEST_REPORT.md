@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](TEST_REPORT.zh-CN.md)
+
 # 测试与验收报告
 
 运行环境：Windows 11 x64，Python 3.14.3，PySide6 6.12.0，PyInstaller 6.22.3，

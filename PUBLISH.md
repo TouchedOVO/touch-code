@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](PUBLISH.zh-CN.md)
+
 # Publishing this repository to GitHub
 
 This folder is already a clean, self-contained source tree. Binaries, virtual environments, local

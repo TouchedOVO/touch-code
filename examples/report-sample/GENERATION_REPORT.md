@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](GENERATION_REPORT.zh-CN.md)
+
 # Space Fractions — Code Agent 生成报告
 
 > 示例报告：为公开发布，已将本机绝对路径脱敏为相对路径；会话标识以 `<session>` 代替。

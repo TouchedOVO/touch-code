@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](CONTRIBUTING.zh-CN.md)
+
 ﻿# Contributing
 
 Thanks for your interest in SpaceCode Agent.

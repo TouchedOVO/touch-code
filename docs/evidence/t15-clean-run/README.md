@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](README.zh-CN.md)
+
 # T15 — Clean Windows runner without Python/Qt
 
 **Run:** [T15 clean Windows runner #1](https://github.com/TouchedOVO/touch-code/actions/runs/42643238074)  

@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](README.zh-CN.md)
+
 # SpaceCode Agent
 
 **Architecture-document-driven code agent for Windows** — turns two architecture Markdown files into a

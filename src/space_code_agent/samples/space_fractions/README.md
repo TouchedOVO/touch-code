@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](README.zh-CN.md)
+
 # Space Fractions
 
 A web-based fraction learning game for sixth-grade students, generated from

@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](README.zh-CN.md)
+
 # Examples
 
 The two Markdown files under `inputs/` are **synthetic sample architecture documents** included only

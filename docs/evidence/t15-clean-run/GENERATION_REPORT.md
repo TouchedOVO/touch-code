@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](GENERATION_REPORT.zh-CN.md)
+
 # Space Fractions — Code Agent 生成报告
 
 **状态：COMPLETED**  

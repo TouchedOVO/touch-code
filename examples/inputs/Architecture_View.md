@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](Architecture_View.zh-CN.md)
+
 ## ScenarioView
 1. UseCase — Scenario View: Use Case Diagram
 ```plantuml

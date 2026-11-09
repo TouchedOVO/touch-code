@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](ASSUMPTIONS.zh-CN.md)
+
 # Assumptions and Deviations
 
 This document records the assumptions, unspecified requirements, document

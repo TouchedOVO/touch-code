@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](ASSUMPTIONS.zh-CN.md)
+
 # ASSUMPTIONS
 
 <!-- Covers: FR-1, FR-DERIVED-1, FR-DERIVED-2, FR-DERIVED-3, NFR-1, ASR-1, ASR-2 -->

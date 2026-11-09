@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](Architecture_Documentation.zh-CN.md)
+
 Analysis Plan:
 Scope: Design a production-ready architectural documentation for the Space Fractions system.
 Approach: Align with the Requirements document and 11 PlantUML diagrams to create a comprehensive architecture.

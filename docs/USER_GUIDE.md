@@ -1,3 +1,5 @@
+> 🌐 **English** | [简体中文](USER_GUIDE.zh-CN.md)
+
 # 使用手册
 
 ## 1. 启动

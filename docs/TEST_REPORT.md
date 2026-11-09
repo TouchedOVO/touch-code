@@ -20,16 +20,18 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 
 ### 1.1 GitHub Actions
 
-最终 `main` 运行：[Windows build #4](https://github.com/TouchedOVO/touch-code/actions/runs/42620774810) — **conclusion: success**
+最终 `main` 运行：[Windows build #6](https://github.com/TouchedOVO/touch-code/actions/runs/42640206235) — **conclusion: success**
 
 | 作业 | 结果 | 证据 |
 |---|---|---|
-| `Agent test suite (Windows)` | ✅ success | Python 3.14 + PySide6，82 项 pytest 通过（该次提交）；Node 22 已配置 |
-| `Generated sample tests (Node)` | ✅ success | Node 22：15 项单元/集成 + 1 项 E2E 全绿（该次提交） |
+| `Agent test suite (Windows)` | ✅ success | Python 3.14 + PySide6，**84 项 pytest** 通过；Node 22 已配置 |
+| `Generated sample tests (Node)` | ✅ success | Node 22：**18 项单元/集成 + 1 项 E2E** 全绿 |
 | `Build one-file EXE` | ✅ success | PyInstaller 构建 + `--smoke-test` 退出码 0 |
-| Artifact `SpaceCodeAgent-windows-x64` | ✅ 可下载 | 63,658,761 B；SHA-256 `59f3c603b04df9cdf92127c35a3b2bdcac5838d1dad06a4eba9388b3543fd1a0` |
+| Artifact `SpaceCodeAgent-windows-x64` | ✅ 可下载 | 63,669,245 B；SHA-256 `0178a9f688b36944012d9b86eb271d3c414e1d548c251c74b089ea6cbb39a1b3` |
 
-代码修复提交 `9d484d6` 的 CI 运行 [#2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) 同样三作业全绿。
+代码修复提交 `9d484d6` 的运行 [#2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) 与
+T14 证据提交 `9bfa376` 的运行 [#5](https://github.com/TouchedOVO/touch-code/actions/runs/42626131295)
+同样均为 success。
 
 ### 1.2 真实 DeepSeek 运行（T14）
 
@@ -99,7 +101,7 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 | 最终状态可能不一致 | 单一 `final_status` 同时写入 UI/CLI、`GENERATION_REPORT.md`、`run_manifest.json`；manifest 另存 `agent_status` | 测试失败用例断言 `run.status=partial` 且 `agent_status=completed` |
 | 指定模型未锁定 | GUI 模型只读；`AppConfig.validate()` 强制 `deepseek-v4-pro`；CLI 需显式 `--allow-model-override`；`test_connection` 不再把“模型未确认”报成成功 | `test_config_validation` 新增锁定断言 |
 | README 安装步骤不可靠 | 改为 `python -m pip install -e ".[dev]"` 后再运行模块 | 元数据 dry-run + 源码运行 `--version` 通过 |
-| CI 无 EXE 产物 / 作业跳过 | `build-exe` 依赖 Python 与 Node 两个测试作业；仍上传 one-file EXE artifact | GitHub Actions [run #4](https://github.com/TouchedOVO/touch-code/actions/runs/42620774810) 三作业全绿，artifact `SpaceCodeAgent-windows-x64`（63,658,761 B）可下载 |
+| CI 无 EXE 产物 / 作业跳过 | `build-exe` 依赖 Python 与 Node 两个测试作业；仍上传 one-file EXE artifact | GitHub Actions [run #6](https://github.com/TouchedOVO/touch-code/actions/runs/42640206235) 三作业全绿，artifact `SpaceCodeAgent-windows-x64`（63,669,245 B）可下载 |
 | 真实模型生成缺少独立证据 | 使用用户提供的 Key 执行真实 `deepseek-v4-pro`，保存脱敏日志、manifest、测试输出、生成源码与浏览器 E2E | 真实运行 `completed`，75 步，27/27 测试通过，UI/持久化契约 pass，Edge 浏览器 E2E pass |
 
 ## 5. 已知未覆盖项

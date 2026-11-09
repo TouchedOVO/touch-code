@@ -1,12 +1,12 @@
-# T14 — Real DeepSeek-V4-Pro run
+# T14 — Real DeepSeek-V4-Pro run (browser UI + persistence)
 
 **Date:** 2026-11-09  
 **Endpoint:** `https://api.deepseek.com`  
-**Requested model:** `deepseek-v4-pro`  
-**Returned model:** `deepseek-v4-pro`  
+**Requested / returned model:** `deepseek-v4-pro` / `deepseek-v4-pro`  
 **Mode:** real API (not Mock)  
 **Agent status:** `completed`  
-**Functional acceptance:** **PARTIAL** — the generated project has no browser UI (see gaps below)
+**Functional acceptance:** **PASS** for browser UI, persistence, interactive flow and tests  
+**Remaining external check:** T15 clean Windows VM (EXE), not covered by this evidence.
 
 ## Command
 
@@ -14,64 +14,58 @@
 $env:DEEPSEEK_API_KEY = "<user-level environment variable>"
 python -m space_code_agent --run .\out\t14-real `
   --doc .\examples\inputs\Architecture_Documentation.md `
-  --uml .\examples\inputs\Architecture_View.md --allow-tests
+  --uml .\examples\inputs\Architecture_View.md --allow-tests --max-steps 80
 ```
 
 ## Measured result
 
 | Metric | Value |
 |---|---|
-| Agent steps / tool calls | 37 / 57 |
-| Model requests | 37 |
-| Input tokens | 1,370,537 (cached 1,296,512) |
-| Output tokens | 58,339 (reasoning 31,703) |
-| Total tokens | 1,428,876 |
-| Estimated cost | **$0.081532** |
-| Agent elapsed | 898.96 s |
-| Generated files | 15 (including reports), 12 source/doc files |
-| Static checks | structure/json/python/js/links/traceability all pass |
-| Generated test suite | **19 / 19 passed** (Node.js 22, exit 0) |
-| Traceability | 7/7 mapped, 7/7 verified (file/test mapping) |
+| Agent steps / tool calls / requests | 75 / 114 / 75 |
+| Input / output / cached / reasoning tokens | 2,525,691 / 91,059 / 2,370,432 / 51,670 |
+| Total tokens | **2,616,750** |
+| Estimated cost | **$0.148089** |
+| Agent elapsed / report wall time | 1,375.4 s / 1,720.1 s |
+| Static checks | structure / JSON / Python / JS / links / traceability all pass |
+| Delivery contracts | deliverables / JSON / traceability / **web_ui** / **persistence** all pass |
+| Generated test suite | **27 / 27 passed** (Node 22, exit 0) |
+| Traceability | 7/7 mapped, 7/7 verified with per-requirement `Covers:` evidence |
+| Browser E2E | **PASS** — Edge headless: menu → help → 10 answers → result screen (10 / 100) |
 
-## What was generated
+## What the model produced
 
 ```text
 generated-project/
-├── .env.example
-├── package.json
-├── README.md
-├── requirements.json / requirements.md
-├── requirements-traceability.json
-├── docs/
-│   ├── ASSUMPTIONS.md
-│   ├── architecture-summary.md
-│   ├── requirements.md / requirements.json
-│   └── requirements-traceability.md
+├── README.md / package.json / .env.example
+├── docs/ASSUMPTIONS.md
+├── public/
+│   ├── index.html        # intro, menu, question, score/result, help scenes
+│   ├── app.js            # state machine + REST calls
+│   └── styles.css        # responsive, keyboard/ARIA styles
 ├── src/
-│   ├── domain.js          # game/question/user/admin domain logic
-│   └── index.js           # node:http REST API
-└── tests/
-    ├── domain.test.js
-    └── e2e/flow.test.js
+│   ├── app.js / server.js / http.js / config.js
+│   ├── domain/fraction.js / game.js
+│   ├── repositories/file-store.js / question.repository.js / score.repository.js
+│   ├── routes/game.routes.js / question.routes.js / user.routes.js
+│   └── services/game.service.js / question.service.js / user.service.js
+├── data/seed-questions.json
+└── test/                 # 27 tests incl. persistence-restart and API E2E
 ```
 
-The REST API implements Play Game, View Score, Update Questions, View Help, pause/resume/reset,
-and admin bearer-token protection. The generated test suite passes.
+- **Browser UI** covers opening/menu, game play, score/result and help, and calls the REST API.
+- **Persistence** uses a JSON file store with temp-file + rename; a restart test recreates the app from
+  the same files and verifies questions and completed scores survive.
+- **Tests** explicitly annotate `Covers:` requirement IDs, enabling per-requirement verification.
 
-## Important gaps (why this is not a full pass)
+## Real-model behavior observed
 
-1. **No browser UI was generated.** The generated README states it is a backend REST API and a
-   future browser client can consume the endpoints. The task describes a web-based interactive
-   learning tool; the UI/accessibility assumptions are therefore not implemented. Its own
-   `docs/ASSUMPTIONS.md` records “No HTML shell is shipped in this backend-focused deliverable”.
-2. **The planner failed twice** (one non-JSON response, one malformed JSON response), so the
-   controller used the deterministic fallback plan. The implementation itself was still produced
-   by the real model.
-3. **Coverage numbers are file/test mappings**, not a manual functional certification. The
-   validator found files and tests per requirement, but it cannot prove that every intended
-   user-facing behavior exists.
-4. The model chose a **modular monolith** and in-memory repositories instead of the documented
-   microservice/cloud topology; this is explicitly recorded in the generated assumptions.
+1. First plan attempt referenced assumption IDs (`ASM-04`, `ASM-05`) in `requirement_ids`; the validator
+   rejected it and the model’s second plan was accepted (9 tasks / 31 files).
+2. First implementation used Express; tests failed with `Cannot find module 'express'` in the sandbox.
+   The controller fed the failure back, and the model completed **repair round 1** by replacing Express
+   with a zero-dependency `node:http` adapter, then all 27 tests passed.
+3. The model explicitly documented deviations: modular monolith instead of deployed microservices;
+   Express replaced; PostgreSQL/Redis/RabbitMQ/Elasticsearch/K8s/Istio/Vault/Terraform optional.
 
 ## Evidence files
 
@@ -79,10 +73,11 @@ and admin bearer-token protection. The generated test suite passes.
 |---|---|
 | `GENERATION_REPORT.md` | Sanitized report from the real run |
 | `traceability_matrix.csv` | Requirement → file/test matrix |
-| `run_manifest.json` | Machine-readable run record, tokens, tests, file hashes |
-| `test-output.txt` | Independent `node --test` output (19 passed) |
-| `run-events.log` | Sanitized agent event log |
-| `generated-project/` | The files the real model wrote |
+| `run_manifest.json` | Tokens, statuses, checks, tests, file hashes |
+| `test-output.txt` | Independent `node --test` output (27 passed) |
+| `browser-e2e.json` | Browser E2E result (Edge/Playwright) |
+| `browser-e2e.png` | Result screen screenshot |
+| `run-events.txt` | Sanitized agent event log |
+| `generated-project/` | Files written by the real model |
 
-Absolute local paths, session IDs and credentials were replaced/removed before publication.
-No API key is present in these files.
+Absolute local paths, session IDs and credentials were removed/replaced. No API key is present.

@@ -227,6 +227,15 @@ class ReportBuilder:
                 lines.append(f"| {check.get('id')} | {check.get('status')} | {_md(detail[:400])} |")
         else:
             lines.append("| — | not run | 未执行静态检查 |")
+        contract_checks = [
+            check for check in self.delivery.checks
+            if check.get("id") in {"web_ui", "persistence"}
+        ]
+        if contract_checks:
+            lines.extend(["", "### 5.1b 功能交付契约", "", "| 检查 | 状态 | 详情 |", "|---|---|---|"])
+            for check in contract_checks:
+                detail = json.dumps(check.get("details", {}), ensure_ascii=False)
+                lines.append(f"| {check.get('id')} | {check.get('status')} | {_md(detail[:500])} |")
         lines.extend(["", "### 5.2 自动化测试", ""])
         if not self.test_results:
             lines.append("**未运行（not run）。** 原因：未启用命令执行、未找到 Node/Python 测试入口，"

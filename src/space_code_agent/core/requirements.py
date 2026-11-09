@@ -102,6 +102,19 @@ class NormalizedRequirements(BaseModel):
     def derived_requirements(self) -> list[RequirementItem]:
         return [r for r in self.requirements if r.confidence == "diagram-derived"]
 
+    def requires_web_ui(self) -> bool:
+        text = f"{self.project_name} {self.target} {self.style}".lower()
+        return any(marker in text for marker in (
+            "web-based", "web based", "web app", "web application", "browser", "website", "web ui",
+        ))
+
+    def requires_persistence(self) -> bool:
+        for req in self.requirements:
+            text = f"{req.id} {req.title} {req.description}".lower()
+            if req.id.upper() == "ASR-1" or "durab" in text or "persist" in text:
+                return True
+        return False
+
     def coverage(self) -> dict:
         total = len(self.requirements)
         implemented = sum(1 for r in self.requirements if r.status == "implemented")

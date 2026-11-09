@@ -150,13 +150,30 @@ def _check_requirements(context: ToolContext, entries: list[dict]) -> dict:
     if requirements is None:
         return {"id": "requirement_traceability", "status": "skipped",
                 "details": {"reason": "no normalized requirements in context"}}
-    paths = {entry["path"] for entry in entries}
     items = getattr(requirements, "requirements", requirements)
+    ids = [getattr(requirement, "id", "") for requirement in items]
+    ids = [req_id for req_id in ids if req_id]
+    found: dict[str, list[str]] = {req_id: [] for req_id in ids}
+    if ids:
+        pattern = re.compile(r"\b(" + "|".join(re.escape(req_id) for req_id in ids) + r")\b")
+        for entry in entries:
+            suffix = Path(entry["path"]).suffix.lower()
+            if suffix in {".md", ".markdown"}:
+                continue
+            try:
+                text, _ = context.policy.read_text(entry["path"], max_chars=300_000)
+            except Exception:
+                continue
+            for req_id in set(pattern.findall(text)):
+                if entry["path"] not in found[req_id]:
+                    found[req_id].append(entry["path"])
     rows: list[dict] = []
     for requirement in items:
-        files = [path for path in getattr(requirement, "files", []) if path in paths]
-        evidence = bool(files)
-        rows.append({"id": getattr(requirement, "id", ""), "files": files, "evidence": evidence})
+        req_id = getattr(requirement, "id", "")
+        files = found.get(req_id, [])
+        tests = [path for path in files if "test" in path.lower()]
+        evidence = bool(files) and (bool(tests) or getattr(requirement, "kind", "FR") != "FR")
+        rows.append({"id": req_id, "files": files[:10], "tests": tests[:10], "evidence": evidence})
     covered = sum(1 for row in rows if row["evidence"])
     return {
         "id": "requirement_traceability",

@@ -30,7 +30,8 @@ documents.
   microservices architecture with Redis, RabbitMQ, Elasticsearch, Kubernetes, Istio, Vault,
   Terraform, Prometheus and a live PostgreSQL cluster. This demo keeps the
   Game/Question/User service boundaries and REST contracts, but:
-  - persistence is in-memory (`sql/init.sql` documents the PostgreSQL equivalent);
+  - the question bank persists to `data/questions.json` (atomic rewrite, restart test); game rounds
+    and guest sessions remain in memory. `sql/init.sql` documents the optional PostgreSQL adapter;
   - Express.js is replaced by `node:http` to achieve zero runtime dependencies;
   - the listed infrastructure components are **not deployed** and are treated as optional
     extensions;

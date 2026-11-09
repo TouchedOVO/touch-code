@@ -1,4 +1,4 @@
-name: Windows build
+﻿name: Windows build
 
 on:
   push:
@@ -45,6 +45,7 @@ jobs:
           node --test
           tests/unit/http.test.js
           tests/unit/schema.test.js
+          tests/unit/persistence.test.js
           services/question-service/tests/questions.test.js
           services/game-service/tests/game.test.js
           services/user-service/tests/auth.test.js

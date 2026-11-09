@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "space-fractions",
   "version": "1.0.0",
   "private": true,
@@ -7,7 +7,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test tests/unit/http.test.js tests/unit/schema.test.js services/question-service/tests/questions.test.js services/game-service/tests/game.test.js services/user-service/tests/auth.test.js",
+    "test": "node --test tests/unit/http.test.js tests/unit/schema.test.js tests/unit/persistence.test.js services/question-service/tests/questions.test.js services/game-service/tests/game.test.js services/user-service/tests/auth.test.js",
     "test:e2e": "node --test tests/e2e/flow.test.js",
     "start:questions": "node services/question-service/src/server.js",
     "start:game": "node services/game-service/src/server.js",

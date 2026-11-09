@@ -26,9 +26,18 @@ SYSTEM_PROMPT = """\
 - 依赖声明：至少一个 package.json / requirements.txt / pyproject.toml（与实现技术栈一致）。
 - 源代码：覆盖架构文档的核心业务流程，模块边界与组件职责清晰，避免空壳文件。
 - 测试：至少一组可运行的自动化测试（领域单元测试 + 接口/端到端测试），不能只写占位断言。
+  每个测试文件必须用注释标注 `Covers: <需求ID列表>`，让验收器能逐需求匹配测试。
 - docs/ASSUMPTIONS.md：逐条列出未明确需求、默认值、文档冲突与重大偏离。
 - 示例配置：如 .env.example（只能有变量名，不能有真实密钥）。
 - 可选：Dockerfile / docker-compose.yml / sql 初始化脚本。
+
+## 架构契约（缺失即无法通过本地验收）
+- 如果目标是 web-based / browser 应用：必须生成真实可交互的 HTML/CSS/JS 界面，覆盖
+  开场、菜单、答题、分数/结果、帮助等场景，并由前端调用后端接口；只做 REST API 不算完成。
+- 如果存在 ASR-1 / Data durability 要求：必须提供可重启恢复的持久化仓储（文件或数据库），
+  并附一个“写入后重新加载仍可读取”的自动化测试；仅提供 SQL DDL 或内存 Map 不算完成。
+- 如果文档要求 microservices：必须保留可独立启动的服务边界，并在 README 中给出启动方式；
+  若降级为单体，必须在 ASSUMPTIONS 与 finish_task 中明确说明重大偏离。
 
 ## 质量要求
 - 代码应能被人类阅读：命名清晰、错误处理明确、无未使用的大段脚手架。
@@ -70,6 +79,9 @@ PLAN_SYSTEM_PROMPT = """\
 计划必须：
 - 选择与文档一致、但可在无外部服务环境下验证的技术栈；
 - 给出完整文件树（每个文件有用途、所属任务、覆盖的需求 ID）；
+- 如果目标是 web/browser 应用，文件树必须包含 HTML/CSS/JS 浏览器界面；
+- 如果存在 ASR-1/持久化要求，文件树必须包含持久化仓储和重启恢复测试；
+- 测试文件必须能被逐需求追踪（测试中标注 Covers: 需求 ID）；
 - 任务按依赖排序，每个任务有验收标准；
 - 明确验证步骤、假设、风险与偏离；
 - 不虚构文档没有的功能；无法确定的内容放入 assumptions。
@@ -94,5 +106,6 @@ JSON 结构：
 def build_plan_message(requirements_summary: str) -> str:
     return (
         "为下面的项目生成实施计划。文件数量控制在 18-35 个，必须包含 README、依赖声明、"
-        "源代码、测试、docs/ASSUMPTIONS.md。\n\n" + requirements_summary.strip()
+        "源代码、测试、docs/ASSUMPTIONS.md；Web 目标必须包含浏览器 UI，ASR-1 必须包含"
+        "持久化仓储与重启恢复测试。\n\n" + requirements_summary.strip()
     )

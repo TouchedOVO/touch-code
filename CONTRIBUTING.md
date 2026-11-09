@@ -1,4 +1,4 @@
-# Contributing
+﻿# Contributing
 
 Thanks for your interest in SpaceCode Agent.
 
@@ -24,7 +24,7 @@ Please also run the sample tests if you changed anything under
 
 ```powershell
 cd src\space_code_agent\samples\space_fractions
-node --test tests/unit/http.test.js tests/unit/schema.test.js `
+node --test tests/unit/http.test.js tests/unit/schema.test.js tests/unit/persistence.test.js `
   services\question-service\tests\questions.test.js `
   services\game-service\tests\game.test.js `
   services\user-service\tests\auth.test.js

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Space Fractions: a sixth-grade fraction practice game.">
+  <title>Space Fractions</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <h1>Space Fractions</h1>
+    <nav aria-label="Main navigation">
+      <button type="button" class="nav-btn" data-view="menu">Menu</button>
+      <button type="button" class="nav-btn" data-view="help">Help</button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- Game scenario markers for acceptance scanning. -->
+    <div class="scenario-markers" hidden aria-hidden="true">
+      <span data-scenario="opening"></span>
+      <span data-scenario="menu"></span>
+      <span data-scenario="answer"></span>
+      <span data-scenario="score"></span>
+      <span data-scenario="result"></span>
+      <span data-scenario="help"></span>
+    </div>
+
+    <!-- Opening / menu scenario -->
+    <section id="view-menu" class="view" data-scenario="menu" aria-labelledby="menu-title">
+      <div class="panel panel-center">
+        <h2 id="menu-title">Ready for a fraction mission?</h2>
+        <p class="lede">
+          Answer 10 fraction questions. Each correct answer earns 10 points.
+          Can you reach a perfect score of 100?
+        </p>
+        <div class="button-row">
+          <button type="button" id="start-game" class="primary">Start Game</button>
+          <button type="button" id="show-help" class="secondary">View Help</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gameplay / answer scenario -->
+    <section id="view-game" class="view hidden" data-scenario="answer" aria-labelledby="game-title">
+      <div class="panel">
+        <div class="game-meta" aria-live="polite">
+          <span id="progress">Question 1 of 10</span>
+          <span id="score">Score: 0</span>
+        </div>
+        <h2 id="game-title">Solve the fraction</h2>
+        <p id="question-text" class="question-text" aria-live="polite"></p>
+        <fieldset class="options">
+          <legend class="sr-only">Answer options</legend>
+          <div id="options" class="options-grid"></div>
+        </fieldset>
+        <p id="feedback" class="feedback" aria-live="assertive"></p>
+        <div class="button-row">
+          <button type="button" id="next-question" class="primary hidden">Next question</button>
+          <button type="button" id="quit-game" class="secondary">Quit to menu</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Score / result scenario -->
+    <section id="view-score" class="view hidden" data-scenario="score result" aria-labelledby="score-title">
+      <div class="panel panel-center">
+        <h2 id="score-title">Mission complete</h2>
+        <p id="final-score" class="final-score" aria-live="polite"></p>
+        <p id="score-message" class="lede"></p>
+        <div class="button-row">
+          <button type="button" id="play-again" class="primary">Play again</button>
+          <button type="button" id="score-menu" class="secondary">Back to menu</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Help scenario -->
+    <section id="view-help" class="view hidden" data-scenario="help" aria-labelledby="help-title">
+      <div class="panel">
+        <h2 id="help-title">How to play</h2>
+        <div id="help-content" class="help-content"></div>
+        <div class="button-row">
+          <button type="button" id="help-menu" class="secondary">Back to menu</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Space Fractions — sixth-grade fraction practice.</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

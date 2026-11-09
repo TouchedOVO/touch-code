@@ -21,9 +21,10 @@ infrastructure so it can be run and tested on a single laptop:
 | `apps/web` | 4000 | Static student UI (intro → menu → game → result) |
 
 Services are plain Node.js HTTP servers with **zero runtime dependencies**
-(`node:http`, `node:crypto`, built-in `fetch`). PostgreSQL DDL is provided in
-`sql/init.sql` as an optional persistence adapter; the demo uses in-memory
-repositories so tests run without a database.
+(`node:http`, `node:crypto`, built-in `fetch`). The question bank is persisted to
+`data/questions.json` with an atomic rewrite, so admin edits survive a service restart;
+`sql/init.sql` documents an optional PostgreSQL adapter. Game rounds and guest sessions remain
+in memory for the demo.
 
 The full rationale and deviations are recorded in
 [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) and

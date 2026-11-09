@@ -13,10 +13,13 @@ import pytest
 from space_code_agent.app.config import AppConfig
 from space_code_agent.app.controller import Controller, RunRequest
 from space_code_agent.app.events import EventSink
+from space_code_agent.agent.planner import fallback_plan, validate_plan
+from space_code_agent.core.delivery import DeliveryValidator
 from space_code_agent.core.document_parser import DocumentParser
 from space_code_agent.core.requirements import RequirementNormalizer
 from space_code_agent.core.sample_project import build_sample_plan, iter_sample_files
 from space_code_agent.providers.mock import MockProvider, tool_response
+from space_code_agent.security.policy import WorkspacePolicy
 
 FIXTURES = Path(__file__).parent / "fixtures" / "Task"
 DOC = FIXTURES / "Architecture_Documentation.md"
@@ -53,6 +56,10 @@ def test_mock_run_completes_with_full_deliverables(mock_run):
     assert result.coverage["implemented"] == 7
     assert result.coverage["verified"] == 7
     assert result.coverage["verified_percent"] == 100.0
+    manifest = json.loads((output / "run_manifest.json").read_text(encoding="utf-8"))
+    checks = {check["id"]: check["status"] for check in manifest["validation"]["delivery"]["checks"]}
+    assert checks["web_ui"] == "pass"
+    assert checks["persistence"] == "pass"
     for relative in (
         "README.md",
         "package.json",
@@ -172,6 +179,45 @@ def test_unrun_tests_are_not_reported_as_success(tmp_path):
     report = (Path(result.output_dir) / "GENERATION_REPORT.md").read_text(encoding="utf-8")
     assert "未运行（not run）" in report
     assert "不得标记为完全成功" in report
+
+
+def test_backend_only_project_fails_ui_and_persistence_contracts(tmp_path):
+    """A backend-only project must not be accepted for a web/durability target."""
+    workspace = tmp_path / "backend-only"
+    (workspace / "src").mkdir(parents=True)
+    (workspace / "tests").mkdir()
+    (workspace / "README.md").write_text("# Backend only\n", encoding="utf-8")
+    (workspace / "package.json").write_text('{"name":"backend-only"}', encoding="utf-8")
+    (workspace / "src" / "app.js").write_text(
+        "// Covers: FR-1\nexport const app = 1;\n", encoding="utf-8"
+    )
+    (workspace / "tests" / "app.test.js").write_text(
+        "// Covers: FR-1\ntest('x', () => {});\n", encoding="utf-8"
+    )
+    parser = DocumentParser()
+    requirements = RequirementNormalizer().normalize(
+        parser.parse(DOC, "architecture"), parser.parse(VIEW, "view")
+    )
+    policy = WorkspacePolicy(workspace, max_file_bytes=1024 * 1024)
+    report = DeliveryValidator(policy, requirements, None, AppConfig()).evaluate([])
+    checks = {check["id"]: check for check in report.checks}
+    assert checks["web_ui"]["status"] == "fail"
+    assert checks["persistence"]["status"] == "fail"
+    assert report.ok is False
+    assert any("Web 目标" in item for item in report.missing)
+    assert any("ASR-1" in item for item in report.missing)
+
+
+def test_fallback_plan_requires_web_ui_and_persistence():
+    parser = DocumentParser()
+    requirements = RequirementNormalizer().normalize(
+        parser.parse(DOC, "architecture"), parser.parse(VIEW, "view")
+    )
+    plan = fallback_plan(requirements)
+    paths = {file.path.lower() for file in plan.files}
+    assert any(path.endswith(".html") for path in paths)
+    assert any("store" in path or "persist" in path for path in paths)
+    assert validate_plan(plan, requirements) == []
 
 
 def test_failing_generated_tests_downgrade_to_partial(tmp_path, monkeypatch):

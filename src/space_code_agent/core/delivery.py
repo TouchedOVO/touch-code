@@ -134,6 +134,18 @@ class DeliveryValidator:
             "details": {"coverage": coverage, "unmapped_fr": unmapped_fr},
         })
 
+        if self.requirements.requires_web_ui():
+            web_check = self._check_web_ui(entries)
+            checks.append(web_check)
+            if web_check["status"] == "fail":
+                missing.append("Web 目标缺少可交互浏览器 UI：" + "; ".join(web_check["details"]["issues"]))
+
+        if self.requirements.requires_persistence():
+            persist_check = self._check_persistence(entries, paths)
+            checks.append(persist_check)
+            if persist_check["status"] == "fail":
+                missing.append("ASR-1 持久化验收未通过：" + "; ".join(persist_check["details"]["issues"]))
+
         report.checks = checks
         report.missing = missing
         report.ok = not missing
@@ -178,13 +190,101 @@ class DeliveryValidator:
                         mappings[req.id].append(path)
         return mappings
 
+    def _check_web_ui(self, entries: list[dict]) -> dict:
+        html = [e["path"] for e in entries if Path(e["path"]).suffix.lower() in {".html", ".htm"}]
+        scripts = [e["path"] for e in entries if Path(e["path"]).suffix.lower() in {".js", ".mjs", ".ts", ".jsx", ".tsx"}]
+        styles = [e["path"] for e in entries if Path(e["path"]).suffix.lower() == ".css"]
+        text_parts: list[str] = []
+        for path in html[:10]:
+            try:
+                chunk, _ = self.policy.read_text(path, max_chars=200_000)
+                text_parts.append(chunk)
+            except PolicyError:
+                continue
+        text = "\n".join(text_parts).lower()
+        markers = {marker: (marker in text) for marker in ("intro", "menu", "question", "score", "result", "help")}
+        found = sum(1 for value in markers.values() if value)
+        issues: list[str] = []
+        if not html:
+            issues.append("没有 HTML 入口")
+        if not scripts and not styles:
+            issues.append("没有 JS/CSS 前端资源")
+        if found < 3:
+            issues.append(f"HTML 仅命中 {found}/6 个游戏场景标记")
+        return {
+            "id": "web_ui",
+            "status": "pass" if not issues else "fail",
+            "details": {
+                "html": html[:10], "scripts": len(scripts), "styles": len(styles),
+                "scene_markers": markers, "issues": issues,
+            },
+        }
+
+    def _check_persistence(self, entries: list[dict], paths: set[str]) -> dict:
+        source_paths = [
+            p for p in paths
+            if Path(p).suffix.lower() in {".js", ".mjs", ".cjs", ".ts", ".py", ".go", ".java", ".cs"}
+        ]
+        patterns = (
+            "writefilesync", "readfilesync", "fs.writefile", "fs.readfile", "aiofiles",
+            "sqlite", "node:sqlite", "better-sqlite3", "sqlalchemy", "psycopg", "asyncpg",
+            "createpool", "new pool", "sequelize", "prisma", "typeorm", "mongoose",
+            "localstorage", "indexeddb", "leveldb", "lmdb",
+        )
+        evidence: list[str] = []
+        for path in source_paths:
+            try:
+                text, _ = self.policy.read_text(path, max_chars=300_000)
+            except PolicyError:
+                continue
+            lowered = text.lower()
+            if any(pattern in lowered for pattern in patterns):
+                evidence.append(path)
+        test_evidence: list[str] = []
+        for path in paths:
+            if "test" not in path.lower():
+                continue
+            try:
+                text, _ = self.policy.read_text(path, max_chars=300_000)
+            except PolicyError:
+                continue
+            lowered = text.lower()
+            if any(word in lowered for word in ("restart", "persist", "durab", "reload", "reopen")):
+                test_evidence.append(path)
+        issues: list[str] = []
+        if not evidence:
+            issues.append("未找到文件/数据库持久化代码")
+        if not test_evidence:
+            issues.append("未找到重启/持久化测试")
+        return {
+            "id": "persistence",
+            "status": "pass" if not issues else "fail",
+            "details": {
+                "source_evidence": evidence[:10], "test_evidence": test_evidence[:10], "issues": issues,
+            },
+        }
+
+    def _test_evidence(self, req, mappings: dict[str, list[str]]) -> list[str]:
+        """Only tests that explicitly reference the requirement ID count as evidence."""
+        candidates = [p for p in mappings.get(req.id, []) if "test" in p.lower()]
+        evidence: list[str] = []
+        pattern = re.compile(rf"\b{re.escape(req.id)}\b")
+        for path in candidates:
+            try:
+                text, _ = self.policy.read_text(path, max_chars=300_000)
+            except PolicyError:
+                continue
+            if pattern.search(text):
+                evidence.append(path)
+        return evidence
+
     def _coverage(self, mappings: dict[str, list[str]], paths: set[str],
                   tests_ran: bool = False, tests_passed: bool = False) -> dict:
         total = len(self.requirements.requirements)
         mapped = implemented = verified = unverified = failed = missing = 0
         for req in self.requirements.requirements:
             files = mappings.get(req.id, [])
-            tests = [path for path in files if "test" in path.lower()]
+            tests = self._test_evidence(req, mappings)
             if not files:
                 missing += 1
                 continue
@@ -218,7 +318,7 @@ class DeliveryValidator:
         tests_passed = tests_ran and all(item.get("passed") is True for item in self.test_results)
         for req in self.requirements.requirements:
             files = report.mappings.get(req.id, [])
-            tests = [path for path in files if "test" in path.lower()]
+            tests = self._test_evidence(req, report.mappings)
             req.files = sorted(files)
             req.tests = sorted(tests)
             req.mapped = bool(files)

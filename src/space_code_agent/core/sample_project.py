@@ -47,6 +47,7 @@ REQUIREMENT_MAP: dict[str, list[str]] = {
     "apps/web/server.js": ["FR-1", "NFR-1"],
     "tests/unit/http.test.js": ["FR-1", "NFR-1"],
     "tests/unit/schema.test.js": ["ASR-1"],
+    "tests/unit/persistence.test.js": ["ASR-1"],
     "tests/e2e/flow.test.js": ["FR-1", "FR-DERIVED-1", "FR-DERIVED-2", "ASR-2"],
     "sql/init.sql": ["ASR-1"],
     "docker-compose.yml": ["NFR-1", "ASR-1"],
@@ -86,6 +87,7 @@ PURPOSES: dict[str, str] = {
     "apps/web/server.js": "静态站点服务器",
     "tests/unit/http.test.js": "HTTP 工具单元测试",
     "tests/unit/schema.test.js": "持久化 DDL 结构与约束测试",
+    "tests/unit/persistence.test.js": "题库重启恢复持久化测试",
     "tests/e2e/flow.test.js": "跨服务端到端流程测试",
     "sql/init.sql": "PostgreSQL 可选表结构",
     "docker-compose.yml": "可选本地拓扑",
@@ -173,7 +175,7 @@ def build_sample_plan(requirements: NormalizedRequirements) -> ProjectPlan:
             "language": "JavaScript (CommonJS)",
             "runtime": "Node.js >= 20",
             "framework": "node:http (zero-dependency REST)",
-            "persistence": "in-memory repositories; PostgreSQL DDL provided as optional adapter",
+            "persistence": "file-backed JSON store (atomic rewrite); PostgreSQL DDL optional",
             "testing": "node:test + node:assert/strict",
             "frontend": "semantic HTML + CSS + ES modules (no build step)",
         },
@@ -184,9 +186,9 @@ def build_sample_plan(requirements: NormalizedRequirements) -> ProjectPlan:
                 impact="保留 REST 契约与中间件式路由，不使用 Express 生态中间件。",
             ),
             Deviation(
-                decision="内存仓库替代在线 PostgreSQL",
-                reason="演示环境不提供数据库；测试必须可重复。",
-                impact="重启后数据丢失；sql/init.sql 提供持久化表结构与索引。",
+                decision="文件 JSON 持久化替代在线 PostgreSQL",
+                reason="演示环境不提供数据库；题库需要跨重启保留。",
+                impact="单机重启后数据保留；多实例/生产部署需切换 PostgreSQL 适配器。",
             ),
             Deviation(
                 decision="不部署 Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform",
@@ -232,7 +234,7 @@ def build_sample_plan(requirements: NormalizedRequirements) -> ProjectPlan:
         ],
         assumptions=[assumption.text for assumption in requirements.assumptions],
         risks=[
-            "内存数据在进程重启后丢失，属演示取舍。",
+            "单机 JSON 文件的并发写入能力有限，生产部署需 PostgreSQL。",
             "完整 OAuth2、PostgreSQL 集群与云原生组件未实现，已在 ASM-06 记录。",
         ],
         source="sample",
@@ -257,8 +259,8 @@ def build_mock_script(requirements: NormalizedRequirements) -> list[ProviderResp
     )]))
     summary = (
         "已生成 Space Fractions：3 个零依赖 Node.js 服务（题库/游戏/用户）、"
-        "学生端与教师后台、单元/集成/端到端测试、PostgreSQL 可选 DDL 与 Docker Compose。"
-        "架构偏离：node:http 替代 Express，内存仓库替代在线 PostgreSQL，"
+        "学生端与教师后台、单元/集成/端到端测试、JSON 文件持久化、PostgreSQL 可选 DDL 与 Docker Compose。"
+        "架构偏离：node:http 替代 Express，文件 JSON 持久化替代在线 PostgreSQL，"
         "未部署 Redis/RabbitMQ/ES/K8s/Istio/Vault/Terraform，详见 docs/ASSUMPTIONS.md。"
     )
     script.append(tool_response([("finish_task", {"summary": summary})]))

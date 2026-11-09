@@ -4,11 +4,11 @@
     "status": "completed",
     "agent_status": "completed",
     "mode": "DeepSeek 真实 API",
-    "started_at": 1794229663.5846522,
-    "finished_at": 1794230890.1245642,
-    "duration_s": 1226.54,
-    "steps": 37,
-    "tool_calls": 57,
+    "started_at": 1794234362.1356027,
+    "finished_at": 1794236082.244413,
+    "duration_s": 1720.11,
+    "steps": 75,
+    "tool_calls": 114,
     "models_used": [
       "deepseek-v4-pro"
     ],
@@ -31,22 +31,27 @@
       {
         "phase": "IMPLEMENTING",
         "message": "Agent 正在写入项目文件",
-        "at_s": 326.91
+        "at_s": 339.07
       },
       {
         "phase": "VERIFYING",
         "message": "静态检查与本地测试",
-        "at_s": 1225.88
+        "at_s": 1400.55
+      },
+      {
+        "phase": "REPAIRING",
+        "message": "第 1/3 轮修复",
+        "at_s": 1403.19
       },
       {
         "phase": "REPORTING",
         "message": "生成报告与追溯矩阵",
-        "at_s": 1226.52
+        "at_s": 1720.05
       }
     ],
     "errors": [],
     "missing": [],
-    "session_id": "20261109-210743-1df2ad",
+    "session_id": "20261109-222602-be8816",
     "output_dir": "generated-project"
   },
   "model": {
@@ -118,19 +123,21 @@
       "verified": true,
       "verification": "passed",
       "files": [
-        "docs/requirements.json",
-        "requirements-traceability.json",
-        "requirements.json",
-        "src/domain.js",
-        "src/index.js",
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "public/app.js",
+        "public/index.html",
+        "public/styles.css",
+        "src/domain/fraction.js",
+        "src/domain/game.js",
+        "src/routes/game.routes.js",
+        "src/services/game.service.js",
+        "test/fraction.test.js",
+        "test/game.api.test.js"
       ],
       "tests": [
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "test/fraction.test.js",
+        "test/game.api.test.js"
       ],
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed"
+      "evidence": "源码: public/app.js, public/index.html, public/styles.css, src/domain/fraction.js；测试: test/fraction.test.js, test/game.api.test.js；验证: passed"
     },
     {
       "id": "NFR-1",
@@ -161,16 +168,13 @@
       "verified": true,
       "verification": "passed",
       "files": [
-        "docs/requirements.json",
-        "requirements-traceability.json",
-        "requirements.json",
-        "src/index.js",
-        "tests/e2e/flow.test.js"
+        "src/app.js",
+        "test/performance.test.js"
       ],
       "tests": [
-        "tests/e2e/flow.test.js"
+        "test/performance.test.js"
       ],
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/index.js；测试: tests/e2e/flow.test.js；验证: passed"
+      "evidence": "源码: src/app.js, test/performance.test.js；测试: test/performance.test.js；验证: passed"
     },
     {
       "id": "ASR-1",
@@ -202,16 +206,19 @@
       "verified": true,
       "verification": "passed",
       "files": [
-        "docs/requirements.json",
-        "requirements-traceability.json",
-        "requirements.json",
-        "src/domain.js",
-        "tests/domain.test.js"
+        "data/scores.json",
+        "data/seed-questions.json",
+        "src/repositories/file-store.js",
+        "src/repositories/question.repository.js",
+        "src/repositories/score.repository.js",
+        "src/services/game.service.js",
+        "src/services/question.service.js",
+        "test/persistence-restart.test.js"
       ],
       "tests": [
-        "tests/domain.test.js"
+        "test/persistence-restart.test.js"
       ],
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js；验证: passed"
+      "evidence": "源码: data/scores.json, data/seed-questions.json, src/repositories/file-store.js, src/repositories/question.repository.js；测试: test/persistence-restart.test.js；验证: passed"
     },
     {
       "id": "ASR-2",
@@ -236,20 +243,18 @@
       "verified": true,
       "verification": "passed",
       "files": [
-        ".env.example",
-        "docs/requirements.json",
-        "requirements-traceability.json",
-        "requirements.json",
-        "src/domain.js",
-        "src/index.js",
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "src/middleware/auth.js",
+        "src/middleware/error-handler.js",
+        "src/routes/question.routes.js",
+        "src/services/user.service.js",
+        "test/question.api.test.js",
+        "test/security.test.js"
       ],
       "tests": [
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "test/question.api.test.js",
+        "test/security.test.js"
       ],
-      "evidence": "源码: .env.example, docs/requirements.json, requirements-traceability.json, requirements.json；测试: tests/e2e/flow.test.js, tests/domain.test.js；验证: passed"
+      "evidence": "源码: src/middleware/auth.js, src/middleware/error-handler.js, src/routes/question.routes.js, src/services/user.service.js；测试: test/question.api.test.js, test/security.test.js；验证: passed"
     },
     {
       "id": "FR-DERIVED-1",
@@ -277,19 +282,20 @@
       "verified": true,
       "verification": "passed",
       "files": [
-        "docs/requirements.json",
-        "requirements-traceability.json",
-        "requirements.json",
-        "src/domain.js",
-        "src/index.js",
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "public/app.js",
+        "public/index.html",
+        "src/routes/game.routes.js",
+        "src/routes/user.routes.js",
+        "src/services/game.service.js",
+        "src/services/user.service.js",
+        "test/game.api.test.js",
+        "test/user.api.test.js"
       ],
       "tests": [
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "test/game.api.test.js",
+        "test/user.api.test.js"
       ],
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed"
+      "evidence": "源码: public/app.js, public/index.html, src/routes/game.routes.js, src/routes/user.routes.js；测试: test/game.api.test.js, test/user.api.test.js；验证: passed"
     },
     {
       "id": "FR-DERIVED-2",
@@ -317,19 +323,14 @@
       "verified": true,
       "verification": "passed",
       "files": [
-        "docs/requirements.json",
-        "requirements-traceability.json",
-        "requirements.json",
-        "src/domain.js",
-        "src/index.js",
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "src/routes/question.routes.js",
+        "src/services/question.service.js",
+        "test/question.api.test.js"
       ],
       "tests": [
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "test/question.api.test.js"
       ],
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed"
+      "evidence": "源码: src/routes/question.routes.js, src/services/question.service.js, test/question.api.test.js；测试: test/question.api.test.js；验证: passed"
     },
     {
       "id": "FR-DERIVED-3",
@@ -356,19 +357,16 @@
       "verified": true,
       "verification": "passed",
       "files": [
-        "docs/requirements.json",
-        "requirements-traceability.json",
-        "requirements.json",
-        "src/domain.js",
-        "src/index.js",
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "public/app.js",
+        "public/index.html",
+        "src/routes/user.routes.js",
+        "src/services/user.service.js",
+        "test/user.api.test.js"
       ],
       "tests": [
-        "tests/domain.test.js",
-        "tests/e2e/flow.test.js"
+        "test/user.api.test.js"
       ],
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed"
+      "evidence": "源码: public/app.js, public/index.html, src/routes/user.routes.js, src/services/user.service.js；测试: test/user.api.test.js；验证: passed"
     }
   ],
   "diagrams": [
@@ -701,183 +699,488 @@
   ],
   "plan": {
     "project_name": "Space Fractions",
-    "summary": "为 Space Fractions 生成的模块化实现（模型计划失败后的确定性回退）。",
-    "architecture_style": "modular monolith (documented deviation)",
+    "summary": "A web-based, interactive learning tool for sixth-grade students to practice fraction-solving skills. The implementation uses modular microservice-style boundaries inside a single Node.js process so that all requirements can be verified without external cloud services. The browser UI provides play, score, and help views; administration is protected by an environment-configured token; question data is persisted to a JSON file store to satisfy data durability and restart recovery.",
+    "architecture_style": "Microservice boundaries simulated as modular monolith with REST-style APIs",
     "stack": {
-      "language": "javascript",
-      "runtime": "Node.js >=20",
-      "framework": "node:http",
-      "persistence": "in-memory with optional PostgreSQL adapter",
-      "testing": "node:test"
+      "language": "JavaScript",
+      "runtime": "Node.js 18-20",
+      "framework": "Express.js 4-5",
+      "persistence": "JSON file repository with optional PostgreSQL adapter interface",
+      "testing": "Node.js built-in test runner with HTTP integration tests"
     },
     "deviations": [
       {
-        "decision": "计划阶段回退为模块化单体",
-        "reason": "模型未返回可校验的结构化计划。",
-        "impact": "服务边界保留在目录与模块中，但不部署独立容器。"
+        "decision": "Simulate microservices as a modular monolith with service-route boundaries",
+        "reason": "Enables local verification without Kubernetes, service discovery, or external cloud infrastructure while preserving Game, Question, User, and Admin component boundaries.",
+        "impact": "Services are not network-isolated; the structure remains ready for later extraction into independent deployable services."
+      },
+      {
+        "decision": "Use file-backed JSON persistence as the default repository instead of PostgreSQL",
+        "reason": "Meets ASR-1 data durability and restart recovery without requiring an external database service during verification.",
+        "impact": "Lower operational realism and limited concurrent write durability compared to PostgreSQL; repository interfaces allow swapping to a database adapter later."
+      },
+      {
+        "decision": "Exclude Redis, RabbitMQ, Elasticsearch, Kubernetes, Istio, Vault, and Terraform from demonstration dependencies",
+        "reason": "The source documentation did not provide business constraints or operational budgets for these components; they are treated as optional extensions.",
+        "impact": "Reduces infrastructure fidelity but improves testability and runnable delivery."
+      },
+      {
+        "decision": "Formalize ASR-2 security as minimal admin token authentication, input validation, and security headers",
+        "reason": "The source documentation referenced ASR-2 without a formal definition or acceptance metrics.",
+        "impact": "Security coverage is implemented and tested, but it is a pragmatic interpretation rather than a documented enterprise security model."
+      },
+      {
+        "decision": "Resolve empty trace/test matrix and diagram syntax inconsistencies by deriving traceability from requirements and use cases",
+        "reason": "The provided test matrix was empty and several PlantUML diagrams used non-native notation.",
+        "impact": "Traceability is reconstructed from component and requirement statements; ambiguity remains for undocumented behaviors."
       }
     ],
     "tasks": [
       {
         "id": "T1",
-        "title": "文档与依赖骨架",
-        "description": "README、依赖声明、假设",
+        "title": "Project scaffold and dependency declaration",
+        "description": "Create Node.js project scaffold, Express app factory, configuration loading, and server entry point. Define npm scripts for start and test.",
         "depends_on": [],
-        "requirement_ids": [
-          "FR-1",
-          "NFR-1"
-        ],
+        "requirement_ids": [],
         "acceptance": [
-          "文件存在且可读"
+          "package.json exists with Express dependency and start/test scripts.",
+          "src/app.js exports an Express app without starting a server.",
+          "src/server.js starts the app on the configured port.",
+          "npm install and npm start succeed locally."
         ]
       },
       {
         "id": "T2",
-        "title": "核心业务实现",
-        "description": "按组件实现领域逻辑与接口",
+        "title": "Fraction domain logic and game state model",
+        "description": "Implement fraction generation, answer validation, game state transitions, scoring rules, and unit tests for domain logic.",
         "depends_on": [
           "T1"
         ],
         "requirement_ids": [
-          "FR-1",
-          "FR-DERIVED-1",
-          "FR-DERIVED-2",
-          "FR-DERIVED-3"
+          "FR-1"
         ],
         "acceptance": [
-          "核心流程可通过静态检查"
+          "Fraction questions are generated as four-option single-choice items.",
+          "Game state transitions through Playing, Paused, and GameOver as required.",
+          "Fixed 10-question game and scoring rules are implemented.",
+          "Unit tests for fraction logic pass and include Covers: FR-1."
         ]
       },
       {
         "id": "T3",
-        "title": "测试与验证",
-        "description": "单元测试与端到端测试",
+        "title": "Persistence repositories and restart recovery",
+        "description": "Implement repository interfaces for questions and scores using a JSON file store. Provide seed question data and restart recovery tests.",
         "depends_on": [
           "T2"
         ],
         "requirement_ids": [
+          "ASR-1"
+        ],
+        "acceptance": [
+          "Question repository persists create, update, and delete operations to data/seed-questions.json or equivalent.",
+          "Score repository persists current game scores to data/scores.json or equivalent.",
+          "A restart recovery test reloads data from the file store and verifies persisted state.",
+          "Tests include Covers: ASR-1."
+        ]
+      },
+      {
+        "id": "T4",
+        "title": "Question service and admin update API",
+        "description": "Build question management service and REST routes for admin CRUD operations, enforcing admin authentication.",
+        "depends_on": [
+          "T3"
+        ],
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-1",
+          "ASR-2"
+        ],
+        "acceptance": [
+          "Admin can create, update, and delete questions through protected REST endpoints.",
+          "Unauthenticated or invalid admin token requests receive 401 or 403.",
+          "Question changes persist across server restart.",
+          "Question API tests include Covers: FR-DERIVED-2 and Covers: ASR-2."
+        ]
+      },
+      {
+        "id": "T5",
+        "title": "Game service and Play Game API",
+        "description": "Implement game session endpoints for starting a game, fetching the next question, submitting an answer, getting the current score, and game over state.",
+        "depends_on": [
+          "T3",
+          "T4"
+        ],
+        "requirement_ids": [
           "FR-1",
           "FR-DERIVED-1",
-          "FR-DERIVED-2",
+          "NFR-1"
+        ],
+        "acceptance": [
+          "Guest can start a game and receives a guest identifier.",
+          "Each answer updates the 10-question score according to scoring rules.",
+          "Game over is returned after 10 questions with final score and no further answer submission.",
+          "Endpoints respond under the performance threshold defined in tests.",
+          "Game API tests include Covers: FR-1, Covers: FR-DERIVED-1, and Covers: NFR-1."
+        ]
+      },
+      {
+        "id": "T6",
+        "title": "User/session service, security, and help/score endpoints",
+        "description": "Implement guest session handling, admin token middleware, security headers, error handling, and user endpoints for help and score views.",
+        "depends_on": [
+          "T5"
+        ],
+        "requirement_ids": [
+          "ASR-2",
+          "FR-DERIVED-1",
           "FR-DERIVED-3"
         ],
         "acceptance": [
-          "测试文件存在"
+          "Guest ID is generated for each new game session.",
+          "Help and score endpoints return appropriate content for browser UI.",
+          "Admin token is read from environment variable and middleware rejects invalid credentials.",
+          "Security tests include Covers: ASR-2 and verify input validation plus basic headers."
+        ]
+      },
+      {
+        "id": "T7",
+        "title": "Browser user interface",
+        "description": "Build HTML, CSS, and browser JavaScript for playing the game, viewing score, and viewing help. Include accessible semantic markup, keyboard operability, visible focus, and sufficient color contrast.",
+        "depends_on": [
+          "T6"
+        ],
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-3"
+        ],
+        "acceptance": [
+          "Browser UI can start a game, answer questions, and display final score.",
+          "Help view is available from the UI.",
+          "Keyboard-only interaction is possible for primary game controls.",
+          "UI calls APIs for play, score, and help and renders errors non-intrusively."
+        ]
+      },
+      {
+        "id": "T8",
+        "title": "Integration, security, performance, and restart recovery tests",
+        "description": "Create test helpers and full test suite covering domain logic, API integration, admin security, performance threshold, and persistence restart recovery.",
+        "depends_on": [
+          "T7"
+        ],
+        "requirement_ids": [
+          "NFR-1",
+          "ASR-1",
+          "ASR-2"
+        ],
+        "acceptance": [
+          "All tests pass with npm test.",
+          "Performance test verifies representative game/question endpoints return within a defined local threshold.",
+          "Restart recovery test stops the app state and recreates repository from files, verifying ASR-1.",
+          "Security tests verify unauthorized admin access is denied and malformed input is rejected.",
+          "Test files contain Covers markers for NFR-1, ASR-1, and ASR-2."
+        ]
+      },
+      {
+        "id": "T9",
+        "title": "Documentation and assumptions",
+        "description": "Write README, docs/ASSUMPTIONS.md, and verification notes covering architecture decisions, deviations, assumptions, parsing warnings, and conflicts.",
+        "depends_on": [
+          "T8"
+        ],
+        "requirement_ids": [],
+        "acceptance": [
+          "README includes installation, run, and test instructions.",
+          "docs/ASSUMPTIONS.md lists A1/A2, ASM-01 through ASM-06, parsing warnings, and document conflicts C-001 through C-008.",
+          "Deviations from the microservices/cloud PostgreSQL stack are documented.",
+          "Verification steps match the implemented commands and browser flow."
         ]
       }
     ],
     "files": [
       {
-        "path": "README.md",
-        "purpose": "项目说明与运行方式",
-        "task_id": "T1",
-        "requirement_ids": [
-          "FR-1",
-          "NFR-1",
-          "ASR-1",
-          "ASR-2",
-          "FR-DERIVED-1",
-          "FR-DERIVED-2",
-          "FR-DERIVED-3"
-        ]
-      },
-      {
         "path": "package.json",
-        "purpose": "依赖与测试脚本",
+        "purpose": "Dependency declaration and npm scripts for start/test.",
         "task_id": "T1",
         "requirement_ids": []
       },
       {
+        "path": "README.md",
+        "purpose": "Project overview, run instructions, test instructions, and verification flow.",
+        "task_id": "T9",
+        "requirement_ids": []
+      },
+      {
         "path": "docs/ASSUMPTIONS.md",
-        "purpose": "假设与偏离记录",
+        "purpose": "Assumptions, deviations, diagram parsing warnings, and document conflicts.",
+        "task_id": "T9",
+        "requirement_ids": []
+      },
+      {
+        "path": "src/config.js",
+        "purpose": "Load port, admin token, data paths, and environment configuration.",
+        "task_id": "T1",
+        "requirement_ids": []
+      },
+      {
+        "path": "src/app.js",
+        "purpose": "Express app factory that mounts all service routes and middleware.",
         "task_id": "T1",
         "requirement_ids": [
-          "FR-1",
-          "NFR-1",
-          "ASR-1",
-          "ASR-2",
-          "FR-DERIVED-1",
-          "FR-DERIVED-2",
-          "FR-DERIVED-3"
+          "NFR-1"
         ]
       },
       {
-        "path": "docs/architecture-summary.md",
-        "purpose": "架构摘要",
+        "path": "src/server.js",
+        "purpose": "Server entry point that starts the configured Express app.",
         "task_id": "T1",
+        "requirement_ids": []
+      },
+      {
+        "path": "src/domain/fraction.js",
+        "purpose": "Fraction generation, answer validation, and four-option question creation.",
+        "task_id": "T2",
+        "requirement_ids": [
+          "FR-1"
+        ]
+      },
+      {
+        "path": "src/domain/game.js",
+        "purpose": "Game state machine and scoring rules for a 10-question session.",
+        "task_id": "T2",
+        "requirement_ids": [
+          "FR-1"
+        ]
+      },
+      {
+        "path": "src/repositories/file-store.js",
+        "purpose": "Generic JSON file read/write and atomic save helper.",
+        "task_id": "T3",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "src/repositories/question.repository.js",
+        "purpose": "Question persistence repository using the JSON file store.",
+        "task_id": "T3",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "src/repositories/score.repository.js",
+        "purpose": "Game score persistence repository using the JSON file store.",
+        "task_id": "T3",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "data/seed-questions.json",
+        "purpose": "Seed sixth-grade fraction questions with four answer choices each.",
+        "task_id": "T3",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "data/scores.json",
+        "purpose": "Runtime persisted scores for restart recovery verification.",
+        "task_id": "T3",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "src/services/question.service.js",
+        "purpose": "Business logic for question CRUD and validation for admin updates.",
+        "task_id": "T4",
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "src/routes/question.routes.js",
+        "purpose": "REST routes for admin-managed question operations.",
+        "task_id": "T4",
+        "requirement_ids": [
+          "FR-DERIVED-2",
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "src/services/game.service.js",
+        "purpose": "Game session creation, question flow, answer submission, scoring, and game over logic.",
+        "task_id": "T5",
         "requirement_ids": [
           "FR-1",
-          "NFR-1",
-          "ASR-1",
+          "FR-DERIVED-1"
+        ]
+      },
+      {
+        "path": "src/routes/game.routes.js",
+        "purpose": "REST routes for Play Game, answer submission, score view, and game state.",
+        "task_id": "T5",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1"
+        ]
+      },
+      {
+        "path": "src/services/user.service.js",
+        "purpose": "Guest session handling, score lookups, and help content.",
+        "task_id": "T6",
+        "requirement_ids": [
           "ASR-2",
           "FR-DERIVED-1",
-          "FR-DERIVED-2",
           "FR-DERIVED-3"
         ]
       },
       {
-        "path": "src/index.js",
-        "purpose": "应用入口",
+        "path": "src/routes/user.routes.js",
+        "purpose": "REST routes for View Score and View Help.",
+        "task_id": "T6",
+        "requirement_ids": [
+          "FR-DERIVED-1",
+          "FR-DERIVED-3"
+        ]
+      },
+      {
+        "path": "src/middleware/auth.js",
+        "purpose": "Admin token authentication middleware and user input validation guard.",
+        "task_id": "T6",
+        "requirement_ids": [
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "src/middleware/error-handler.js",
+        "purpose": "Central error handler and security header middleware.",
+        "task_id": "T6",
+        "requirement_ids": [
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "public/index.html",
+        "purpose": "Browser UI shell for game, score, and help views.",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-3"
+        ]
+      },
+      {
+        "path": "public/styles.css",
+        "purpose": "Responsive layout, visible focus states, accessible contrast, and CSS transitions.",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1"
+        ]
+      },
+      {
+        "path": "public/app.js",
+        "purpose": "Browser JavaScript for interacting with game, score, and help APIs.",
+        "task_id": "T7",
+        "requirement_ids": [
+          "FR-1",
+          "FR-DERIVED-1",
+          "FR-DERIVED-3"
+        ]
+      },
+      {
+        "path": "test/helpers/test-app.js",
+        "purpose": "Test helper that creates an app instance with isolated in-process state.",
+        "task_id": "T8",
+        "requirement_ids": []
+      },
+      {
+        "path": "test/fraction.test.js",
+        "purpose": "Unit tests for fraction generation and answer validation. Covers: FR-1.",
         "task_id": "T2",
         "requirement_ids": [
-          "FR-1",
-          "FR-DERIVED-1",
-          "FR-DERIVED-2",
-          "FR-DERIVED-3"
+          "FR-1"
         ]
       },
       {
-        "path": "src/domain.js",
-        "purpose": "领域逻辑",
-        "task_id": "T2",
+        "path": "test/game.api.test.js",
+        "purpose": "Integration tests for game flow, score, and game over. Covers: FR-1, FR-DERIVED-1.",
+        "task_id": "T8",
         "requirement_ids": [
           "FR-1",
-          "FR-DERIVED-1",
-          "FR-DERIVED-2",
-          "FR-DERIVED-3"
+          "FR-DERIVED-1"
         ]
       },
       {
-        "path": "tests/domain.test.js",
-        "purpose": "领域单元测试",
-        "task_id": "T3",
+        "path": "test/question.api.test.js",
+        "purpose": "Integration tests for admin question CRUD. Covers: FR-DERIVED-2, ASR-2.",
+        "task_id": "T8",
         "requirement_ids": [
-          "FR-1",
-          "FR-DERIVED-1",
           "FR-DERIVED-2",
-          "FR-DERIVED-3"
+          "ASR-2"
         ]
       },
       {
-        "path": "tests/e2e/flow.test.js",
-        "purpose": "端到端流程测试",
-        "task_id": "T3",
+        "path": "test/security.test.js",
+        "purpose": "Security tests for admin token, unauthorized access, input validation, and basic headers. Covers: ASR-2.",
+        "task_id": "T8",
         "requirement_ids": [
-          "FR-1",
-          "FR-DERIVED-1",
-          "FR-DERIVED-2",
-          "FR-DERIVED-3"
+          "ASR-2"
+        ]
+      },
+      {
+        "path": "test/persistence-restart.test.js",
+        "purpose": "Restart recovery test that verifies persisted question and score state reloads from files. Covers: ASR-1.",
+        "task_id": "T8",
+        "requirement_ids": [
+          "ASR-1"
+        ]
+      },
+      {
+        "path": "test/performance.test.js",
+        "purpose": "Performance threshold test for representative game and question endpoints. Covers: NFR-1.",
+        "task_id": "T8",
+        "requirement_ids": [
+          "NFR-1"
         ]
       }
     ],
     "verification_steps": [
-      "node --check 所有 JS 文件",
-      "node --test"
+      "Run npm install to install dependencies.",
+      "Run npm test and confirm all unit, integration, security, performance, and restart recovery tests pass.",
+      "Run npm start and open http://localhost:3000 in a browser.",
+      "From the browser UI, start a game, answer ten questions, and verify the final score is displayed.",
+      "Open the help view and verify keyboard-only navigation is possible.",
+      "Use an admin token to create, update, and delete a question through the API, then restart the server and verify the change persists.",
+      "Attempt admin question update without a token and verify the request is rejected.",
+      "Stop and restart the server, then verify persisted questions and any persisted scores are recovered."
     ],
     "assumptions": [
-      "A1: The game will be played by 1000 users concurrently",
-      "A2: The game will be played for 1 hour per session",
-      "每局固定 10 道分数题；答对 +10 分、答错 0 分，满分 100 分，无倒计时。",
-      "学生无需注册；会话开始时生成访客 ID，分数仅用于当前回合展示。管理员使用环境变量配置的令牌登录。",
-      "题目为六年级分数四则运算单选题（4 个选项），题目与答案由种子数据提供，管理员可增删改。",
-      "开始/结束动画以 CSS 过渡和文本场景实现，不依赖外部图片或视频素材。",
-      "无障碍要求：键盘可操作、语义化标签、可见焦点、颜色对比度不低于 4.5:1。",
-      "保留 Game/Question/User 三个服务边界，使用 REST + 进程内仓库运行；PostgreSQL 以可选适配器提供，Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform 不纳入演示依赖。这是相对原文档微服务/云原生方案的重大偏离，必须在报告与 ASSUMPTIONS.md 中声明。"
+      "A1: The game will be played by 1000 users concurrently.",
+      "A2: The game will be played for 1 hour per session.",
+      "ASM-01: Each game has exactly 10 fraction questions; correct answers add 10 points, wrong answers add 0 points, maximum score is 100, and there is no countdown timer.",
+      "ASM-02: Students do not register; a guest ID is generated at the start of each session, and scores are only shown for the current round. Administrators log in with an environment-configured token.",
+      "ASM-03: Questions are sixth-grade single-choice fraction arithmetic items with 4 answer choices, seeded by data and manageable by administrators.",
+      "ASM-04: Start/end animations use CSS transitions and text scenes only, with no external image or video assets.",
+      "ASM-05: Accessibility requirements include keyboard operability, semantic markup, visible focus, and color contrast of at least 4.5:1.",
+      "ASM-06: Game, Question, and User service boundaries are preserved with REST plus in-process repositories; PostgreSQL is an optional adapter, and Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform are not included as demo dependencies.",
+      "These assumptions, including ASM-01 through ASM-06, are implementation constraints and not reused as requirement IDs.",
+      "ASR-2 is interpreted as a security requirement covering admin authentication, input validation, and basic security headers because the source did not provide a formal definition.",
+      "The parsing warnings for ObjectDiagram and CollaborationDiagram1/2 are treated as source syntax issues; their element semantics are extracted and implemented according to the corresponding use cases.",
+      "The document conflict C-001 about 11 versus 13 PlantUML diagrams is accepted as source inconsistency without blocking implementation.",
+      "The empty trace and test matrices are reconstructed from requirement statements, component definitions, and derived use cases."
     ],
     "risks": [
-      "回退计划可能与原架构文档的微服务部署不完全一致。"
+      "JSON file persistence may not satisfy the performance and concurrency assumptions for 1000 simultaneous users in production; PostgreSQL or a scalable store should replace it outside local verification.",
+      "The modular monolith approach verifies component boundaries but not true network microservice behavior, so deployment risks remain unrecognized.",
+      "ASR-2 security is an inferred requirement and may be incomplete relative to formal security policies.",
+      "The source diagrams contain notation inconsistencies, so some interactions derived from them may be ambiguous or over-simplified.",
+      "The user interaction with the browser UI is manually verified; no full end-to-end browser automation is included."
     ],
-    "source": "fallback"
+    "source": "model"
   },
   "coverage": {
     "total": 7,
@@ -904,9 +1207,9 @@
       "verified": true,
       "verification": "passed",
       "components": "GameComponent",
-      "files": "docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js",
-      "tests": "tests/domain.test.js; tests/e2e/flow.test.js",
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed",
+      "files": "public/app.js; public/index.html; public/styles.css; src/domain/fraction.js; src/domain/game.js; src/routes/game.routes.js; src/services/game.service.js; test/fraction.test.js; test/game.api.test.js",
+      "tests": "test/fraction.test.js; test/game.api.test.js",
+      "evidence": "源码: public/app.js, public/index.html, public/styles.css, src/domain/fraction.js；测试: test/fraction.test.js, test/game.api.test.js；验证: passed",
       "source": "Architecture_Documentation.md:33"
     },
     {
@@ -919,9 +1222,9 @@
       "verified": true,
       "verification": "passed",
       "components": "GameComponent",
-      "files": "docs/requirements.json; requirements-traceability.json; requirements.json; src/index.js; tests/e2e/flow.test.js",
-      "tests": "tests/e2e/flow.test.js",
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/index.js；测试: tests/e2e/flow.test.js；验证: passed",
+      "files": "src/app.js; test/performance.test.js",
+      "tests": "test/performance.test.js",
+      "evidence": "源码: src/app.js, test/performance.test.js；测试: test/performance.test.js；验证: passed",
       "source": "Architecture_Documentation.md:34"
     },
     {
@@ -934,9 +1237,9 @@
       "verified": true,
       "verification": "passed",
       "components": "QuestionComponent",
-      "files": "docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; tests/domain.test.js",
-      "tests": "tests/domain.test.js",
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js；验证: passed",
+      "files": "data/scores.json; data/seed-questions.json; src/repositories/file-store.js; src/repositories/question.repository.js; src/repositories/score.repository.js; src/services/game.service.js; src/services/question.service.js; test/persistence-restart.test.js",
+      "tests": "test/persistence-restart.test.js",
+      "evidence": "源码: data/scores.json, data/seed-questions.json, src/repositories/file-store.js, src/repositories/question.repository.js；测试: test/persistence-restart.test.js；验证: passed",
       "source": "Architecture_Documentation.md:35"
     },
     {
@@ -949,9 +1252,9 @@
       "verified": true,
       "verification": "passed",
       "components": "",
-      "files": ".env.example; docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js",
-      "tests": "tests/domain.test.js; tests/e2e/flow.test.js",
-      "evidence": "源码: .env.example, docs/requirements.json, requirements-traceability.json, requirements.json；测试: tests/e2e/flow.test.js, tests/domain.test.js；验证: passed",
+      "files": "src/middleware/auth.js; src/middleware/error-handler.js; src/routes/question.routes.js; src/services/user.service.js; test/question.api.test.js; test/security.test.js",
+      "tests": "test/question.api.test.js; test/security.test.js",
+      "evidence": "源码: src/middleware/auth.js, src/middleware/error-handler.js, src/routes/question.routes.js, src/services/user.service.js；测试: test/question.api.test.js, test/security.test.js；验证: passed",
       "source": "Architecture_Documentation.md:26"
     },
     {
@@ -964,9 +1267,9 @@
       "verified": true,
       "verification": "passed",
       "components": "GameComponent; UserComponent",
-      "files": "docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js",
-      "tests": "tests/domain.test.js; tests/e2e/flow.test.js",
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed",
+      "files": "public/app.js; public/index.html; src/routes/game.routes.js; src/routes/user.routes.js; src/services/game.service.js; src/services/user.service.js; test/game.api.test.js; test/user.api.test.js",
+      "tests": "test/game.api.test.js; test/user.api.test.js",
+      "evidence": "源码: public/app.js, public/index.html, src/routes/game.routes.js, src/routes/user.routes.js；测试: test/game.api.test.js, test/user.api.test.js；验证: passed",
       "source": "Architecture_View.md:3"
     },
     {
@@ -979,9 +1282,9 @@
       "verified": true,
       "verification": "passed",
       "components": "QuestionComponent; AdminComponent",
-      "files": "docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js",
-      "tests": "tests/domain.test.js; tests/e2e/flow.test.js",
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed",
+      "files": "src/routes/question.routes.js; src/services/question.service.js; test/question.api.test.js",
+      "tests": "test/question.api.test.js",
+      "evidence": "源码: src/routes/question.routes.js, src/services/question.service.js, test/question.api.test.js；测试: test/question.api.test.js；验证: passed",
       "source": "Architecture_View.md:3"
     },
     {
@@ -994,9 +1297,9 @@
       "verified": true,
       "verification": "passed",
       "components": "UserComponent",
-      "files": "docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js",
-      "tests": "tests/domain.test.js; tests/e2e/flow.test.js",
-      "evidence": "源码: docs/requirements.json, requirements-traceability.json, requirements.json, src/domain.js；测试: tests/domain.test.js, tests/e2e/flow.test.js；验证: passed",
+      "files": "public/app.js; public/index.html; src/routes/user.routes.js; src/services/user.service.js; test/user.api.test.js",
+      "tests": "test/user.api.test.js",
+      "evidence": "源码: public/app.js, public/index.html, src/routes/user.routes.js, src/services/user.service.js；测试: test/user.api.test.js；验证: passed",
       "source": "Architecture_View.md:3"
     }
   ],
@@ -1006,8 +1309,8 @@
         "id": "structure",
         "status": "pass",
         "details": {
-          "files": 15,
-          "sources": 4,
+          "files": 34,
+          "sources": 28,
           "readme": true,
           "manifest": true,
           "tests": true,
@@ -1019,7 +1322,7 @@
         "id": "json_syntax",
         "status": "pass",
         "details": {
-          "checked": 4,
+          "checked": 3,
           "errors": []
         }
       },
@@ -1035,7 +1338,7 @@
         "id": "js_syntax",
         "status": "pass",
         "details": {
-          "checked": 4,
+          "checked": 26,
           "errors": [],
           "runtime": "node"
         }
@@ -1044,7 +1347,7 @@
         "id": "readme_links",
         "status": "pass",
         "details": {
-          "checked": 1,
+          "checked": 2,
           "missing": []
         }
       },
@@ -1058,88 +1361,86 @@
             {
               "id": "FR-1",
               "files": [
-                "docs/requirements.json",
-                "requirements-traceability.json",
-                "requirements.json",
-                "src/domain.js",
-                "src/index.js",
-                "tests/domain.test.js",
-                "tests/e2e/flow.test.js"
+                "test/fraction.test.js",
+                "test/game.api.test.js"
+              ],
+              "tests": [
+                "test/fraction.test.js",
+                "test/game.api.test.js"
               ],
               "evidence": true
             },
             {
               "id": "NFR-1",
               "files": [
-                "docs/requirements.json",
-                "requirements-traceability.json",
-                "requirements.json",
-                "src/index.js",
-                "tests/e2e/flow.test.js"
+                "test/performance.test.js"
+              ],
+              "tests": [
+                "test/performance.test.js"
               ],
               "evidence": true
             },
             {
               "id": "ASR-1",
               "files": [
-                "docs/requirements.json",
-                "requirements-traceability.json",
-                "requirements.json",
-                "src/domain.js",
-                "tests/domain.test.js"
+                "src/repositories/file-store.js",
+                "src/services/game.service.js",
+                "test/persistence-restart.test.js"
+              ],
+              "tests": [
+                "test/persistence-restart.test.js"
               ],
               "evidence": true
             },
             {
               "id": "ASR-2",
               "files": [
-                ".env.example",
-                "docs/requirements.json",
-                "requirements-traceability.json",
-                "requirements.json",
-                "src/domain.js",
-                "src/index.js",
-                "tests/domain.test.js",
-                "tests/e2e/flow.test.js"
+                "src/middleware/auth.js",
+                "src/middleware/error-handler.js",
+                "src/routes/question.routes.js",
+                "test/question.api.test.js",
+                "test/security.test.js"
+              ],
+              "tests": [
+                "test/question.api.test.js",
+                "test/security.test.js"
               ],
               "evidence": true
             },
             {
               "id": "FR-DERIVED-1",
               "files": [
-                "docs/requirements.json",
-                "requirements-traceability.json",
-                "requirements.json",
-                "src/domain.js",
-                "src/index.js",
-                "tests/domain.test.js",
-                "tests/e2e/flow.test.js"
+                "src/routes/user.routes.js",
+                "src/services/user.service.js",
+                "test/game.api.test.js",
+                "test/user.api.test.js"
+              ],
+              "tests": [
+                "test/game.api.test.js",
+                "test/user.api.test.js"
               ],
               "evidence": true
             },
             {
               "id": "FR-DERIVED-2",
               "files": [
-                "docs/requirements.json",
-                "requirements-traceability.json",
-                "requirements.json",
-                "src/domain.js",
-                "src/index.js",
-                "tests/domain.test.js",
-                "tests/e2e/flow.test.js"
+                "src/routes/question.routes.js",
+                "test/question.api.test.js"
+              ],
+              "tests": [
+                "test/question.api.test.js"
               ],
               "evidence": true
             },
             {
               "id": "FR-DERIVED-3",
               "files": [
-                "docs/requirements.json",
-                "requirements-traceability.json",
-                "requirements.json",
-                "src/domain.js",
-                "src/index.js",
-                "tests/domain.test.js",
-                "tests/e2e/flow.test.js"
+                "src/routes/user.routes.js",
+                "src/services/user.service.js",
+                "test/user.api.test.js"
+              ],
+              "tests": [
+                "test/user.api.test.js"
               ],
               "evidence": true
             }
@@ -1152,8 +1453,8 @@
         "profile": "node",
         "exit_code": 0,
         "passed": true,
-        "duration_s": 0.29,
-        "output": "TAP version 13\n# Subtest: seed data contains at least one full game of valid questions\nok 1 - seed data contains at least one full game of valid questions\n  ---\n  duration_ms: 1.2679\n  type: 'test'\n  ...\n# Subtest: createApp wires the logical components\nok 2 - createApp wires the logical components\n  ---\n  duration_ms: 0.3286\n  type: 'test'\n  ...\n# Subtest: correct answers accumulate points and the final answer ends the game\nok 3 - correct answers accumulate points and the final answer ends the game\n  ---\n  duration_ms: 2.4857\n  type: 'test'\n  ...\n# Subtest: a wrong answer does not change the score\nok 4 - a wrong answer does not change the score\n  ---\n  duration_ms: 0.2056\n  type: 'test'\n  ...\n# Subtest: answers reject out-of-range or non-integer selections\nok 5 - answers reject out-of-range or non-integer selections\n  ---\n  duration_ms: 0.1829\n  type: 'test'\n  ...\n# Subtest: pause and resume transition between game states\nok 6 - pause and resume transition between game states\n  ---\n  duration_ms: 0.2061\n  type: 'test'\n  ...\n# Subtest: reset starts a fresh game with the same guest id\nok 7 - reset starts a fresh game with the same guest id\n  ---\n  duration_ms: 0.1297\n  type: 'test'\n  ...\n# Subtest: game view does not leak the correct index of the current question\nok 8 - game view does not leak the correct index of the current question\n  ---\n  duration_ms: 0.1371\n  type: 'test'\n  ...\n# Subtest: QuestionComponent supports create, read, update and delete\nok 9 - QuestionComponent supports create, read, update and delete\n  ---\n  duration_ms: 0.3043\n  type: 'test'\n  ...\n# Subtest: question validation rejects invalid shapes\nok 10 - question validation rejects invalid shapes\n  ---\n  duration_ms: 0.7408\n  type: 'test'\n  ...\n# Subtest: creating a question with a duplicate id is rejected\nok 11 - creating a question with a duplicate id is rejected\n  ---\n  duration_ms: 0.1615\n  type: 'test'\n  ...\n# Subtest: AdminComponent authorizes only the configured token\nok 12 - AdminComponent authorizes only the configured token\n  ---\n  duration_ms: 0.1357\n  type: 'test'\n  ...\n# Subtest: UserComponent creates unique guest identities\nok 13 - UserComponent creates unique guest identities\n  ---\n  duration_ms: 0.0827\n  type: 'test'\n  ...\n# Subtest: pick returns all available questions when fewer than requested\nok 14 - pick returns all available questions when fewer than requested\n  ---\n  duration_ms: 0.036\n  type: 'test'\n  ...\n# Subtest: starting a game with no questions throws a validation error\nok 15 - starting a game with no questions throws a validation error\n  ---\n  duration_ms: 0.0693\n  type: 'test'\n  ...\n# Subtest: health and help endpoints are public\nok 16 - health and help endpoints are public\n  ---\n  duration_ms: 46.026\n  type: 'test'\n  ...\n# Subtest: a full game flow ends with a score and supports reset\nok 17 - a full game flow ends with a score and supports reset\n  ---\n  duration_ms: 23.6911\n  type: 'test'\n  ...\n# Subtest: admin question endpoints enforce auth and support CRUD\nok 18 - admin question endpoints enforce auth and support CRUD\n  ---\n  duration_ms: 8.0788\n  type: 'test'\n  ...\n# Subtest: invalid input and unknown routes return 4xx responses\nok 19 - invalid input and unknown routes return 4xx responses\n  ---\n  duration_ms: 7.574\n  type: 'test'\n  ...\n1..19\n# tests 19\n# suites 0\n# pass 19\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 214.097\n",
+        "duration_s": 0.5,
+        "output": "TAP version 13\n# Subtest: gcd and reduceFraction normalise fractions\nok 1 - gcd and reduceFraction normalise fractions\n  ---\n  duration_ms: 1.0234\n  type: 'test'\n  ...\n# Subtest: parseFraction accepts simple, mixed and whole-number forms\nok 2 - parseFraction accepts simple, mixed and whole-number forms\n  ---\n  duration_ms: 0.3051\n  type: 'test'\n  ...\n# Subtest: fraction arithmetic returns reduced results\nok 3 - fraction arithmetic returns reduced results\n  ---\n  duration_ms: 0.2592\n  type: 'test'\n  ...\n# Subtest: formatFraction renders canonical and mixed-number forms\nok 4 - formatFraction renders canonical and mixed-number forms\n  ---\n  duration_ms: 0.1401\n  type: 'test'\n  ...\n# Subtest: generated questions have four unique options and a valid correct answer\nok 5 - generated questions have four unique options and a valid correct answer\n  ---\n  duration_ms: 4.1978\n  type: 'test'\n  ...\n# Subtest: generated question answers are mathematically correct\nok 6 - generated question answers are mathematically correct\n  ---\n  duration_ms: 0.7378\n  type: 'test'\n  ...\n# Subtest: full game flow awards 10 points per correct answer and reaches 100\nok 7 - full game flow awards 10 points per correct answer and reaches 100\n  ---\n  duration_ms: 93.919\n  type: 'test'\n  ...\n# Subtest: wrong answers earn zero points and still advance the game\nok 8 - wrong answers earn zero points and still advance the game\n  ---\n  duration_ms: 14.4152\n  type: 'test'\n  ...\n# Subtest: unknown games return 404\nok 9 - unknown games return 404\n  ---\n  duration_ms: 10.6337\n  type: 'test'\n  ...\n# Subtest: test\\\\helpers\\\\test-app.js\nok 3 - test\\\\helpers\\\\test-app.js\n  ---\n  duration_ms: 155.1217\n  type: 'test'\n  ...\n# Subtest: health and help endpoints respond within the latency budget\nok 11 - health and help endpoints respond within the latency budget\n  ---\n  duration_ms: 61.5858\n  type: 'test'\n  ...\n# Subtest: game creation and a full answer loop stay within the latency budget\nok 12 - game creation and a full answer loop stay within the latency budget\n  ---\n  duration_ms: 32.9482\n  type: 'test'\n  ...\n# Subtest: questions and scores survive a simulated process restart\nok 13 - questions and scores survive a simulated process restart\n  ---\n  duration_ms: 15.3478\n  type: 'test'\n  ...\n# Subtest: seed questions are written to the questions file on first boot\nok 14 - seed questions are written to the questions file on first boot\n  ---\n  duration_ms: 4.7084\n  type: 'test'\n  ...\n# Subtest: empty data files are treated as empty collections, not crashes\nok 15 - empty data files are treated as empty collections, not crashes\n  ---\n  duration_ms: 5.4836\n  type: 'test'\n  ...\n# Subtest: admin question list requires a valid token\nok 16 - admin question list requires a valid token\n  ---\n  duration_ms: 61.9238\n  type: 'test'\n  ...\n# Subtest: admin can create, read, update and delete a question\nok 17 - admin can create, read, update and delete a question\n  ---\n  duration_ms: 32.8109\n  type: 'test'\n  ...\n# Subtest: question creation without token is rejected and nothing is written\nok 18 - question creation without token is rejected and nothing is written\n  ---\n  duration_ms: 9.035\n  type: 'test'\n  ...\n# Subtest: invalid question payloads return 400 with details\nok 19 - invalid question payloads return 400 with details\n  ---\n  duration_ms: 7.3246\n  type: 'test'\n  ...\n# Subtest: admin endpoints reject missing, malformed and wrong tokens\nok 20 - admin endpoints reject missing, malformed and wrong tokens\n  ---\n  duration_ms: 60.769\n  type: 'test'\n  ...\n# Subtest: responses include defensive security headers and no powered-by header\nok 21 - responses include defensive security headers and no powered-by header\n  ---\n  duration_ms: 11.2973\n  type: 'test'\n  ...\n# Subtest: invalid JSON bodies are rejected with a controlled error\nok 22 - invalid JSON bodies are rejected with a controlled error\n  ---\n  duration_ms: 7.2653\n  type: 'test'\n  ...\n# Subtest: game question payloads never expose the correct answer index\nok 23 - game question payloads never expose the correct answer index\n  ---\n  duration_ms: 10.8485\n  type: 'test'\n  ...\n# Subtest: admin delete without token does not remove questions\nok 24 - admin delete without token does not remove questions\n  ---\n  duration_ms: 8.6461\n  type: 'test'\n  ...\n# Subtest: help endpoint returns keyboard and scoring guidance for students\nok 25 - help endpoint returns keyboard and scoring guidance for students\n  ---\n  duration_ms: 54.2759\n  type: 'test'\n  ...\n# Subtest: guest creation returns an id and score history is empty before play\nok 26 - guest creation returns an id and score history is empty before play\n  ---\n  duration_ms: 14.7751\n  type: 'test'\n  ...\n# Subtest: completed scores are returned for a guest\nok 27 - completed scores are returned for a guest\n  ---\n  duration_ms: 26.7256\n  type: 'test'\n  ...\n1..27\n# tests 27\n# suites 0\n# pass 27\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 412.9171\n",
         "timed_out": false
       }
     ],
@@ -1170,8 +1471,8 @@
               "package.json"
             ],
             "assumptions": true,
-            "tests": 2,
-            "sources": 4,
+            "tests": 7,
+            "sources": 28,
             "empty_sources": []
           }
         },
@@ -1202,6 +1503,44 @@
             },
             "unmapped_fr": []
           }
+        },
+        {
+          "id": "web_ui",
+          "status": "pass",
+          "details": {
+            "html": [
+              "public/index.html"
+            ],
+            "scripts": 26,
+            "styles": 1,
+            "scene_markers": {
+              "intro": false,
+              "menu": true,
+              "question": true,
+              "score": true,
+              "result": true,
+              "help": true
+            },
+            "issues": []
+          }
+        },
+        {
+          "id": "persistence",
+          "status": "pass",
+          "details": {
+            "source_evidence": [
+              "test/helpers/test-app.js",
+              "test/persistence-restart.test.js",
+              "src/http.js",
+              "src/repositories/file-store.js",
+              "public/app.js",
+              "src/app.js"
+            ],
+            "test_evidence": [
+              "test/persistence-restart.test.js"
+            ],
+            "issues": []
+          }
         }
       ],
       "coverage": {
@@ -1218,93 +1557,188 @@
         "percent": 100.0,
         "verified_percent": 100.0
       },
-      "files": 15
+      "files": 34
     }
   },
   "usage": {
-    "input_tokens": 1370537,
-    "output_tokens": 58339,
-    "cached_tokens": 1296512,
-    "reasoning_tokens": 31703,
-    "total_tokens": 1428876,
-    "requests": 37,
-    "estimated_cost_usd": 0.081532
+    "input_tokens": 2525691,
+    "output_tokens": 91059,
+    "cached_tokens": 2370432,
+    "reasoning_tokens": 51670,
+    "total_tokens": 2616750,
+    "requests": 75,
+    "estimated_cost_usd": 0.148089
   },
   "files": [
     {
       "path": ".env.example",
-      "bytes": 434,
-      "sha256": "87b2f603f4f6b42e6d3a8ad409e38ce4bb006187642ffa6508b6a54151839df8"
+      "bytes": 439,
+      "sha256": "eafed5654af836e805cc35cfb5a54b98f2f7fe63151242e91b51787486c32a3b"
     },
     {
       "path": "README.md",
-      "bytes": 5189,
-      "sha256": "164e6e509fb081461792554f7f74dd24f86d065504c68124dbbd94e89299d71d"
+      "bytes": 6850,
+      "sha256": "64d53ac72ffe6b595aa9961aed4e3719b57a4d28d41e55ff673bbc0cf597777a"
+    },
+    {
+      "path": "data/scores.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "data/seed-questions.json",
+      "bytes": 1945,
+      "sha256": "efa705f921df81829b51f6769bda352236276380460e46dda042598a1094bc84"
     },
     {
       "path": "docs/ASSUMPTIONS.md",
-      "bytes": 8587,
-      "sha256": "3d41a6f6dbd5381188f6f6a6000866ed2385fc299819421e3dd11306eb514d2d"
-    },
-    {
-      "path": "docs/architecture-summary.md",
-      "bytes": 7643,
-      "sha256": "ba834dd9921db7ddd31067ddaa0d93e70b53867cd7485ca139514fee21016692"
-    },
-    {
-      "path": "docs/requirements-traceability.md",
-      "bytes": 1306,
-      "sha256": "b026732b779cf4c31cc2546b26a25f56f04ce2d9ff0368e73f0ab1a4fd002a3f"
-    },
-    {
-      "path": "docs/requirements.json",
-      "bytes": 908,
-      "sha256": "fe2e74f1cfc410de2f7b4b80068eafaf602e1c711539a36ac049e8718f336628"
-    },
-    {
-      "path": "docs/requirements.md",
-      "bytes": 1336,
-      "sha256": "9374d5cf93696a277f59334dcd2709fb77c4e5580c0129f34636ee0ddc66c33e"
+      "bytes": 6404,
+      "sha256": "990bd9719c1b28cfa423040e6e28d1a9edcde033abd4a3deff410fdf6d5f5b4a"
     },
     {
       "path": "package.json",
-      "bytes": 670,
-      "sha256": "30d12938e0b1396b806b57307187a192e4a2464aafbc742e73278fa1bf60543e"
+      "bytes": 633,
+      "sha256": "2919ac98efef670ce2b059111e8fa188c267aa2cd483d493420a31a4daf6245f"
     },
     {
-      "path": "requirements-traceability.json",
-      "bytes": 978,
-      "sha256": "203deac2a1dbcc503be4580d0566f60c25c0863e80101038449f0bc7fdbd6796"
+      "path": "public/app.js",
+      "bytes": 7594,
+      "sha256": "7b1f7b844a23ae06ea4891e9795cc0fc5cec78638a85dbe356ab0efa58bb3d78"
     },
     {
-      "path": "requirements.json",
-      "bytes": 621,
-      "sha256": "eb4a12efadcfa718ce7344f34be610b180a68ce6d9a70b89bc938a61a980739d"
+      "path": "public/index.html",
+      "bytes": 3850,
+      "sha256": "12ec13b20656ed0099d724e5ef65ad1641dc080d1604f2b40479911d62b7811d"
     },
     {
-      "path": "requirements.md",
-      "bytes": 1119,
-      "sha256": "51446cde0a596cfd65daf0407a232da60d8322252a307564e79fcec7bd410d8f"
+      "path": "public/styles.css",
+      "bytes": 4019,
+      "sha256": "12d945e7a8679f3e885b7c857d54ddbef39704883dcb428c4a0c2a564f10e638"
     },
     {
-      "path": "src/domain.js",
-      "bytes": 15504,
-      "sha256": "d44ccb84f2e7774becc003a5e2c601eb51cbb04766cfefc2b2feb3d38dcdb431"
+      "path": "src/app.js",
+      "bytes": 3208,
+      "sha256": "02d9bbfa86c7f82691d1a6d03a7fc3caf96899ec9c90ec61d950622bf5fd6e3c"
     },
     {
-      "path": "src/index.js",
-      "bytes": 6870,
-      "sha256": "58656267474b43e420c030bd4891c70a10c8965062897ff0611abd1b9482687e"
+      "path": "src/config.js",
+      "bytes": 794,
+      "sha256": "d53dbaba529b9368dd06503d250514d92c9ae09d69025c261269a65551c52153"
     },
     {
-      "path": "tests/domain.test.js",
-      "bytes": 7102,
-      "sha256": "1249d11179f8639374e13c560dd48d3150a3050b03bac9a24e795f75dc484d17"
+      "path": "src/domain/fraction.js",
+      "bytes": 6420,
+      "sha256": "7e4e287668d296a80232060189cce122ca7465518ddf3b4046cb783692c46b43"
     },
     {
-      "path": "tests/e2e/flow.test.js",
-      "bytes": 5405,
-      "sha256": "0852a3203fa177ffd6605a5e706e2332f843dec660b284a2717b8358e33a9c92"
+      "path": "src/domain/game.js",
+      "bytes": 4045,
+      "sha256": "b03e3463e2d9c8f9e3a0825ede3468073a3adf6ebf9a07b7d5f4b46815cd5dc6"
+    },
+    {
+      "path": "src/http.js",
+      "bytes": 11627,
+      "sha256": "ebcf92646c3bb3b53d127d5e87b5b79257f8a34138554ffab52e54a1e6ad61b7"
+    },
+    {
+      "path": "src/middleware/auth.js",
+      "bytes": 1280,
+      "sha256": "b687293727ef15826d4e571b0644beaf81e0592f67da39900168879242b096c2"
+    },
+    {
+      "path": "src/middleware/error-handler.js",
+      "bytes": 1703,
+      "sha256": "b9eb8cdc32ccc39543af74aa1fbb649b757261b240e9a188df2a6db57eeabc6c"
+    },
+    {
+      "path": "src/repositories/file-store.js",
+      "bytes": 1311,
+      "sha256": "09abd10293b4dcd8e118c38a737987a2e8b36543c01fc17690f6e36309282a55"
+    },
+    {
+      "path": "src/repositories/question.repository.js",
+      "bytes": 1960,
+      "sha256": "f31e3c4dc8d5ece8db33dbe6c520f8b07113ca5e9e258c222c964b25ff3e8cdb"
+    },
+    {
+      "path": "src/repositories/score.repository.js",
+      "bytes": 1030,
+      "sha256": "c1729a9915c1f45c497db1de99446464ad9740004556ab6ecf64f6e03c176235"
+    },
+    {
+      "path": "src/routes/game.routes.js",
+      "bytes": 1736,
+      "sha256": "ed9c2cb680d4c0effd209392c5dd0a494e9905554c225b10dca549ce32d7e064"
+    },
+    {
+      "path": "src/routes/question.routes.js",
+      "bytes": 1516,
+      "sha256": "2ec4dd3e70f4dbedaee9cdd1be81f4d77cb9dcf7d5574fdbe87b2496f8dd1009"
+    },
+    {
+      "path": "src/routes/user.routes.js",
+      "bytes": 614,
+      "sha256": "259fcc184487cf4bfd6c36ba0811ad1c4c88bdfa11357f0c50f112bfec85578a"
+    },
+    {
+      "path": "src/server.js",
+      "bytes": 474,
+      "sha256": "e4a31c5e093d6a4ef9a7b79f07fe665e16a0a97e17d3f63a4b637b9159168738"
+    },
+    {
+      "path": "src/services/game.service.js",
+      "bytes": 4086,
+      "sha256": "f8c9a219ca662731c00c2d9e97429fd4b3338e85b8d87a85803b18f7119c257f"
+    },
+    {
+      "path": "src/services/question.service.js",
+      "bytes": 3239,
+      "sha256": "f445d5bbb5b64545408c504720d2dd789365342469b1c1269947aa04ec8079f6"
+    },
+    {
+      "path": "src/services/user.service.js",
+      "bytes": 2289,
+      "sha256": "afe857f3a62dd8f8f22b867e562b64185b4311fa89332eeede92d529a4a8d49d"
+    },
+    {
+      "path": "test/fraction.test.js",
+      "bytes": 3737,
+      "sha256": "9cae49796669bfd564721806fc79523f584e091849b2afc5858a67c4fa2349e3"
+    },
+    {
+      "path": "test/game.api.test.js",
+      "bytes": 4172,
+      "sha256": "486d2c760b600ea76d8c65853dff1e9e7cbe5fed06ec5968d7b2e948dd3c5060"
+    },
+    {
+      "path": "test/helpers/test-app.js",
+      "bytes": 2976,
+      "sha256": "0a374c0a7c6a2ead730e7d78545476542d08e17a4d054adea7e3700f0d734d90"
+    },
+    {
+      "path": "test/performance.test.js",
+      "bytes": 2476,
+      "sha256": "8bb223a39d0a3f1037b4cb448c9caa41d5b0877fc998aec5588137bc520d76e9"
+    },
+    {
+      "path": "test/persistence-restart.test.js",
+      "bytes": 3265,
+      "sha256": "ab81f460be9f0ece8dbe2b4be4b9cde25a46835ffb84b51b345fc9d19b660687"
+    },
+    {
+      "path": "test/question.api.test.js",
+      "bytes": 4012,
+      "sha256": "0de49be54a0b0c58e1f8fbeb5135a890f196f86473d2711293258b9147c21a11"
+    },
+    {
+      "path": "test/security.test.js",
+      "bytes": 3855,
+      "sha256": "6502e6292de548abb774f8fb9e894dffdff638276d3a52defa0f8f5250352870"
+    },
+    {
+      "path": "test/user.api.test.js",
+      "bytes": 2761,
+      "sha256": "1724057b3aec9952710a23b92ddb34f90c7192f714602f4717394c3b2719e3a6"
     }
   ],
   "artifacts": {

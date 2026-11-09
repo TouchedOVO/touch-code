@@ -1,12 +1,12 @@
 # Space Fractions — Code Agent 生成报告
 
 **状态：COMPLETED**  
-**生成时间：** 2026-11-09T21:28:10+08:00  
+**生成时间：** 2026-11-09T22:54:42+08:00  
 **运行模式：** DeepSeek 真实 API  
 **模型：** deepseek-v4-pro（reasoning effort=high）  
 **输出目录：** `generated-project`  
-**总耗时：** 1226.5s  
-**Agent 步数 / 工具调用：** 37 / 57  
+**总耗时：** 1720.1s  
+**Agent 步数 / 工具调用：** 75 / 114  
 **文件映射覆盖率：** 7/7 （100.0%），未映射=0  
 **测试验证覆盖率：** 7/7 （100.0%），未验证=0，失败=0  
 **Agent 内部状态：** completed  
@@ -15,7 +15,7 @@
 
 ## 1. 执行摘要
 
-为 Space Fractions 生成的模块化实现（模型计划失败后的确定性回退）。
+A web-based, interactive learning tool for sixth-grade students to practice fraction-solving skills. The implementation uses modular microservice-style boundaries inside a single Node.js process so that all requirements can be verified without external cloud services. The browser UI provides play, score, and help views; administration is protected by an environment-configured token; question data is persisted to a JSON file store to satisfy data durability and restart recovery.
 
 ### 1.1 执行阶段
 
@@ -24,9 +24,10 @@
 | VALIDATING_INPUT | 校验输入文档与输出目录 | 0.0s |
 | NORMALIZING | 解析架构文档与 UML 视图 | 0.0s |
 | PLANNING | 生成结构化实施计划 | 0.01s |
-| IMPLEMENTING | Agent 正在写入项目文件 | 326.91s |
-| VERIFYING | 静态检查与本地测试 | 1225.88s |
-| REPORTING | 生成报告与追溯矩阵 | 1226.52s |
+| IMPLEMENTING | Agent 正在写入项目文件 | 339.07s |
+| VERIFYING | 静态检查与本地测试 | 1400.55s |
+| REPAIRING | 第 1/3 轮修复 | 1403.19s |
+| REPORTING | 生成报告与追溯矩阵 | 1720.05s |
 
 ## 2. 输入与解析
 
@@ -68,13 +69,13 @@
 
 | 需求 | 类型 | 标题 | 置信度 | 状态 | 验证 | 实现文件 | 测试 |
 |---|---|---|---|---|---|---|---|
-| FR-1 | FR | Play game | explicit | verified | passed | docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js | tests/domain.test.js; tests/e2e/flow.test.js |
-| NFR-1 | NFR | Performance | explicit | verified | passed | docs/requirements.json; requirements-traceability.json; requirements.json; src/index.js; tests/e2e/flow.test.js | tests/e2e/flow.test.js |
-| ASR-1 | ASR | Data durability | explicit | verified | passed | docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; tests/domain.test.js | tests/domain.test.js |
-| ASR-2 | ASR | Security | inferred | verified | passed | .env.example; docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js | tests/domain.test.js; tests/e2e/flow.test.js |
-| FR-DERIVED-1 | FR | View Score | diagram-derived | verified | passed | docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js | tests/domain.test.js; tests/e2e/flow.test.js |
-| FR-DERIVED-2 | FR | Update Questions | diagram-derived | verified | passed | docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js | tests/domain.test.js; tests/e2e/flow.test.js |
-| FR-DERIVED-3 | FR | View Help | diagram-derived | verified | passed | docs/requirements.json; requirements-traceability.json; requirements.json; src/domain.js; src/index.js; tests/domain.test.js; tests/e2e/flow.test.js | tests/domain.test.js; tests/e2e/flow.test.js |
+| FR-1 | FR | Play game | explicit | verified | passed | public/app.js; public/index.html; public/styles.css; src/domain/fraction.js; src/domain/game.js; src/routes/game.routes.js; src/services/game.service.js; test/fraction.test.js; test/game.api.test.js | test/fraction.test.js; test/game.api.test.js |
+| NFR-1 | NFR | Performance | explicit | verified | passed | src/app.js; test/performance.test.js | test/performance.test.js |
+| ASR-1 | ASR | Data durability | explicit | verified | passed | data/scores.json; data/seed-questions.json; src/repositories/file-store.js; src/repositories/question.repository.js; src/repositories/score.repository.js; src/services/game.service.js; src/services/question.service.js; test/persistence-restart.test.js | test/persistence-restart.test.js |
+| ASR-2 | ASR | Security | inferred | verified | passed | src/middleware/auth.js; src/middleware/error-handler.js; src/routes/question.routes.js; src/services/user.service.js; test/question.api.test.js; test/security.test.js | test/question.api.test.js; test/security.test.js |
+| FR-DERIVED-1 | FR | View Score | diagram-derived | verified | passed | public/app.js; public/index.html; src/routes/game.routes.js; src/routes/user.routes.js; src/services/game.service.js; src/services/user.service.js; test/game.api.test.js; test/user.api.test.js | test/game.api.test.js; test/user.api.test.js |
+| FR-DERIVED-2 | FR | Update Questions | diagram-derived | verified | passed | src/routes/question.routes.js; src/services/question.service.js; test/question.api.test.js | test/question.api.test.js |
+| FR-DERIVED-3 | FR | View Help | diagram-derived | verified | passed | public/app.js; public/index.html; src/routes/user.routes.js; src/services/user.service.js; test/user.api.test.js | test/user.api.test.js |
 
 完整机器可读矩阵见 `traceability_matrix.csv`；逐文件哈希见 `run_manifest.json`。
 
@@ -82,23 +83,42 @@
 
 | 文件 | 大小 | SHA-256 |
 |---|---:|---|
-| `.env.example` | 434 B | `87b2f603f4f6b42e6d3a8ad4` |
-| `README.md` | 5.1 KB | `164e6e509fb081461792554f` |
-| `docs/ASSUMPTIONS.md` | 8.4 KB | `3d41a6f6dbd5381188f6f6a6` |
-| `docs/architecture-summary.md` | 7.5 KB | `ba834dd9921db7ddd31067dd` |
-| `docs/requirements-traceability.md` | 1.3 KB | `b026732b779cf4c31cc2546b` |
-| `docs/requirements.json` | 908 B | `fe2e74f1cfc410de2f7b4b80` |
-| `docs/requirements.md` | 1.3 KB | `9374d5cf93696a277f59334d` |
-| `package.json` | 670 B | `30d12938e0b1396b806b5730` |
-| `requirements-traceability.json` | 978 B | `203deac2a1dbcc503be4580d` |
-| `requirements.json` | 621 B | `eb4a12efadcfa718ce7344f3` |
-| `requirements.md` | 1.1 KB | `51446cde0a596cfd65daf040` |
-| `src/domain.js` | 15.1 KB | `d44ccb84f2e7774becc003a5` |
-| `src/index.js` | 6.7 KB | `58656267474b43e420c030bd` |
-| `tests/domain.test.js` | 6.9 KB | `1249d11179f8639374e13c56` |
-| `tests/e2e/flow.test.js` | 5.3 KB | `0852a3203fa177ffd6605a5e` |
+| `.env.example` | 439 B | `eafed5654af836e805cc35cf` |
+| `README.md` | 6.7 KB | `64d53ac72ffe6b595aa9961a` |
+| `data/scores.json` | 3 B | `37517e5f3dc66819f61f5a7b` |
+| `data/seed-questions.json` | 1.9 KB | `efa705f921df81829b51f676` |
+| `docs/ASSUMPTIONS.md` | 6.3 KB | `990bd9719c1b28cfa423040e` |
+| `package.json` | 633 B | `2919ac98efef670ce2b05911` |
+| `public/app.js` | 7.4 KB | `7b1f7b844a23ae06ea4891e9` |
+| `public/index.html` | 3.8 KB | `12ec13b20656ed0099d724e5` |
+| `public/styles.css` | 3.9 KB | `12d945e7a8679f3e885b7c85` |
+| `src/app.js` | 3.1 KB | `02d9bbfa86c7f82691d1a6d0` |
+| `src/config.js` | 794 B | `d53dbaba529b9368dd06503d` |
+| `src/domain/fraction.js` | 6.3 KB | `7e4e287668d296a802320601` |
+| `src/domain/game.js` | 4.0 KB | `b03e3463e2d9c8f9e3a0825e` |
+| `src/http.js` | 11.4 KB | `ebcf92646c3bb3b53d127d5e` |
+| `src/middleware/auth.js` | 1.2 KB | `b687293727ef15826d4e571b` |
+| `src/middleware/error-handler.js` | 1.7 KB | `b9eb8cdc32ccc39543af74aa` |
+| `src/repositories/file-store.js` | 1.3 KB | `09abd10293b4dcd8e118c38a` |
+| `src/repositories/question.repository.js` | 1.9 KB | `f31e3c4dc8d5ece8db33dbe6` |
+| `src/repositories/score.repository.js` | 1.0 KB | `c1729a9915c1f45c497db1de` |
+| `src/routes/game.routes.js` | 1.7 KB | `ed9c2cb680d4c0effd209392` |
+| `src/routes/question.routes.js` | 1.5 KB | `2ec4dd3e70f4dbedaee9cdd1` |
+| `src/routes/user.routes.js` | 614 B | `259fcc184487cf4bfd6c36ba` |
+| `src/server.js` | 474 B | `e4a31c5e093d6a4ef9a7b79f` |
+| `src/services/game.service.js` | 4.0 KB | `f8c9a219ca662731c00c2d9e` |
+| `src/services/question.service.js` | 3.2 KB | `f445d5bbb5b64545408c5047` |
+| `src/services/user.service.js` | 2.2 KB | `afe857f3a62dd8f8f22b867e` |
+| `test/fraction.test.js` | 3.6 KB | `9cae49796669bfd564721806` |
+| `test/game.api.test.js` | 4.1 KB | `486d2c760b600ea76d8c6585` |
+| `test/helpers/test-app.js` | 2.9 KB | `0a374c0a7c6a2ead730e7d78` |
+| `test/performance.test.js` | 2.4 KB | `8bb223a39d0a3f1037b4cb44` |
+| `test/persistence-restart.test.js` | 3.2 KB | `ab81f460be9f0ece8dbe2b4b` |
+| `test/question.api.test.js` | 3.9 KB | `0de49be54a0b0c58e1f8fbeb` |
+| `test/security.test.js` | 3.8 KB | `6502e6292de548abb774f8fb` |
+| `test/user.api.test.js` | 2.7 KB | `1724057b3aec9952710a23b9` |
 
-共 15 个文件，其中 Agent 记录写入 15 个，累计 62.2 KB。
+共 34 个文件，其中 Agent 记录写入 34 个，累计 103.8 KB。
 
 ## 5. 验证结果
 
@@ -106,122 +126,129 @@
 
 | 检查 | 状态 | 详情 |
 |---|---|---|
-| structure | pass | {"files": 15, "sources": 4, "readme": true, "manifest": true, "tests": true, "issues": [], "notes": []} |
-| json_syntax | pass | {"checked": 4, "errors": []} |
+| structure | pass | {"files": 34, "sources": 28, "readme": true, "manifest": true, "tests": true, "issues": [], "notes": []} |
+| json_syntax | pass | {"checked": 3, "errors": []} |
 | python_syntax | pass | {"checked": 0, "errors": []} |
-| js_syntax | pass | {"checked": 4, "errors": [], "runtime": "node"} |
-| readme_links | pass | {"checked": 1, "missing": []} |
-| requirement_traceability | pass | {"total": 7, "covered": 7, "rows": [{"id": "FR-1", "files": ["docs/requirements.json", "requirements-traceability.json", "requirements.json", "src/domain.js", "src/index.js", "tests/domain.test.js", "tests/e2e/flow.test.js"], "evidence": true}, {"id": "NFR-1", "files": ["docs/requirements.json", "requirements-traceability.json", "requirements.json", "src/index.js", "tests/e2e/flow.test.js"], "evid |
+| js_syntax | pass | {"checked": 26, "errors": [], "runtime": "node"} |
+| readme_links | pass | {"checked": 2, "missing": []} |
+| requirement_traceability | pass | {"total": 7, "covered": 7, "rows": [{"id": "FR-1", "files": ["test/fraction.test.js", "test/game.api.test.js"], "tests": ["test/fraction.test.js", "test/game.api.test.js"], "evidence": true}, {"id": "NFR-1", "files": ["test/performance.test.js"], "tests": ["test/performance.test.js"], "evidence": true}, {"id": "ASR-1", "files": ["src/repositories/file-store.js", "src/services/game.service.js", "te |
+
+### 5.1b 功能交付契约
+
+| 检查 | 状态 | 详情 |
+|---|---|---|
+| web_ui | pass | {"html": ["public/index.html"], "scripts": 26, "styles": 1, "scene_markers": {"intro": false, "menu": true, "question": true, "score": true, "result": true, "help": true}, "issues": []} |
+| persistence | pass | {"source_evidence": ["test/helpers/test-app.js", "test/persistence-restart.test.js", "src/http.js", "src/repositories/file-store.js", "public/app.js", "src/app.js"], "test_evidence": ["test/persistence-restart.test.js"], "issues": []} |
 
 ### 5.2 自动化测试
 
-- `node`：exit=0，passed=True，耗时 0.29s
+- `node`：exit=0，passed=True，耗时 0.5s
 
 ```text
 TAP version 13
-# Subtest: seed data contains at least one full game of valid questions
-ok 1 - seed data contains at least one full game of valid questions
+# Subtest: gcd and reduceFraction normalise fractions
+ok 1 - gcd and reduceFraction normalise fractions
   ---
-  duration_ms: 1.2679
+  duration_ms: 1.0234
   type: 'test'
   ...
-# Subtest: createApp wires the logical components
-ok 2 - createApp wires the logical components
+# Subtest: parseFraction accepts simple, mixed and whole-number forms
+ok 2 - parseFraction accepts simple, mixed and whole-number forms
   ---
-  duration_ms: 0.3286
+  duration_ms: 0.3051
   type: 'test'
   ...
-# Subtest: correct answers accumulate points and the final answer ends the game
-ok 3 - correct answers accumulate points and the final answer ends the game
+# Subtest: fraction arithmetic returns reduced results
+ok 3 - fraction arithmetic returns reduced results
   ---
-  duration_ms: 2.4857
+  duration_ms: 0.2592
   type: 'test'
   ...
-# Subtest: a wrong answer does not change the score
-ok 4 - a wrong answer does not change the score
+# Subtest: formatFraction renders canonical and mixed-number forms
+ok 4 - formatFraction renders canonical and mixed-number forms
   ---
-  duration_ms: 0.2056
+  duration_ms: 0.1401
   type: 'test'
   ...
-# Subtest: answers reject out-of-range or non-integer selections
-ok 5 - answers reject out-of-range or non-integer selections
+# Subtest: generated questions have four unique options and a valid correct answer
+ok 5 - generated questions have four unique options and a valid correct answer
   ---
-  duration_ms: 0.1829
+  duration_ms: 4.1978
   type: 'test'
   ...
-# Subtest: pause and resume transition between game states
-ok 6 - pause and resume transition between game states
+# Subtest: generated question answers are mathematically correct
+ok 6 - generated question answers are mathematically correct
   ---
-  duration_ms: 0.2061
+  duration_ms: 0.7378
   type: 'test'
   ...
-# Subtest: reset starts a fresh game with the same guest id
-ok 7 - reset starts a fresh game with the same guest id
+# Subtest: full game flow awards 10 points per correct answer and reaches 100
+ok 7 - full game flow awards 10 points per correct answer and reaches 100
   ---
-  duration_ms: 0.1297
+  duration_ms: 93.919
   type: 'test'
   ...
-# Subtest: game view does not leak the correct index of the current question
-ok 8 - game view does not leak the correct index of the current question
+# Subtest: wrong answers earn zero points and still advance the game
+ok 8 - wrong answers earn zero points and still advance the game
   ---
-  duration_ms: 0.1371
+  duration_ms: 14.4152
   type: 'test'
   ...
-# Subtest: QuestionComponent supports create, read, update and delete
-ok 9 - QuestionComponent supports create, read, update and delete
+# Subtest: unknown games return 404
+ok 9 - unknown games return 404
   ---
-  duration_ms: 0.3043
+  duration_ms: 10.6337
   type: 'test'
   ...
-# Subtest: question validation rejects invalid shapes
-ok 10 - question validation rejects invalid shapes
+# Subtest: test\\helpers\\test-app.js
+ok 3 - test\\helpers\\test-app.js
   ---
-  duration_ms: 0.7408
+  duration_ms: 155.1217
   type: 'test'
   ...
-# Subtest: creating a question with a duplicate id is rejected
-ok 11 - creating a question with a duplicate id is rejected
+# Subtest: health and help endpoints respond within the latency budget
+ok 11 - health and help endpoints respond within the latency budget
   ---
-  duration_ms: 0.1615
+  duration_ms: 61.5858
   type: 'test'
   ...
-# Subtest: AdminComponent authorizes only the configured token
-ok 12 - AdminComponent authorizes only the configured token
+# Subtest: game creation and a full answer loop stay within the latency budget
+ok 12 - game creation and a full answer loop stay within the latency budget
   ---
-  duration_ms: 0.1357
+  duration_ms: 32.9482
   type: 'test'
   ...
-# Subtest: UserComponent creates unique guest identities
-ok 13 - UserComponent creates unique guest identities
+# Subtest: questions and scores survive a simulated process restart
+ok 13 - questions and scores survive a simulated process restart
   ---
-  duration_ms: 0.0827
+  duration_ms: 15.3478
   type: 'test'
   ...
-# Subtest: pick returns all available questions when fewer than requested
-ok 14 - pick returns all available questions when fewer than requested
+# Subtest: seed questions are written to the questions file on first boot
+ok 14 - seed questions are written to the questions file on first boot
   ---
-  duration_ms: 0.036
+  duration_ms: 4.7084
   type: 'test'
   ...
-# Subtest: starting a game with no questions throws a validation error
-ok 15 - starting a game with no questions throws a validation error
+# Subtest: empty data files are treated as empty collections, not crashes
+ok 15 - empty data files are treated as empty collections, not crashes
   ---
-  duration_ms: 0.0693
+  duration_ms: 5.4836
   type: 'test'
   ...
-# Subtest: health and help endpoints are public
-ok 16 - health and help endpoints are public
+# Subtest: admin question list requires a valid token
+ok 16 - admin question list requires a valid token
   ---
-  duration_ms: 46.026
+  duration_ms: 61.9238
   type: 'test'
   ...
-# Subtest: a full game flow ends with a score and supports reset
-ok 17 - a full game flow ends with a score and supports reset
+# Subtest: admin can create, read, update and delete a question
+ok 17 - admin can create, read, update and delete a question
   ---
-  duration_ms: 23.6911
+  duration_ms: 32.8109
   type: 'test'
   ...
-# Subtest: admin question endpoints enforce auth and
+# Subt
 ```
 
 
@@ -238,19 +265,27 @@ ok 17 - a full game flow ends with a score and supports reset
 
 ### 计划中的偏离
 
-- **计划阶段回退为模块化单体**：模型未返回可校验的结构化计划。；影响：服务边界保留在目录与模块中，但不部署独立容器。
+- **Simulate microservices as a modular monolith with service-route boundaries**：Enables local verification without Kubernetes, service discovery, or external cloud infrastructure while preserving Game, Question, User, and Admin component boundaries.；影响：Services are not network-isolated; the structure remains ready for later extraction into independent deployable services.
+- **Use file-backed JSON persistence as the default repository instead of PostgreSQL**：Meets ASR-1 data durability and restart recovery without requiring an external database service during verification.；影响：Lower operational realism and limited concurrent write durability compared to PostgreSQL; repository interfaces allow swapping to a database adapter later.
+- **Exclude Redis, RabbitMQ, Elasticsearch, Kubernetes, Istio, Vault, and Terraform from demonstration dependencies**：The source documentation did not provide business constraints or operational budgets for these components; they are treated as optional extensions.；影响：Reduces infrastructure fidelity but improves testability and runnable delivery.
+- **Formalize ASR-2 security as minimal admin token authentication, input validation, and security headers**：The source documentation referenced ASR-2 without a formal definition or acceptance metrics.；影响：Security coverage is implemented and tested, but it is a pragmatic interpretation rather than a documented enterprise security model.
+- **Resolve empty trace/test matrix and diagram syntax inconsistencies by deriving traceability from requirements and use cases**：The provided test matrix was empty and several PlantUML diagrams used non-native notation.；影响：Traceability is reconstructed from component and requirement statements; ambiguity remains for undocumented behaviors.
 
 ## 7. 用量与预算
 
-- 模型请求：37 次
-- 输入 tokens：1370537（缓存命中 1296512）
-- 输出 tokens：58339（推理 tokens 31703）
-- 估算费用：$0.0815（价格参数可配置，非账单依据）
-- 预算：最多 60 步 / 3000000 tokens / $6.0 / 45 分钟
+- 模型请求：75 次
+- 输入 tokens：2525691（缓存命中 2370432）
+- 输出 tokens：91059（推理 tokens 51670）
+- 估算费用：$0.1481（价格参数可配置，非账单依据）
+- 预算：最多 80 步 / 3000000 tokens / $6.0 / 45 分钟
 
 ## 8. 风险与未解决问题
 
-- 回退计划可能与原架构文档的微服务部署不完全一致。
+- JSON file persistence may not satisfy the performance and concurrency assumptions for 1000 simultaneous users in production; PostgreSQL or a scalable store should replace it outside local verification.
+- The modular monolith approach verifies component boundaries but not true network microservice behavior, so deployment risks remain unrecognized.
+- ASR-2 security is an inferred requirement and may be incomplete relative to formal security policies.
+- The source diagrams contain notation inconsistencies, so some interactions derived from them may be ambiguous or over-simplified.
+- The user interaction with the browser UI is manually verified; no full end-to-end browser automation is included.
 - 生成的示例项目用于教学演示，不应视为生产级微服务；Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform 未纳入演示依赖。
 - 真实 DeepSeek API 端到端运行需用户提供有效 API Key；Mock 模式只验证工具与编排回路。
 

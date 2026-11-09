@@ -1,6 +1,8 @@
 'use strict';
 
 // Covers: FR-DERIVED-2, ASR-1
+const fs = require('node:fs');
+const path = require('node:path');
 const { SEED_QUESTIONS } = require('./questions');
 
 function validationError(message) {
@@ -56,15 +58,35 @@ function shuffle(items) {
   return copy;
 }
 
-function createQuestionStore(seed = SEED_QUESTIONS) {
+function createQuestionStore(seed = SEED_QUESTIONS, options = {}) {
+  const persistPath = options.persistPath || null;
   let questions = seed.map(clone);
   let counter = questions.length;
+
+  if (persistPath && fs.existsSync(persistPath)) {
+    const raw = JSON.parse(fs.readFileSync(persistPath, 'utf8'));
+    if (!raw || !Array.isArray(raw.questions)) {
+      throw new Error(`invalid persistence file: ${persistPath}`);
+    }
+    questions = raw.questions.map(clone);
+    counter = Number.isInteger(raw.counter) ? raw.counter : questions.length;
+  }
+
+  function persist() {
+    if (!persistPath) return;
+    fs.mkdirSync(path.dirname(persistPath), { recursive: true });
+    const temp = `${persistPath}.tmp`;
+    const payload = JSON.stringify({ version: 1, counter, questions }, null, 2);
+    fs.writeFileSync(temp, payload, 'utf8');
+    fs.renameSync(temp, persistPath);
+  }
 
   function find(id) {
     return questions.find((question) => question.id === id);
   }
 
   return {
+    persistencePath: persistPath,
     count() {
       return questions.length;
     },
@@ -88,6 +110,7 @@ function createQuestionStore(seed = SEED_QUESTIONS) {
       counter += 1;
       const question = { id: `q-${String(counter).padStart(3, '0')}`, ...valid };
       questions.push(question);
+      persist();
       return clone(question);
     },
     update(id, patch) {
@@ -96,17 +119,20 @@ function createQuestionStore(seed = SEED_QUESTIONS) {
       const merged = { ...existing, ...patch, id: existing.id };
       const valid = validateQuestion(merged);
       Object.assign(existing, valid);
+      persist();
       return clone(existing);
     },
     remove(id) {
       const index = questions.findIndex((question) => question.id === String(id));
       if (index < 0) return false;
       questions.splice(index, 1);
+      persist();
       return true;
     },
     reset() {
       questions = seed.map(clone);
       counter = questions.length;
+      persist();
     },
   };
 }

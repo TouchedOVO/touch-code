@@ -1,0 +1,13 @@
+{
+  "tool": "Microsoft Edge (Playwright, headless)",
+  "url": "http://127.0.0.1:3210",
+  "steps": [
+    "menu visible",
+    "help visible",
+    "game started",
+    "result after 10 answers: 10 / 100"
+  ],
+  "final_score": "10 / 100",
+  "page_errors": [],
+  "ok": true
+}

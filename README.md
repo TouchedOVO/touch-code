@@ -5,7 +5,7 @@ real, tested project, then reports exactly what was implemented.
 
 [![Python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PySide6](https://img.shields.io/badge/PySide6-6.12-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qtforpython-6/)
-[![Tests](https://img.shields.io/badge/tests-82%20passed-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-84%20passed-brightgreen)](#testing)
 [![Windows build](https://github.com/TouchedOVO/touch-code/actions/workflows/windows-build.yml/badge.svg)](https://github.com/TouchedOVO/touch-code/actions/workflows/windows-build.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -104,9 +104,9 @@ accepts another model when `--allow-model-override` is passed explicitly. No pro
 used in formal mode.
 
 > A sanitized real **deepseek-v4-pro** run is included under
-> [`docs/evidence/t14-real`](docs/evidence/t14-real). It completed with 19/19 generated tests, but the
-> model produced a backend-only REST project without a browser UI; the evidence and limitations are
-> documented there. See [TEST_REPORT](docs/TEST_REPORT.md) for what was actually executed.
+> [`docs/evidence/t14-real`](docs/evidence/t14-real). It generated a browser UI and restart-safe
+> persistence, passed 27/27 tests and a real Edge browser E2E, and used one automatic repair round.
+> See [TEST_REPORT](docs/TEST_REPORT.md) for details and remaining limitations.
 
 ## Build the Windows EXE
 
@@ -131,13 +131,13 @@ python -m pytest tests -q
 
 The suite covers parsing (including the 13 PlantUML blocks), conflict detection, path attacks, tool
 schema errors, retry/auth handling, cancellation, budgets, repair-on-rejection, Mock end-to-end and GUI
-smoke tests. Current status: **82 passed**.
+smoke tests. Current status: **84 passed**.
 
 The built-in Space Fractions project has its own zero-dependency test suite (Node.js ≥ 20):
 
 ```powershell
 cd src\space_code_agent\samples\space_fractions
-node --test tests/unit/http.test.js tests/unit/schema.test.js `
+node --test tests/unit/http.test.js tests/unit/schema.test.js tests/unit/persistence.test.js `
   services\question-service\tests\questions.test.js `
   services\game-service\tests\game.test.js `
   services\user-service\tests\auth.test.js

@@ -3,12 +3,12 @@
 > 示例报告：为公开发布，已将本机绝对路径脱敏为相对路径；会话标识以 `<session>` 代替。
 
 **状态：COMPLETED**  
-**生成时间：** 2026-11-09T20:37:22+08:00  
+**生成时间：** 2026-11-09T22:59:30+08:00  
 **运行模式：** Mock（内置样例）  
 **模型：** deepseek-v4-pro（reasoning effort=high）  
 **输出目录：** `examples/output/space-fractions`（示例路径）  
-**总耗时：** 2.8s  
-**Agent 步数 / 工具调用：** 35 / 35  
+**总耗时：** 2.9s  
+**Agent 步数 / 工具调用：** 36 / 36  
 **文件映射覆盖率：** 7/7 （100.0%），未映射=0  
 **测试验证覆盖率：** 7/7 （100.0%），未验证=0，失败=0  
 **Agent 内部状态：** completed  
@@ -27,8 +27,8 @@
 | NORMALIZING | 解析架构文档与 UML 视图 | 0.0s |
 | PLANNING | 生成结构化实施计划 | 0.01s |
 | IMPLEMENTING | Agent 正在写入项目文件 | 0.03s |
-| VERIFYING | 静态检查与本地测试 | 0.24s |
-| REPORTING | 生成报告与追溯矩阵 | 2.72s |
+| VERIFYING | 静态检查与本地测试 | 0.25s |
+| REPORTING | 生成报告与追溯矩阵 | 2.8s |
 
 ## 2. 输入与解析
 
@@ -72,8 +72,8 @@
 |---|---|---|---|---|---|---|---|
 | FR-1 | FR | Play game | explicit | verified | passed | apps/web/index.html; apps/web/server.js; apps/web/src/api.js; apps/web/src/main.js; apps/web/src/styles.css; lib/http.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/src/questionClient.js; services/game-service/src/server.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js; tests/unit/http.test.js | services/game-service/tests/game.test.js; tests/e2e/flow.test.js; tests/unit/http.test.js |
 | NFR-1 | NFR | Performance | explicit | verified | passed | apps/web/server.js; docker-compose.yml; lib/http.js; services/game-service/src/questionClient.js; tests/unit/http.test.js | tests/unit/http.test.js |
-| ASR-1 | ASR | Data durability | explicit | verified | passed | docker-compose.yml; services/question-service/src/store.js; sql/init.sql; tests/unit/schema.test.js | tests/unit/schema.test.js |
-| ASR-2 | ASR | Security | inferred | verified | passed | apps/web/src/admin.js; services/game-service/src/index.js; services/question-service/src/index.js; services/question-service/tests/questions.test.js; services/user-service/src/auth.js; services/user-service/src/index.js; services/user-service/src/server.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js | services/question-service/tests/questions.test.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js |
+| ASR-1 | ASR | Data durability | explicit | verified | passed | docker-compose.yml; services/question-service/src/server.js; services/question-service/src/store.js; sql/init.sql; tests/unit/persistence.test.js; tests/unit/schema.test.js | tests/unit/persistence.test.js; tests/unit/schema.test.js |
+| ASR-2 | ASR | Security | inferred | verified | passed | apps/web/src/admin.js; services/game-service/src/index.js; services/question-service/src/index.js; services/question-service/tests/questions.test.js; services/user-service/src/auth.js; services/user-service/src/index.js; services/user-service/src/server.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js | services/user-service/tests/auth.test.js; tests/e2e/flow.test.js |
 | FR-DERIVED-1 | FR | View Score | diagram-derived | verified | passed | apps/web/index.html; apps/web/src/api.js; apps/web/src/main.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js | services/game-service/tests/game.test.js; tests/e2e/flow.test.js |
 | FR-DERIVED-2 | FR | Update Questions | diagram-derived | verified | passed | apps/web/admin.html; apps/web/src/admin.js; services/question-service/src/index.js; services/question-service/src/questions.js; services/question-service/src/server.js; services/question-service/src/store.js; services/question-service/tests/questions.test.js; sql/init.sql; tests/e2e/flow.test.js | services/question-service/tests/questions.test.js; tests/e2e/flow.test.js |
 | FR-DERIVED-3 | FR | View Help | diagram-derived | verified | passed | apps/web/index.html; apps/web/server.js; apps/web/src/main.js; apps/web/src/styles.css; tests/e2e/flow.test.js | tests/e2e/flow.test.js |
@@ -84,9 +84,9 @@
 
 | 文件 | 大小 | SHA-256 |
 |---|---:|---|
-| `.env.example` | 386 B | `8d4a06507d038aaaf0abeec5` |
-| `.gitignore` | 59 B | `0adef38900f234ca398138fc` |
-| `README.md` | 5.0 KB | `4485708b764d9bcae453e430` |
+| `.env.example` | 425 B | `412d2b26b7d16c427324ca9b` |
+| `.gitignore` | 65 B | `17996a7a505c9ef361abc5a5` |
+| `README.md` | 5.1 KB | `9910517463ee096d59c895ff` |
 | `apps/web/admin.html` | 3.2 KB | `b9125b96a250938924b63bd3` |
 | `apps/web/index.html` | 4.4 KB | `b5a76f3bdb6cbbbb4f0e0852` |
 | `apps/web/server.js` | 1.6 KB | `3e18a21edc5bcc8acab1ea0d` |
@@ -95,10 +95,10 @@
 | `apps/web/src/main.js` | 5.8 KB | `b6be5f0e663534592ccf780a` |
 | `apps/web/src/styles.css` | 7.8 KB | `35d0491e127696fedbed3092` |
 | `docker-compose.yml` | 1.4 KB | `af970964accabaf3cb71d2ba` |
-| `docs/ASSUMPTIONS.md` | 3.2 KB | `d2a214af3b45275a4bb51d4b` |
-| `docs/architecture-summary.md` | 2.9 KB | `21b9096aa878873f40ad9f1f` |
+| `docs/ASSUMPTIONS.md` | 3.4 KB | `e53be3755b9195935867a716` |
+| `docs/architecture-summary.md` | 3.1 KB | `b4f679d5ba86ba5b06a39a44` |
 | `lib/http.js` | 5.0 KB | `0f29640df7e8dd349b6cedf2` |
-| `package.json` | 740 B | `bdf48470458b63e80f91f5e2` |
+| `package.json` | 774 B | `c9513ec2f60d1f9e5236782b` |
 | `services/game-service/src/game.js` | 4.0 KB | `a344bf2cdb149fb3f290cf29` |
 | `services/game-service/src/index.js` | 2.7 KB | `dd6ff96fd385b6c4c17b615e` |
 | `services/game-service/src/questionClient.js` | 1.4 KB | `cc2d35573bf5939971950704` |
@@ -106,8 +106,8 @@
 | `services/game-service/tests/game.test.js` | 2.4 KB | `2ac81dd5fdab027824c1758a` |
 | `services/question-service/src/index.js` | 3.3 KB | `9940595773d490a2a5e2bc01` |
 | `services/question-service/src/questions.js` | 1.9 KB | `6182de8a7af5b28ee8c29748` |
-| `services/question-service/src/server.js` | 866 B | `a65ba1b699d70b132a86aec2` |
-| `services/question-service/src/store.js` | 3.7 KB | `9108508922d9b9e4285edebf` |
+| `services/question-service/src/server.js` | 1.0 KB | `25c41eb646bd5254ab04fa73` |
+| `services/question-service/src/store.js` | 4.6 KB | `43f4cb6ff8bc5b5f1d9a77e5` |
 | `services/question-service/tests/questions.test.js` | 3.5 KB | `b016dc35db7fb98881038f2c` |
 | `services/user-service/src/auth.js` | 2.2 KB | `6db22acbf6aedb8506c71786` |
 | `services/user-service/src/index.js` | 1.5 KB | `c8432ae334295d632d8a4b24` |
@@ -116,9 +116,10 @@
 | `sql/init.sql` | 2.3 KB | `ce49cce9e9ca982134302bdd` |
 | `tests/e2e/flow.test.js` | 4.9 KB | `513da726b1bec1582a5a7fd7` |
 | `tests/unit/http.test.js` | 1.7 KB | `24176fb22a645e07c5d4ecba` |
+| `tests/unit/persistence.test.js` | 1.9 KB | `ae6e78e0f6ea501c0b751ea5` |
 | `tests/unit/schema.test.js` | 1.0 KB | `925d12810cfbaf5df7a93f21` |
 
-共 33 个文件，其中 Agent 记录写入 33 个，累计 88.6 KB。
+共 34 个文件，其中 Agent 记录写入 34 个，累计 92.1 KB。
 
 ## 5. 验证结果
 
@@ -126,42 +127,135 @@
 
 | 检查 | 状态 | 详情 |
 |---|---|---|
-| structure | pass | {"files": 33, "sources": 27, "readme": true, "manifest": true, "tests": true, "issues": [], "notes": []} |
+| structure | pass | {"files": 34, "sources": 28, "readme": true, "manifest": true, "tests": true, "issues": [], "notes": []} |
 | json_syntax | pass | {"checked": 1, "errors": []} |
 | python_syntax | pass | {"checked": 0, "errors": []} |
-| js_syntax | pass | {"checked": 22, "errors": [], "runtime": "node"} |
+| js_syntax | pass | {"checked": 23, "errors": [], "runtime": "node"} |
 | readme_links | pass | {"checked": 3, "missing": []} |
-| requirement_traceability | pass | {"total": 7, "covered": 7, "rows": [{"id": "FR-1", "files": ["apps/web/index.html", "apps/web/server.js", "apps/web/src/api.js", "apps/web/src/main.js", "apps/web/src/styles.css", "lib/http.js", "services/game-service/src/game.js", "services/game-service/src/index.js", "services/game-service/src/questionClient.js", "services/game-service/src/server.js", "services/game-service/tests/game.test.js",  |
+| requirement_traceability | pass | {"total": 7, "covered": 7, "rows": [{"id": "FR-1", "files": ["apps/web/server.js", "apps/web/src/api.js", "apps/web/src/main.js", "lib/http.js", "services/game-service/src/game.js", "services/game-service/src/index.js", "services/game-service/src/questionClient.js", "services/game-service/src/server.js", "services/game-service/tests/game.test.js", "services/question-service/src/server.js"], "tests |
+
+### 5.1b 功能交付契约
+
+| 检查 | 状态 | 详情 |
+|---|---|---|
+| web_ui | pass | {"html": ["apps/web/admin.html", "apps/web/index.html"], "scripts": 23, "styles": 1, "scene_markers": {"intro": true, "menu": true, "question": true, "score": true, "result": true, "help": true}, "issues": []} |
+| persistence | pass | {"source_evidence": ["tests/unit/persistence.test.js", "services/question-service/src/store.js", "tests/unit/schema.test.js"], "test_evidence": ["tests/unit/persistence.test.js", "tests/unit/schema.test.js"], "issues": []} |
 
 ### 5.2 自动化测试
 
-- `node`：exit=0，passed=True，耗时 0.43s
+- `node`：exit=0，passed=True，耗时 0.47s
 
 ```text
-✔ correct answers accumulate ten points each and finish the game (2.7945ms)
-✔ wrong answers do not add points and reveal the correct index (0.1283ms)
-✔ answers must be submitted in order (0.2708ms)
-✔ finished games reject further answers (0.11ms)
-✔ public state never leaks answerIndex (0.1475ms)
-✔ public question list hides answers and respects count (50.1991ms)
-✔ internal endpoint requires service token and includes answers (11.1066ms)
-✔ admin can create, update and delete a question (13.4069ms)
-✔ invalid question payload is rejected (4.0279ms)
-✔ admin login, /me and guest sessions (56.2578ms)
-✔ expired tokens are rejected (0.2439ms)
-✔ student can play a full round and admin can add a question (77.3158ms)
-✔ router matches path parameters and returns 404 JSON (47.9517ms)
-✔ readJson rejects invalid JSON and preserves bearer tokens (10.2364ms)
-✔ durable schema defines the core tables and constraints (0.6972ms)
-✔ schema keeps secrets out and documents role boundaries (0.2391ms)
-ℹ tests 16
-ℹ suites 0
-ℹ pass 16
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 349.4756
+TAP version 13
+# Subtest: correct answers accumulate ten points each and finish the game
+ok 1 - correct answers accumulate ten points each and finish the game
+  ---
+  duration_ms: 1.8097
+  type: 'test'
+  ...
+# Subtest: wrong answers do not add points and reveal the correct index
+ok 2 - wrong answers do not add points and reveal the correct index
+  ---
+  duration_ms: 0.1391
+  type: 'test'
+  ...
+# Subtest: answers must be submitted in order
+ok 3 - answers must be submitted in order
+  ---
+  duration_ms: 0.3794
+  type: 'test'
+  ...
+# Subtest: finished games reject further answers
+ok 4 - finished games reject further answers
+  ---
+  duration_ms: 0.3025
+  type: 'test'
+  ...
+# Subtest: public state never leaks answerIndex
+ok 5 - public state never leaks answerIndex
+  ---
+  duration_ms: 0.1322
+  type: 'test'
+  ...
+# Subtest: public question list hides answers and respects count
+ok 6 - public question list hides answers and respects count
+  ---
+  duration_ms: 53.6716
+  type: 'test'
+  ...
+# Subtest: internal endpoint requires service token and includes answers
+ok 7 - internal endpoint requires service token and includes answers
+  ---
+  duration_ms: 10.9447
+  type: 'test'
+  ...
+# Subtest: admin can create, update and delete a question
+ok 8 - admin can create, update and delete a question
+  ---
+  duration_ms: 13.1658
+  type: 'test'
+  ...
+# Subtest: invalid question payload is rejected
+ok 9 - invalid question payload is rejected
+  ---
+  duration_ms: 6.008
+  type: 'test'
+  ...
+# Subtest: admin login, /me and guest sessions
+ok 10 - admin login, /me and guest sessions
+  ---
+  duration_ms: 59.6451
+  type: 'test'
+  ...
+# Subtest: expired tokens are rejected
+ok 11 - expired tokens are rejected
+  ---
+  duration_ms: 0.4317
+  type: 'test'
+  ...
+# Subtest: student can play a full round and admin can add a question
+ok 12 - student can play a full round and admin can add a question
+  ---
+  duration_ms: 81.1094
+  type: 'test'
+  ...
+# Subtest: router matches path parameters and returns 404 JSON
+ok 13 - router matches path parameters and returns 404 JSON
+  ---
+  duration_ms: 53.7106
+  type: 'test'
+  ...
+# Subtest: readJson rejects invalid JSON and preserves bearer tokens
+ok 14 - readJson rejects invalid JSON and preserves bearer tokens
+  ---
+  duration_ms: 10.3161
+  type: 'test'
+  ...
+# Subtest: admin edits survive a store restart
+ok 15 - admin edits survive a store restart
+  ---
+  duration_ms: 6.2764
+  type: 'test'
+  ...
+# Subtest: deleted questions stay deleted after restart
+ok 16 - deleted questions stay deleted after restart
+  ---
+  duration_ms: 3.74
+  type: 'test'
+  ...
+# Subtest: invalid persistence file fails loudly instead of silently resetting
+ok 17 - invalid persistence file fails loudly instead of silently resetting
+  ---
+  duration_ms: 3.0902
+  type: 'test'
+  ...
+# Subtest: durable schema defines the core tables and constraints
+ok 18 - durable schema defines the core tables and constraints
+  ---
+  duration_ms: 0.6587
+  type: 'test'
+  ...
+# Subtest: schema keeps 
 ```
 
 
@@ -179,21 +273,21 @@
 ### 计划中的偏离
 
 - **以 node:http 替代 Express.js**：让生成项目零运行时依赖、可离线安装与验证。；影响：保留 REST 契约与中间件式路由，不使用 Express 生态中间件。
-- **内存仓库替代在线 PostgreSQL**：演示环境不提供数据库；测试必须可重复。；影响：重启后数据丢失；sql/init.sql 提供持久化表结构与索引。
+- **文件 JSON 持久化替代在线 PostgreSQL**：演示环境不提供数据库；题库需要跨重启保留。；影响：单机重启后数据保留；多实例/生产部署需切换 PostgreSQL 适配器。
 - **不部署 Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform**：架构文档未给出这些组件的业务约束与运维预算。；影响：仅保留微服务边界，不声称生产可用；列入 ASSUMPTIONS 的重大偏离。
 - **最小 HMAC 管理员令牌替代完整 OAuth2**：教学演示的认证边界，避免引入外部身份提供商。；影响：无刷新令牌、无第三方登录；令牌有过期时间与签名校验。
 
 ## 7. 用量与预算
 
-- 模型请求：35 次
-- 输入 tokens：3500（缓存命中 0）
-- 输出 tokens：700（推理 tokens 0）
+- 模型请求：36 次
+- 输入 tokens：3600（缓存命中 0）
+- 输出 tokens：720（推理 tokens 0）
 - 估算费用：$0.0013（价格参数可配置，非账单依据）
 - 预算：最多 60 步 / 3000000 tokens / $6.0 / 45 分钟
 
 ## 8. 风险与未解决问题
 
-- 内存数据在进程重启后丢失，属演示取舍。
+- 单机 JSON 文件的并发写入能力有限，生产部署需 PostgreSQL。
 - 完整 OAuth2、PostgreSQL 集群与云原生组件未实现，已在 ASM-06 记录。
 - 生成的示例项目用于教学演示，不应视为生产级微服务；Redis/RabbitMQ/Elasticsearch/Kubernetes/Istio/Vault/Terraform 未纳入演示依赖。
 - 真实 DeepSeek API 端到端运行需用户提供有效 API Key；Mock 模式只验证工具与编排回路。

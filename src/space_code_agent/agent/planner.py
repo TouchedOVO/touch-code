@@ -112,10 +112,19 @@ def validate_plan(plan: ProjectPlan, requirements: NormalizedRequirements) -> li
         issues.append("计划缺少 docs/ASSUMPTIONS.md。")
     if not any(path.startswith("tests/") or "/tests/" in path or ".test." in path for path in lower):
         issues.append("计划缺少测试文件。")
+    if requirements.requires_web_ui() and not any(path.endswith((".html", ".htm")) for path in lower):
+        issues.append("目标为 Web 应用，但计划缺少浏览器 HTML 入口。")
+    if requirements.requires_persistence() and not any(
+        marker in path for path in lower
+        for marker in ("store", "repository", "persist", "db", "database", "sql")
+    ):
+        issues.append("ASR-1 要求持久化，但计划缺少持久化仓储/数据库文件。")
     known = {req.id for req in requirements.requirements}
     referenced: set[str] = set()
     for file in plan.files:
         referenced.update(file.requirement_ids)
+    # Plans may reference assumptions (ASM-xx) for rationale; they are not requirements.
+    referenced = {req_id for req_id in referenced if not req_id.upper().startswith("ASM-")}
     unknown = sorted(referenced - known)
     if unknown:
         issues.append("计划引用了未知需求 ID：" + ", ".join(unknown[:8]))
@@ -148,7 +157,7 @@ class Planner:
             "strict": False,
         }
         last_error: Exception | None = None
-        for attempt in range(2):
+        for attempt in range(3):
             try:
                 response = self.provider.create(
                     instructions=PLAN_SYSTEM_PROMPT,
@@ -176,19 +185,31 @@ class Planner:
             except (PlanError, ValidationError, json.JSONDecodeError) as exc:
                 last_error = exc
                 self._emit("log", f"计划解析失败：{str(exc)[:200]}", "warn")
+                prompt += (
+                    "\n\n上一次回复无法解析为完整 JSON。请只输出一个 JSON 对象，"
+                    "不要 Markdown 代码块、不要解释文字，并确保括号与引号闭合。"
+                )
         raise PlanError(f"模型计划生成失败：{last_error}")
 
     @staticmethod
     def _parse(text: str) -> ProjectPlan:
         cleaned = text.strip()
-        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.I)
-        cleaned = re.sub(r"\s*```$", "", cleaned)
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.I | re.S)
+        cleaned = re.sub(r"\s*```\s*$", "", cleaned, flags=re.S)
         start = cleaned.find("{")
         end = cleaned.rfind("}")
         if start < 0 or end <= start:
             raise PlanError("模型回复中没有 JSON 对象。", cleaned)
-        data = json.loads(cleaned[start:end + 1])
-        return ProjectPlan.model_validate(data)
+        candidate = cleaned[start:end + 1]
+        attempts = [candidate, re.sub(r",\s*([}\]])", r"\1", candidate)]
+        last_exc: Exception | None = None
+        for attempt in attempts:
+            try:
+                data = json.loads(attempt)
+                return ProjectPlan.model_validate(data)
+            except (json.JSONDecodeError, ValidationError) as exc:
+                last_exc = exc
+        raise PlanError(f"JSON 无法解析：{last_exc}", candidate)
 
     def _emit(self, kind: str, message: str, level: str = "info") -> None:
         try:
@@ -205,38 +226,77 @@ def fallback_plan(requirements: NormalizedRequirements) -> ProjectPlan:
     """
     req_ids = [req.id for req in requirements.requirements]
     core = [req.id for req in requirements.requirements if req.kind == "FR"]
+    web = requirements.requires_web_ui()
+    persist = requirements.requires_persistence()
+    files = [
+        PlanFile(path="README.md", purpose="项目说明与运行方式", task_id="T1", requirement_ids=req_ids),
+        PlanFile(path="package.json", purpose="依赖与测试脚本", task_id="T1", requirement_ids=[]),
+        PlanFile(path="docs/ASSUMPTIONS.md", purpose="假设与偏离记录", task_id="T1", requirement_ids=req_ids),
+        PlanFile(path="docs/architecture-summary.md", purpose="架构摘要", task_id="T1",
+                 requirement_ids=req_ids),
+        PlanFile(path="src/index.js", purpose="应用入口与 REST 接口", task_id="T2", requirement_ids=core),
+        PlanFile(path="src/domain.js", purpose="领域逻辑", task_id="T2", requirement_ids=core),
+        PlanFile(path="tests/domain.test.js", purpose="领域单元测试（含 Covers 标记）",
+                 task_id="T3", requirement_ids=core),
+        PlanFile(path="tests/e2e/flow.test.js", purpose="端到端流程测试（含 Covers 标记）",
+                 task_id="T3", requirement_ids=core),
+    ]
+    if persist:
+        files.extend([
+            PlanFile(path="src/store.js", purpose="文件/数据库持久化仓储（重启可恢复）",
+                     task_id="T4", requirement_ids=["ASR-1", "FR-DERIVED-2"]),
+            PlanFile(path="tests/persistence.test.js", purpose="重启后数据仍可读取的持久化测试",
+                     task_id="T4", requirement_ids=["ASR-1"]),
+        ])
+    if web:
+        files.extend([
+            PlanFile(path="public/index.html", purpose="浏览器界面：开场、菜单、答题、分数、帮助、结束场景",
+                     task_id="T5", requirement_ids=["FR-1", "FR-DERIVED-1", "FR-DERIVED-3"]),
+            PlanFile(path="public/app.js", purpose="前端状态机与 REST 调用", task_id="T5",
+                     requirement_ids=["FR-1", "FR-DERIVED-1", "FR-DERIVED-3"]),
+            PlanFile(path="public/styles.css", purpose="可访问的响应式样式", task_id="T5",
+                     requirement_ids=["FR-1", "FR-DERIVED-3"]),
+        ])
+    tasks = [
+        PlanTask(id="T1", title="文档与依赖骨架", description="README、依赖声明、假设",
+                 requirement_ids=req_ids[:2], acceptance=["文件存在且可读"]),
+        PlanTask(id="T2", title="核心业务实现", description="按组件实现领域逻辑与接口",
+                 depends_on=["T1"], requirement_ids=core, acceptance=["核心流程可通过静态检查"]),
+        PlanTask(id="T3", title="测试与验证", description="单元测试与端到端测试，测试文件标注 Covers",
+                 depends_on=["T2"], requirement_ids=core, acceptance=["测试文件存在且通过"]),
+    ]
+    if persist:
+        tasks.append(PlanTask(id="T4", title="持久化", description="题库仓储写入磁盘并在重启后恢复",
+                              depends_on=["T2"], requirement_ids=["ASR-1"],
+                              acceptance=["重启后新增/修改仍可读取"]))
+    if web:
+        tasks.append(PlanTask(id="T5", title="浏览器界面", description="完整游戏场景与前端交互",
+                              depends_on=["T2"], requirement_ids=["FR-1", "FR-DERIVED-1", "FR-DERIVED-3"],
+                              acceptance=["可从开场进入答题并看到结束反馈"]))
     return ProjectPlan(
         project_name=requirements.project_name,
-        summary=f"为 {requirements.project_name} 生成的模块化实现（模型计划失败后的确定性回退）。",
+        summary=(
+            f"为 {requirements.project_name} 生成的模块化实现（模型计划失败后的确定性回退）。"
+            + (" 包含浏览器 UI。" if web else "")
+            + (" 包含可重启恢复的持久化仓储。" if persist else "")
+        ),
         architecture_style="modular monolith (documented deviation)",
         stack={"language": "javascript", "runtime": "Node.js >=20", "framework": "node:http",
-               "persistence": "in-memory with optional PostgreSQL adapter", "testing": "node:test"},
+               "persistence": "file-backed JSON store + optional PostgreSQL adapter"
+               if persist else "in-memory",
+               "testing": "node:test"},
         deviations=[Deviation(
             decision="计划阶段回退为模块化单体",
             reason="模型未返回可校验的结构化计划。",
             impact="服务边界保留在目录与模块中，但不部署独立容器。",
         )],
-        tasks=[
-            PlanTask(id="T1", title="文档与依赖骨架", description="README、依赖声明、假设",
-                     requirement_ids=req_ids[:2], acceptance=["文件存在且可读"]),
-            PlanTask(id="T2", title="核心业务实现", description="按组件实现领域逻辑与接口",
-                     depends_on=["T1"], requirement_ids=core, acceptance=["核心流程可通过静态检查"]),
-            PlanTask(id="T3", title="测试与验证", description="单元测试与端到端测试",
-                     depends_on=["T2"], requirement_ids=core, acceptance=["测试文件存在"]),
-        ],
-        files=[
-            PlanFile(path="README.md", purpose="项目说明与运行方式", task_id="T1", requirement_ids=req_ids),
-            PlanFile(path="package.json", purpose="依赖与测试脚本", task_id="T1", requirement_ids=[]),
-            PlanFile(path="docs/ASSUMPTIONS.md", purpose="假设与偏离记录", task_id="T1", requirement_ids=req_ids),
-            PlanFile(path="docs/architecture-summary.md", purpose="架构摘要", task_id="T1",
-                     requirement_ids=req_ids),
-            PlanFile(path="src/index.js", purpose="应用入口", task_id="T2", requirement_ids=core),
-            PlanFile(path="src/domain.js", purpose="领域逻辑", task_id="T2", requirement_ids=core),
-            PlanFile(path="tests/domain.test.js", purpose="领域单元测试", task_id="T3", requirement_ids=core),
-            PlanFile(path="tests/e2e/flow.test.js", purpose="端到端流程测试", task_id="T3",
-                     requirement_ids=core),
-        ],
-        verification_steps=["node --check 所有 JS 文件", "node --test"],
+        tasks=tasks,
+        files=files,
+        verification_steps=(
+            ["node --check 所有 JS 文件", "node --test"]
+            + (["浏览器 E2E：开场→菜单→答题→结束反馈"] if web else [])
+            + (["重启持久化测试：写入后重新加载仍可读取"] if persist else [])
+        ),
         assumptions=[assumption.text for assumption in requirements.assumptions],
         risks=["回退计划可能与原架构文档的微服务部署不完全一致。"],
         source="fallback",

@@ -1,145 +1,183 @@
 # Space Fractions
 
-<!-- Requirement coverage: [FR-1] [NFR-1] [ASR-1] [ASR-2] [FR-DERIVED-1] [FR-DERIVED-2] [FR-DERIVED-3] -->
+Space Fractions is a web-based, interactive learning tool for sixth-grade
+students to practice fraction-solving skills. Players answer 10 fraction
+questions, earn 10 points per correct answer, and see a final score out of
+100. Administrators can manage the question bank through a token-protected
+REST API.
 
-A web-based, interactive learning tool designed to improve fraction-solving
-skills for sixth-grade students. Players answer a fixed set of 10 single-choice
-fraction arithmetic questions, earn 10 points per correct answer, and view their
-score at the end of the round.
-
-This repository implements the **backend REST API and domain model**. It is a
-zero-dependency Node.js modular monolith; a future browser client can consume the
-JSON endpoints below.
+The project is implemented with Node.js only, using its built-in `http`
+module for the REST API. The three documented service boundaries (Game,
+Question, User) are preserved as separate modules but run inside one Node.js
+process so the application can be verified without external cloud services.
+This deliberate modular-monolith deviation is documented in
+[`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md).
 
 ## Features
 
-- **Play Game (FR-1):** create a guest session, receive 10 questions, and submit
-  answers one at a time.
-- **View Score (FR-DERIVED-1):** inspect the current score and game state at any
-  time; final score is shown after game over.
-- **Update Questions (FR-DERIVED-2):** admin-only create, read, update and delete
-  for sixth-grade fraction questions.
-- **View Help (FR-DERIVED-3):** a public help endpoint describes how to play.
-- **Security (ASR-2):** correct answers are hidden until answered; admin routes
-  use a bearer token with a timing-safe comparison; request bodies are size-capped.
-- **Performance (NFR-1):** built on `node:http` with in-memory state and small
-  JSON payloads.
-- **Data durability (ASR-1):** seed questions ship in source; admin edits are
-  in-memory in this demo, with a repository seam for an optional PostgreSQL adapter.
+- Interactive browser UI with menu, gameplay, score/result, and help views.
+- Keyboard-operable interface with visible focus, semantic labels, and
+  accessible contrast.
+- 10-question sessions; correct answers award 10 points, wrong answers award 0.
+- Guest sessions — students do not need to register.
+- Durable JSON file persistence for questions and completed scores with
+  atomic writes and restart recovery.
+- Admin question CRUD protected by a constant-time token comparison.
+- Defensive security headers and centralized error handling.
 
 ## Directory structure
 
 ```
 .
-├── README.md
 ├── package.json
+├── README.md
 ├── .env.example
-├── requirements.json
-├── requirements.md
-├── requirements-traceability.json
+├── data/
+│   ├── seed-questions.json   # Seed sixth-grade fraction questions
+│   └── scores.json           # Persisted completed scores (created at runtime)
 ├── docs/
-│   ├── ASSUMPTIONS.md            # assumptions, conflicts, deviations
-│   ├── architecture-summary.md   # normalized architecture views
-│   ├── requirements.md
-│   └── requirements-traceability.md
+│   └── ASSUMPTIONS.md
+├── public/
+│   ├── index.html            # Browser UI shell
+│   ├── styles.css            # Responsive, accessible styles
+│   └── app.js                # Browser-side game logic
 ├── src/
-│   ├── index.js                  # HTTP server and REST routes
-│   └── domain.js                 # Game/Question/User/Admin domain logic
-└── tests/
-    ├── domain.test.js            # unit tests
-    └── e2e/
-        └── flow.test.js          # end-to-end HTTP tests
+│   ├── config.js             # Environment configuration
+│   ├── app.js                # App factory and service wiring
+│   ├── http.js               # Zero-dependency HTTP router and helpers
+│   ├── server.js             # Server entry point
+│   ├── domain/
+│   │   ├── fraction.js       # Fraction arithmetic and question generation
+│   │   └── game.js           # Game state machine and scoring rules
+│   ├── repositories/
+│   │   ├── file-store.js     # Atomic JSON file store
+│   │   ├── question.repository.js
+│   │   └── score.repository.js
+│   ├── services/
+│   │   ├── question.service.js
+│   │   ├── game.service.js
+│   │   └── user.service.js
+│   ├── routes/
+│   │   ├── question.routes.js
+│   │   ├── game.routes.js
+│   │   └── user.routes.js
+│   └── middleware/
+│       ├── auth.js
+│       └── error-handler.js
+└── test/
+    ├── helpers/test-app.js
+    ├── fraction.test.js
+    ├── game.api.test.js
+    ├── question.api.test.js
+    ├── security.test.js
+    ├── persistence-restart.test.js
+    └── performance.test.js
 ```
 
 ## Requirements
 
-- Node.js **20 or newer** (`node --version` should print `v20.x` or later).
-- No npm install step is required; there are **zero runtime dependencies**.
+- Node.js 18, 19, or 20.
+- `npm` (bundled with Node.js).
+- No external database or message broker is required. Data is stored in JSON
+  files under `data/`.
 
-## Installation and run
+## Installation
 
 ```bash
-# 1. (Optional) check the Node version
-node --version
+npm install
+```
 
-# 2. Start the server
+There are no third-party runtime dependencies. `npm install` is optional and
+is only needed to regenerate a lockfile if one is later added.
+
+## Running the application
+
+```bash
 npm start
 ```
 
-The server listens on `http://127.0.0.1:3000` by default. Override the port and
-admin token with environment variables:
+Then open <http://localhost:3000> in a browser.
+
+Configuration is read from environment variables; see `.env.example`. The
+default admin token is `dev-admin-token` and should be overridden in any real
+deployment:
 
 ```bash
-PORT=8080 ADMIN_TOKEN='your-strong-token' npm start
+ADMIN_TOKEN='replace-with-a-strong-secret' npm start
 ```
 
-When `ADMIN_TOKEN` is not set, the server falls back to `dev-admin-token` so the
-demo works out of the box. **Do not use that fallback outside local development.**
+On first boot the question repository creates `data/questions.json` from
+`data/seed-questions.json`. Completed scores are appended to
+`data/scores.json`.
 
-## Test commands
+## Running the tests
 
 ```bash
-# Run all automated tests
 npm test
-
-# Syntax-check every JavaScript file
-npm run check
 ```
 
-The test suite uses the built-in `node:test` runner; no dependencies are needed.
+The test suite uses the Node.js built-in test runner and covers:
 
-## API quick reference
+- `test/fraction.test.js` — fraction arithmetic and question generation.
+- `test/game.api.test.js` — full game flow, scoring, and game over.
+- `test/question.api.test.js` — admin question CRUD.
+- `test/security.test.js` — token enforcement, headers, input handling.
+- `test/persistence-restart.test.js` — restart recovery for questions and scores.
+- `test/performance.test.js` — representative latency thresholds.
+
+Each test file contains a `Covers:` comment mapping it to requirement IDs.
+
+## Manual verification flow
+
+1. Run `npm install` and `npm test`; all tests should pass.
+2. Run `npm start` and open <http://localhost:3000>.
+3. From the UI, start a game, answer ten questions, and verify the final score.
+4. Open Help and verify keyboard-only navigation (Tab, Enter, Escape).
+5. Create/update/delete a question through the admin API:
+
+   ```bash
+   curl -X POST http://localhost:3000/api/questions \
+     -H 'Authorization: Bearer dev-admin-token' \
+     -H 'Content-Type: application/json' \
+     -d '{"text":"1/4 + 1/4 = ?","options":["1/2","1/4","1/8","2/4"],"answerIndex":0}'
+   ```
+
+6. Restart the server and confirm the created question and completed scores
+   are recovered from `data/questions.json` and `data/scores.json`.
+7. Attempt the same admin operation without the token and confirm a 401
+   response.
+
+## API summary
 
 Public endpoints:
 
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/api/health` | Service health. |
-| `GET` | `/api/help` | How-to-play text (View Help). |
-| `POST` | `/api/games` | Start a game; returns `guestId` and first question. |
-| `GET` | `/api/games/:id` | View game state and score. |
-| `POST` | `/api/games/:id/answers` | Body `{ "selectedIndex": 0..3 }`; answers current question. |
-| `POST` | `/api/games/:id/pause` | Pause the game. |
-| `POST` | `/api/games/:id/resume` | Resume a paused game. |
-| `POST` | `/api/games/:id/reset` | Start a new round with the same guest ID. |
+- `POST /api/users/guest` — create a guest ID.
+- `GET /api/users/:guestId/scores` — list persisted scores for a guest.
+- `GET /api/help` — help content.
+- `POST /api/games` — start a game with `{ "guestId": "..." }`.
+- `GET /api/games/:id` — current game state and current question.
+- `POST /api/games/:id/answer` — submit `{ "selectedIndex": 0-3 }`.
+- `GET /api/games/:id/score` — current or final score.
+- `POST /api/games/:id/pause` and `POST /api/games/:id/resume` — state control.
 
 Admin endpoints (require `Authorization: Bearer <ADMIN_TOKEN>`):
 
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/api/questions` | List all questions. |
-| `POST` | `/api/questions` | Create a question. |
-| `PUT` | `/api/questions/:id` | Update a question. |
-| `DELETE` | `/api/questions/:id` | Delete a question. |
-
-A question object has the shape:
-
-```json
-{
-  "id": "q_...",
-  "prompt": "1/2 + 1/4 = ?",
-  "options": ["2/6", "3/4", "1/3", "2/4"],
-  "correctIndex": 1,
-  "category": "addition"
-}
-```
-
-Player-facing game responses **never include `correctIndex` for the current
-question**; the answer result reveals correctness only after submission.
+- `GET /api/questions`
+- `POST /api/questions`
+- `GET /api/questions/:id`
+- `PUT /api/questions/:id`
+- `DELETE /api/questions/:id`
 
 ## Assumptions and limitations
 
-The implementation follows the assumptions and deviations recorded in
-[`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md). The most important points:
+- A game is 10 questions, +10 points per correct answer, no timer.
+- Students do not register; a guest ID is generated on first play.
+- In-progress games are held in memory and are not resumed across restarts.
+  Completed scores and questions are durable.
+- PostgreSQL is not required to run the demo; the persistence layer uses JSON
+  files with an interface that could be replaced by a database adapter.
+- Redis, RabbitMQ, Elasticsearch, Kubernetes, Istio, Vault, and Terraform are
+  intentionally excluded from the demo dependencies.
 
-- Each game has exactly **10 questions**, `+10` per correct answer, max `100`, no
-  timer.
-- Students do **not** register; a guest ID is generated per session.
-- The project is a **modular monolith**, not distributed microservices. This is a
-  documented deviation from the original architecture input.
-- Persistence is **in-memory**. The optional PostgreSQL adapter is **not
-  implemented**; the repository interface is the extension seam.
-- Redis, RabbitMQ, Elasticsearch, Kubernetes, Istio, Vault and Terraform are
-  optional extensions and are **not implemented**.
-- The deliverable is the REST API plus domain model; a full browser UI is not
-  included.
+See [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) for the full list of
+assumptions, document conflicts, and diagram-parsing warnings.

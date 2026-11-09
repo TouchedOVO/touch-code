@@ -1,0 +1,72 @@
+[
+  {
+    "id": "q-seed-01",
+    "text": "1/2 + 1/4 = ?",
+    "options": ["2/6", "3/4", "3/8", "1/6"],
+    "answerIndex": 1,
+    "explanation": "Find a common denominator: 1/2 = 2/4, so 2/4 + 1/4 = 3/4."
+  },
+  {
+    "id": "q-seed-02",
+    "text": "3/4 − 1/4 = ?",
+    "options": ["1/4", "2/5", "1/2", "1"],
+    "answerIndex": 2,
+    "explanation": "The denominators already match: 3/4 − 1/4 = 2/4 = 1/2."
+  },
+  {
+    "id": "q-seed-03",
+    "text": "2/3 × 3/4 = ?",
+    "options": ["5/12", "1/2", "3/4", "1/3"],
+    "answerIndex": 1,
+    "explanation": "Multiply across: (2 × 3) / (3 × 4) = 6/12 = 1/2."
+  },
+  {
+    "id": "q-seed-04",
+    "text": "3/5 ÷ 2/3 = ?",
+    "options": ["6/15", "5/8", "1/5", "9/10"],
+    "answerIndex": 3,
+    "explanation": "Multiply by the reciprocal: 3/5 × 3/2 = 9/10."
+  },
+  {
+    "id": "q-seed-05",
+    "text": "5/6 + 2/3 = ?",
+    "options": ["3/2", "7/9", "5/8", "4/3"],
+    "answerIndex": 0,
+    "explanation": "2/3 = 4/6, so 5/6 + 4/6 = 9/6 = 3/2."
+  },
+  {
+    "id": "q-seed-06",
+    "text": "7/8 − 1/2 = ?",
+    "options": ["4/8", "3/8", "1/4", "6/8"],
+    "answerIndex": 1,
+    "explanation": "1/2 = 4/8, so 7/8 − 4/8 = 3/8."
+  },
+  {
+    "id": "q-seed-07",
+    "text": "4/5 × 5/6 = ?",
+    "options": ["9/11", "5/6", "2/3", "1/5"],
+    "answerIndex": 2,
+    "explanation": "4/5 × 5/6 = 20/30, which reduces to 2/3."
+  },
+  {
+    "id": "q-seed-08",
+    "text": "7/10 ÷ 1/2 = ?",
+    "options": ["7/20", "3/5", "7/5", "14/5"],
+    "answerIndex": 2,
+    "explanation": "7/10 × 2/1 = 14/10 = 7/5."
+  },
+  {
+    "id": "q-seed-09",
+    "text": "1/3 + 1/6 = ?",
+    "options": ["2/9", "1/2", "1/6", "2/6"],
+    "answerIndex": 1,
+    "explanation": "1/3 = 2/6, so 2/6 + 1/6 = 3/6 = 1/2."
+  },
+  {
+    "id": "q-seed-10",
+    "text": "11/12 − 3/4 = ?",
+    "options": ["8/12", "7/12", "1/4", "1/6"],
+    "answerIndex": 3,
+    "explanation": "3/4 = 9/12, so 11/12 − 9/12 = 2/12 = 1/6."
+  }
+]

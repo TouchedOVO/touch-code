@@ -18,16 +18,18 @@ Initial public release.
   machine-readable run manifest.
 - Built-in zero-dependency Space Fractions sample (33 files, 16 Node tests) for offline Mock runs.
 - PyInstaller one-file/one-dir build script, icon, version metadata and Windows CI workflow.
-  CI run [#2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) passes Python tests,
+  CI run [#4](https://github.com/TouchedOVO/touch-code/actions/runs/42620774810) passes Python tests,
   Node 22 tests, EXE build, smoke test and uploads the `SpaceCodeAgent-windows-x64` artifact.
-- 82 pytest tests covering parsing, security, tools, provider retries, cancellation, budgets,
+- 84 pytest tests covering parsing, security, tools, provider retries, cancellation, budgets,
   repair-on-rejection, Mock end-to-end and GUI smoke.
+- Browser UI + persistence contracts, per-requirement `Covers:` test evidence and a real T14
+  browser E2E under `docs/evidence/t14-real/`.
 
 ### Known limitations
 
-- A real `deepseek-v4-pro` run is included under `docs/evidence/t14-real/`. It completed with
-  19/19 generated tests, but the model produced a backend-only REST project without a browser UI,
-  so functional acceptance for T14 is recorded as **partial**.
-- The generated demo uses `node:http` instead of Express and in-memory repositories instead of a live
-  PostgreSQL cluster; see the generated `ASSUMPTIONS.md` (major deviation).
+- A real `deepseek-v4-pro` run is included under `docs/evidence/t14-real/`. It generated a browser UI,
+  restart-safe question/score persistence and 27/27 passing tests, with one automatic repair round.
+- The generated demo uses a modular monolith, `node:http` and file-backed JSON persistence instead of
+  deployed microservices and a PostgreSQL cluster; see the generated `ASSUMPTIONS.md` (major deviation).
+- T15 still needs a completely clean Windows VM without Python/Qt preinstalled.
 - Session-resume UI, diff preview and streaming reasoning display are not implemented.

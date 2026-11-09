@@ -34,10 +34,12 @@
 
 ## Data and durability
 
-- Demo repositories are in-memory (`Map` / arrays), which keeps tests hermetic.
+- The question bank persists to `data/questions.json` using a same-directory temp file + atomic
+  rename; admin edits survive a service restart. A dedicated restart test covers this.
+- Game rounds and guest sessions are in-memory; they are intentionally transient.
 - `sql/init.sql` defines equivalent PostgreSQL tables (`questions`, `games`, `game_answers`,
-  `users`) for teams that want durable storage. ASR-1 is therefore addressed at the schema
-  level, not by a deployed database in this demo.
+  `users`) for teams that want a database-backed deployment. ASR-1 is satisfied at the application
+  level by the JSON store in this demo, with PostgreSQL as an optional adapter.
 
 ## Security
 

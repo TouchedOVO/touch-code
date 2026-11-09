@@ -37,7 +37,7 @@ class AppConfig:
     reasoning_effort: str = "high"
     temperature: float | None = None
     max_output_tokens: int = 16000
-    plan_max_output_tokens: int = 8000
+    plan_max_output_tokens: int = 16000
     request_timeout_s: float = 180.0
     max_retries: int = 4
     retry_base_delay_s: float = 1.0

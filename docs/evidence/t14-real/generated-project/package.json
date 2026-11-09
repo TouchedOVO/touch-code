@@ -1,26 +1,22 @@
 {
   "name": "space-fractions",
   "version": "1.0.0",
+  "description": "A web-based, interactive learning tool for sixth-grade students to practice fraction-solving skills.",
   "private": true,
-  "description": "A web-based, interactive learning tool for sixth-grade fraction-solving practice.",
-  "main": "src/index.js",
   "type": "commonjs",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
-    "test": "node --test",
-    "check": "node --check src/index.js && node --check src/domain.js && node --check tests/domain.test.js && node --check tests/e2e/flow.test.js"
+    "start": "node src/server.js",
+    "test": "node --test test/fraction.test.js test/game.api.test.js test/question.api.test.js test/security.test.js test/persistence-restart.test.js test/performance.test.js test/user.api.test.js"
   },
   "keywords": [
     "education",
     "fractions",
     "math",
     "learning",
-    "node"
+    "sixth-grade"
   ],
-  "license": "MIT",
-  "dependencies": {}
+  "license": "MIT"
 }

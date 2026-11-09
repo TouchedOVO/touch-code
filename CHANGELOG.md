@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 ## 1.0.0 — 2026-11-09
 
@@ -18,7 +18,7 @@ Initial public release.
   machine-readable run manifest.
 - Built-in zero-dependency Space Fractions sample (33 files, 16 Node tests) for offline Mock runs.
 - PyInstaller one-file/one-dir build script, icon, version metadata and Windows CI workflow.
-- 80 pytest tests covering parsing, security, tools, provider retries, cancellation, budgets,
+- 82 pytest tests covering parsing, security, tools, provider retries, cancellation, budgets,
   repair-on-rejection, Mock end-to-end and GUI smoke.
 
 ### Known limitations

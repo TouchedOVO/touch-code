@@ -1,18 +1,18 @@
 # 测试与验收报告
 
 运行环境：Windows 11 x64，Python 3.14.3，PySide6 6.12.0，PyInstaller 6.22.3，
-Node.js 26.13.0（仅用于验证生成项目）。DeepSeek API Key：**未提供**。
+Node.js **22.23.4 / 26.13.0**（生成项目测试）。DeepSeek API Key：**未提供**。
 
 ## 1. 执行证据
 
 | 命令 | 结果 |
 |---|---|
-| `python -m pytest tests -q` | **80 passed in 6.83s** |
-| `node --test tests/unit services/question-service/tests services/game-service/tests services/user-service/tests` | **15 passed / 0 failed**（约 0.29 s） |
-| `node --test tests/e2e` | **1 passed / 0 failed**（约 0.18 s） |
+| `python -m pytest tests -q` | **82 passed**（含测试失败→修复→重测用例） |
+| `node --test tests/unit/http.test.js tests/unit/schema.test.js services/question-service/tests/questions.test.js services/game-service/tests/game.test.js services/user-service/tests/auth.test.js` | **15 passed / 0 failed**（Node 22 与 26） |
+| `node --test tests/e2e/flow.test.js` | **1 passed / 0 failed**（Node 22 与 26） |
 | `SpaceCodeAgent.exe --smoke-test`（one-file） | 退出码 **0**，冷启动 **3.1 s** |
-| `SpaceCodeAgent.exe --mock-run … --allow-tests`（one-file） | 退出码 **0**，**14.2 s**，状态 `completed`，覆盖 **100%** |
-| 生成项目内 `node --test`（由 Agent 实际执行） | **16 passed / 0 failed**，0.84 s，manifest `exit_code=0` |
+| `SpaceCodeAgent.exe --mock-run … --allow-tests`（one-file） | 退出码 **0**，**14.2 s**，状态 `completed`，映射/验证均 **100%** |
+| 生成项目内 `node --test`（由 Agent 实际执行） | **16 passed / 0 failed**，manifest `exit_code=0` |
 
 one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,014,405 字节（58.2 MiB）**。
 
@@ -30,9 +30,9 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 | T08 | 429 / 5xx / 断网 | ✅ PASS | 429 重试后成功；503 重试耗尽；连接错误重试；`test_provider.py` |
 | T09 | API Key 失效 | ✅ PASS | 401 不重试，错误消息经脱敏，不含 Key；`test_provider.py` |
 | T10 | 用户点击停止 | ✅ PASS | 取消 token 在首步前生效，未写文件，仍生成 cancelled 报告；`test_mock_e2e.py` |
-| T11 | 测试失败/完成被拒 | ✅ PASS | 完成拒绝→补充 README→成功；连续 3 次拒绝→`partial` 且如实列出缺失；`test_agent_loop.py` |
-| T12 | 无 Node/npm 机器 | ✅ PASS | `js_syntax=skipped`、`run_tests=not_available`，报告写 `not run`；`test_tool_registry.py`；EXE 在仅含 System32 的 PATH 下仍完成生成并如实标注 |
-| T13 | Mock 模型端到端 | ✅ PASS | 完整文件树、README、依赖、测试、报告；80 项测试中的 `test_mock_e2e.py` |
+| T11 | 测试失败/完成被拒 | ✅ PASS | 完成拒绝→补充 README→成功；测试失败→回传 stderr→修复→重测通过；连续 3 次拒绝→`partial`；`test_agent_loop.py` / `test_mock_e2e.py` |
+| T12 | 无 Node/npm 机器 | ✅ PASS | `js_syntax=skipped`、`run_tests=not_available`，报告写 `not run`；生成完成但状态为 `partial`，不误报成功；`test_tool_registry.py` / `test_mock_e2e.py`；EXE 在仅含 System32 的 PATH 下同样如此 |
+| T13 | Mock 模型端到端 | ✅ PASS | 完整文件树、README、依赖、测试、报告；82 项测试中的 `test_mock_e2e.py` |
 | T14 | 真实 DeepSeek 端到端 | ⏸ **NOT RUN** | 无 API Key。代码路径已实现，仅待凭据；不得声称已通过 |
 | T15 | 干净 Windows 双击 EXE | ✅ 本机 PASS / ⚠ 未做全新 VM | one-file `--smoke-test`、GUI 启动（窗口标题可见）、Mock 全流程、最小 PATH 无 Node 生成均通过；未在未安装 Python 的全新虚拟机复测 |
 
@@ -48,7 +48,20 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
    未运行场景明确 `not run`，不以“文件存在”代替通过。
 5. **安全与取消**：路径攻击拒绝、原子写入、默认不覆盖、密钥脱敏、取消后保留文件、报告不写入 Key。
 
-## 4. 已知未覆盖项
+## 4. 针对代码审查问题的修复
+
+| 审查问题 | 修复 | 本地验证 |
+|---|---|---|
+| PEP 639 许可证分类器冲突 | 删除 `License :: OSI Approved :: MIT License`，保留 `license = "MIT"` 与 `license-files` | `pip install --dry-run -e .` 元数据构建成功（setuptools 84.2.1） |
+| Node 22 将目录当模块入口 | workflow、`package.json`、README、CONTRIBUTING、测试报告全部改为显式测试文件 | Node **22.23.4** 下 15 + 1 项测试全绿 |
+| 测试失败未进入修复闭环 | Controller 在测试失败后把命令、退出码、精简 stderr 回传模型，修复后重新静态检查并重测，最多 3 轮 | 新增 `test_test_failure_triggers_model_repair_and_retest`；82 项测试全绿 |
+| 需求覆盖率可能高估 | 拆分 `mapped` / `implemented` / `verified` / `unverified` / `failed`；只有源码 + 测试且测试真实通过才记 `verified`；测试未运行时状态降为 `partial` | 报告、CSV、manifest 均输出两套覆盖率；测试断言 7/7 映射、7/7 验证，未运行场景为 partial |
+| 最终状态可能不一致 | 单一 `final_status` 同时写入 UI/CLI、`GENERATION_REPORT.md`、`run_manifest.json`；manifest 另存 `agent_status` | 测试失败用例断言 `run.status=partial` 且 `agent_status=completed` |
+| 指定模型未锁定 | GUI 模型只读；`AppConfig.validate()` 强制 `deepseek-v4-pro`；CLI 需显式 `--allow-model-override`；`test_connection` 不再把“模型未确认”报成成功 | `test_config_validation` 新增锁定断言 |
+| README 安装步骤不可靠 | 改为 `python -m pip install -e ".[dev]"` 后再运行模块 | 元数据 dry-run + 源码运行 `--version` 通过 |
+| CI 无 EXE 产物 / 作业跳过 | `build-exe` 依赖 Python 与 Node 两个测试作业；仍上传 one-file EXE artifact | 本地 one-file 构建与 smoke 已验证；GitHub Actions 结果需以推送后的 run 为准 |
+
+## 5. 已知未覆盖项
 
 - **真实 DeepSeek API 端到端（T14）**：需要用户提供 `DEEPSEEK_API_KEY`。Mock 模式不消耗额度，
   但不能替代真实模型验收。

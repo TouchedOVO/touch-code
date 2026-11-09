@@ -3,13 +3,15 @@
 > 示例报告：为公开发布，已将本机绝对路径脱敏为相对路径；会话标识以 `<session>` 代替。
 
 **状态：COMPLETED**  
-**生成时间：** 2026-11-09T19:45:31+08:00  
+**生成时间：** 2026-11-09T20:37:22+08:00  
 **运行模式：** Mock（内置样例）  
 **模型：** deepseek-v4-pro（reasoning effort=high）  
 **输出目录：** `examples/output/space-fractions`（示例路径）  
-**总耗时：** 12.0s  
+**总耗时：** 2.8s  
 **Agent 步数 / 工具调用：** 35 / 35  
-**需求覆盖率：** 7/7 （100.0%），partial=0，missing=0  
+**文件映射覆盖率：** 7/7 （100.0%），未映射=0  
+**测试验证覆盖率：** 7/7 （100.0%），未验证=0，失败=0  
+**Agent 内部状态：** completed  
 
 > 本报告由本地验收器依据真实磁盘文件、工具执行记录与静态检查生成。模型文本自述不作为完成依据；未运行的测试明确标记为 not run。
 
@@ -25,8 +27,8 @@
 | NORMALIZING | 解析架构文档与 UML 视图 | 0.0s |
 | PLANNING | 生成结构化实施计划 | 0.01s |
 | IMPLEMENTING | Agent 正在写入项目文件 | 0.03s |
-| VERIFYING | 静态检查与本地测试 | 0.26s |
-| REPORTING | 生成报告与追溯矩阵 | 11.9s |
+| VERIFYING | 静态检查与本地测试 | 0.24s |
+| REPORTING | 生成报告与追溯矩阵 | 2.72s |
 
 ## 2. 输入与解析
 
@@ -66,15 +68,15 @@
 
 ## 3. 需求覆盖矩阵
 
-| 需求 | 类型 | 标题 | 置信度 | 状态 | 实现文件 | 测试 |
-|---|---|---|---|---|---|---|
-| FR-1 | FR | Play game | explicit | implemented | apps/web/index.html; apps/web/server.js; apps/web/src/api.js; apps/web/src/main.js; apps/web/src/styles.css; lib/http.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/src/questionClient.js; services/game-service/src/server.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js; tests/unit/http.test.js | services/game-service/tests/game.test.js; tests/e2e/flow.test.js; tests/unit/http.test.js |
-| NFR-1 | NFR | Performance | explicit | implemented | apps/web/server.js; docker-compose.yml; lib/http.js; services/game-service/src/questionClient.js; tests/unit/http.test.js | tests/unit/http.test.js |
-| ASR-1 | ASR | Data durability | explicit | implemented | docker-compose.yml; services/question-service/src/store.js; sql/init.sql; tests/unit/schema.test.js | tests/unit/schema.test.js |
-| ASR-2 | ASR | Security | inferred | implemented | apps/web/src/admin.js; services/game-service/src/index.js; services/question-service/src/index.js; services/question-service/tests/questions.test.js; services/user-service/src/auth.js; services/user-service/src/index.js; services/user-service/src/server.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js | services/question-service/tests/questions.test.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js |
-| FR-DERIVED-1 | FR | View Score | diagram-derived | implemented | apps/web/index.html; apps/web/src/api.js; apps/web/src/main.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js | services/game-service/tests/game.test.js; tests/e2e/flow.test.js |
-| FR-DERIVED-2 | FR | Update Questions | diagram-derived | implemented | apps/web/admin.html; apps/web/src/admin.js; services/question-service/src/index.js; services/question-service/src/questions.js; services/question-service/src/server.js; services/question-service/src/store.js; services/question-service/tests/questions.test.js; sql/init.sql; tests/e2e/flow.test.js | services/question-service/tests/questions.test.js; tests/e2e/flow.test.js |
-| FR-DERIVED-3 | FR | View Help | diagram-derived | implemented | apps/web/index.html; apps/web/server.js; apps/web/src/main.js; apps/web/src/styles.css; tests/e2e/flow.test.js | tests/e2e/flow.test.js |
+| 需求 | 类型 | 标题 | 置信度 | 状态 | 验证 | 实现文件 | 测试 |
+|---|---|---|---|---|---|---|---|
+| FR-1 | FR | Play game | explicit | verified | passed | apps/web/index.html; apps/web/server.js; apps/web/src/api.js; apps/web/src/main.js; apps/web/src/styles.css; lib/http.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/src/questionClient.js; services/game-service/src/server.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js; tests/unit/http.test.js | services/game-service/tests/game.test.js; tests/e2e/flow.test.js; tests/unit/http.test.js |
+| NFR-1 | NFR | Performance | explicit | verified | passed | apps/web/server.js; docker-compose.yml; lib/http.js; services/game-service/src/questionClient.js; tests/unit/http.test.js | tests/unit/http.test.js |
+| ASR-1 | ASR | Data durability | explicit | verified | passed | docker-compose.yml; services/question-service/src/store.js; sql/init.sql; tests/unit/schema.test.js | tests/unit/schema.test.js |
+| ASR-2 | ASR | Security | inferred | verified | passed | apps/web/src/admin.js; services/game-service/src/index.js; services/question-service/src/index.js; services/question-service/tests/questions.test.js; services/user-service/src/auth.js; services/user-service/src/index.js; services/user-service/src/server.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js | services/question-service/tests/questions.test.js; services/user-service/tests/auth.test.js; tests/e2e/flow.test.js |
+| FR-DERIVED-1 | FR | View Score | diagram-derived | verified | passed | apps/web/index.html; apps/web/src/api.js; apps/web/src/main.js; services/game-service/src/game.js; services/game-service/src/index.js; services/game-service/tests/game.test.js; services/question-service/src/server.js; tests/e2e/flow.test.js | services/game-service/tests/game.test.js; tests/e2e/flow.test.js |
+| FR-DERIVED-2 | FR | Update Questions | diagram-derived | verified | passed | apps/web/admin.html; apps/web/src/admin.js; services/question-service/src/index.js; services/question-service/src/questions.js; services/question-service/src/server.js; services/question-service/src/store.js; services/question-service/tests/questions.test.js; sql/init.sql; tests/e2e/flow.test.js | services/question-service/tests/questions.test.js; tests/e2e/flow.test.js |
+| FR-DERIVED-3 | FR | View Help | diagram-derived | verified | passed | apps/web/index.html; apps/web/server.js; apps/web/src/main.js; apps/web/src/styles.css; tests/e2e/flow.test.js | tests/e2e/flow.test.js |
 
 完整机器可读矩阵见 `traceability_matrix.csv`；逐文件哈希见 `run_manifest.json`。
 
@@ -96,7 +98,7 @@
 | `docs/ASSUMPTIONS.md` | 3.2 KB | `d2a214af3b45275a4bb51d4b` |
 | `docs/architecture-summary.md` | 2.9 KB | `21b9096aa878873f40ad9f1f` |
 | `lib/http.js` | 5.0 KB | `0f29640df7e8dd349b6cedf2` |
-| `package.json` | 644 B | `6532662b69a675e9ff953fc2` |
+| `package.json` | 740 B | `bdf48470458b63e80f91f5e2` |
 | `services/game-service/src/game.js` | 4.0 KB | `a344bf2cdb149fb3f290cf29` |
 | `services/game-service/src/index.js` | 2.7 KB | `dd6ff96fd385b6c4c17b615e` |
 | `services/game-service/src/questionClient.js` | 1.4 KB | `cc2d35573bf5939971950704` |
@@ -116,7 +118,7 @@
 | `tests/unit/http.test.js` | 1.7 KB | `24176fb22a645e07c5d4ecba` |
 | `tests/unit/schema.test.js` | 1.0 KB | `925d12810cfbaf5df7a93f21` |
 
-共 33 个文件，其中 Agent 记录写入 33 个，累计 88.5 KB。
+共 33 个文件，其中 Agent 记录写入 33 个，累计 88.6 KB。
 
 ## 5. 验证结果
 
@@ -133,25 +135,25 @@
 
 ### 5.2 自动化测试
 
-- `node`：exit=0，passed=True，耗时 0.77s
+- `node`：exit=0，passed=True，耗时 0.43s
 
 ```text
-✔ correct answers accumulate ten points each and finish the game (1.5738ms)
-✔ wrong answers do not add points and reveal the correct index (0.1036ms)
-✔ answers must be submitted in order (0.2255ms)
-✔ finished games reject further answers (0.4044ms)
-✔ public state never leaks answerIndex (0.1024ms)
-✔ public question list hides answers and respects count (53.5661ms)
-✔ internal endpoint requires service token and includes answers (9.1156ms)
-✔ admin can create, update and delete a question (10.4262ms)
-✔ invalid question payload is rejected (2.8805ms)
-✔ admin login, /me and guest sessions (53.4584ms)
-✔ expired tokens are rejected (0.3686ms)
-✔ student can play a full round and admin can add a question (71.0832ms)
-✔ router matches path parameters and returns 404 JSON (62.5369ms)
-✔ readJson rejects invalid JSON and preserves bearer tokens (9.0805ms)
-✔ durable schema defines the core tables and constraints (0.7639ms)
-✔ schema keeps secrets out and documents role boundaries (0.1817ms)
+✔ correct answers accumulate ten points each and finish the game (2.7945ms)
+✔ wrong answers do not add points and reveal the correct index (0.1283ms)
+✔ answers must be submitted in order (0.2708ms)
+✔ finished games reject further answers (0.11ms)
+✔ public state never leaks answerIndex (0.1475ms)
+✔ public question list hides answers and respects count (50.1991ms)
+✔ internal endpoint requires service token and includes answers (11.1066ms)
+✔ admin can create, update and delete a question (13.4069ms)
+✔ invalid question payload is rejected (4.0279ms)
+✔ admin login, /me and guest sessions (56.2578ms)
+✔ expired tokens are rejected (0.2439ms)
+✔ student can play a full round and admin can add a question (77.3158ms)
+✔ router matches path parameters and returns 404 JSON (47.9517ms)
+✔ readJson rejects invalid JSON and preserves bearer tokens (10.2364ms)
+✔ durable schema defines the core tables and constraints (0.6972ms)
+✔ schema keeps secrets out and documents role boundaries (0.2391ms)
 ℹ tests 16
 ℹ suites 0
 ℹ pass 16
@@ -159,7 +161,7 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 328.7903
+ℹ duration_ms 349.4756
 ```
 
 

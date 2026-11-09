@@ -13,6 +13,10 @@ import pytest
 from space_code_agent.app.config import AppConfig
 from space_code_agent.app.controller import Controller, RunRequest
 from space_code_agent.app.events import EventSink
+from space_code_agent.core.document_parser import DocumentParser
+from space_code_agent.core.requirements import RequirementNormalizer
+from space_code_agent.core.sample_project import build_sample_plan, iter_sample_files
+from space_code_agent.providers.mock import MockProvider, tool_response
 
 FIXTURES = Path(__file__).parent / "fixtures" / "Task"
 DOC = FIXTURES / "Architecture_Documentation.md"
@@ -47,6 +51,8 @@ def test_mock_run_completes_with_full_deliverables(mock_run):
     assert result.outcome is not None and result.outcome.status == "completed"
     assert result.coverage["percent"] == 100.0
     assert result.coverage["implemented"] == 7
+    assert result.coverage["verified"] == 7
+    assert result.coverage["verified_percent"] == 100.0
     for relative in (
         "README.md",
         "package.json",
@@ -71,17 +77,20 @@ def test_mock_run_completes_with_full_deliverables(mock_run):
 
 
 def test_generated_report_is_traceable(mock_run):
-    _result, _sink, output = mock_run
+    result, _sink, output = mock_run
     report = (output / "GENERATION_REPORT.md").read_text(encoding="utf-8")
     assert "状态：COMPLETED" in report
-    assert "需求覆盖率：" in report
+    assert "文件映射覆盖率：" in report
+    assert "测试验证覆盖率：" in report
     assert "7/7" in report
     assert "SequenceDiagram1" in report
     assert "ObjectDiagram" in report
 
     manifest = json.loads((output / "run_manifest.json").read_text(encoding="utf-8"))
-    assert manifest["run"]["status"] == "completed"
+    assert manifest["run"]["status"] == result.status == "completed"
+    assert manifest["run"]["agent_status"] == "completed"
     assert manifest["coverage"]["percent"] == 100.0
+    assert manifest["coverage"]["verified"] == 7
     assert len(manifest["files"]) >= 30
     assert manifest["model"]["mock"] is True
     assert "api_key" not in json.dumps(manifest).lower()
@@ -92,7 +101,8 @@ def test_generated_report_is_traceable(mock_run):
     assert {row["requirement_id"] for row in rows} == {
         "FR-1", "NFR-1", "ASR-1", "ASR-2", "FR-DERIVED-1", "FR-DERIVED-2", "FR-DERIVED-3",
     }
-    assert all(row["status"] == "implemented" for row in rows)
+    assert all(row["status"] == "verified" for row in rows)
+    assert all(row["mapped"] == "True" and row["verified"] == "True" for row in rows)
 
 
 def test_generated_project_tests_pass_when_node_exists(mock_run):
@@ -149,6 +159,21 @@ def test_output_dir_gets_unique_subdir_when_non_empty(tmp_path):
     assert target.is_dir()
 
 
+def test_unrun_tests_are_not_reported_as_success(tmp_path):
+    request = make_request(tmp_path, allow_command_execution=False)
+    result = Controller().run(request)
+    assert result.status == "partial"
+    assert result.outcome is not None and result.outcome.status == "completed"
+    manifest = json.loads((Path(result.output_dir) / "run_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["run"]["status"] == "partial"
+    assert manifest["run"]["agent_status"] == "completed"
+    assert manifest["coverage"]["tests_ran"] is False
+    assert manifest["coverage"]["verified"] == 0
+    report = (Path(result.output_dir) / "GENERATION_REPORT.md").read_text(encoding="utf-8")
+    assert "未运行（not run）" in report
+    assert "不得标记为完全成功" in report
+
+
 def test_failing_generated_tests_downgrade_to_partial(tmp_path, monkeypatch):
     """A real test failure must never be reported as a clean completion."""
     monkeypatch.setattr(
@@ -168,3 +193,58 @@ def test_failing_generated_tests_downgrade_to_partial(tmp_path, monkeypatch):
     report = (Path(result.output_dir) / "GENERATION_REPORT.md").read_text(encoding="utf-8")
     assert "自动化测试未通过" in report
     assert "expected 100 got 90" in report
+    manifest = json.loads((Path(result.output_dir) / "run_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["run"]["status"] == "partial"
+    assert manifest["run"]["agent_status"] == "completed"
+    assert manifest["coverage"]["failed"] == 7
+
+
+def test_test_failure_triggers_model_repair_and_retest(tmp_path):
+    """The controller must feed test output back to the model and re-run tests."""
+    if shutil.which("node") is None:
+        pytest.skip("node not available")
+    parser = DocumentParser()
+    requirements = RequirementNormalizer().normalize(
+        parser.parse(DOC, "architecture"), parser.parse(VIEW, "view")
+    )
+    plan = build_sample_plan(requirements)
+    broken_test = (
+        "const test = require('node:test');\n"
+        "const assert = require('node:assert/strict');\n"
+        "test('intentional failure', () => assert.equal(1, 2));\n"
+    )
+    original_files = dict(iter_sample_files())
+    schema_path = "tests/unit/schema.test.js"
+    assert schema_path in original_files
+
+    script = []
+    for path, content in original_files.items():
+        payload = broken_test if path == schema_path else content
+        script.append(tool_response([("write_file", {"path": path, "content": payload})]))
+    script.append(tool_response([("finish_task", {"summary": "first attempt"})]))
+    script.append(tool_response([(
+        "write_file",
+        {"path": schema_path, "content": original_files[schema_path], "overwrite": True},
+    )]))
+    script.append(tool_response([("finish_task", {"summary": "fixed failing test"})]))
+
+    config = AppConfig(mock_mode=False, max_agent_steps=60, max_repair_rounds=2,
+                       allow_command_execution=True)
+    request = RunRequest(
+        doc_path=str(DOC),
+        view_path=str(VIEW),
+        output_dir=str(tmp_path / "out"),
+        config=config,
+        approve=lambda name, message: True,
+        provider_override=MockProvider(script),
+        plan_override=plan,
+    )
+    sink = EventSink()
+    result = Controller(emit=sink).run(request)
+    phases = [event.data.get("phase") for event in sink.of("phase")]
+    assert "REPAIRING" in phases
+    assert result.status == "completed", result.error
+    manifest = json.loads((Path(result.output_dir) / "run_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["validation"]["tests"][0]["passed"] is True
+    assert manifest["coverage"]["verified"] == 7
+    assert manifest["run"]["status"] == "completed"

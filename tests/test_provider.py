@@ -73,6 +73,8 @@ def test_config_validation():
     assert AppConfig(model="").validate()
     assert AppConfig(reasoning_effort="turbo").validate()
     assert AppConfig(max_agent_steps=0).validate()
+    assert AppConfig(model="deepseek-flash").validate()
+    assert AppConfig(model="deepseek-flash", allow_model_override=True).validate() == []
 
 
 def test_redactor_masks_registered_and_pattern_keys():

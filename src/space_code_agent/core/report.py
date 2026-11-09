@@ -50,6 +50,7 @@ class ReportBuilder:
         test_results: list[dict] | None = None,
         inputs: list[dict] | None = None,
         errors: list[str] | None = None,
+        final_status: str | None = None,
     ) -> None:
         self.policy = policy
         self.requirements = requirements
@@ -66,11 +67,12 @@ class ReportBuilder:
         self.test_results = test_results or []
         self.inputs = inputs or []
         self.errors = errors or []
+        self.final_status = final_status or outcome.status
 
     # ------------------------------------------------------------------ #
     def write(self) -> dict[str, str]:
         validator = DeliveryValidator(self.policy, self.requirements, self.plan, self.config, self.files)
-        validator.apply()
+        validator.apply(self.test_results)
         rows = validator.traceability_rows()
         report_path = self.policy.write_text_atomic(
             "GENERATION_REPORT.md", self._report_markdown(rows), overwrite=True,
@@ -103,7 +105,7 @@ class ReportBuilder:
             "cancelled": "CANCELLED",
             "budget_exhausted": "BUDGET_EXHAUSTED",
             "failed": "FAILED",
-        }.get(self.outcome.status, self.outcome.status.upper())
+        }.get(self.final_status, self.final_status.upper())
         lines: list[str] = [
             f"# {self.requirements.project_name} — Code Agent 生成报告",
             "",
@@ -114,9 +116,12 @@ class ReportBuilder:
             f"**输出目录：** `{self.policy.root_str}`  ",
             f"**总耗时：** {duration:.1f}s  ",
             f"**Agent 步数 / 工具调用：** {self.outcome.steps} / {self.outcome.tool_calls}  ",
-            f"**需求覆盖率：** {coverage.get('implemented', 0)}/{coverage.get('total', 0)} "
-            f"（{coverage.get('percent', 0)}%），partial={coverage.get('partial', 0)}，"
-            f"missing={coverage.get('missing', 0)}  ",
+            f"**文件映射覆盖率：** {coverage.get('mapped', 0)}/{coverage.get('total', 0)} "
+            f"（{coverage.get('percent', 0)}%），未映射={coverage.get('missing', 0)}  ",
+            f"**测试验证覆盖率：** {coverage.get('verified', 0)}/{coverage.get('total', 0)} "
+            f"（{coverage.get('verified_percent', 0)}%），未验证={coverage.get('unverified', 0)}，"
+            f"失败={coverage.get('failed', 0)}  ",
+            f"**Agent 内部状态：** {self.outcome.status}  ",
             "",
             "> 本报告由本地验收器依据真实磁盘文件、工具执行记录与静态检查生成。"
             "模型文本自述不作为完成依据；未运行的测试明确标记为 not run。",
@@ -181,14 +186,14 @@ class ReportBuilder:
             "",
             "## 3. 需求覆盖矩阵",
             "",
-            "| 需求 | 类型 | 标题 | 置信度 | 状态 | 实现文件 | 测试 |",
-            "|---|---|---|---|---|---|---|",
+            "| 需求 | 类型 | 标题 | 置信度 | 状态 | 验证 | 实现文件 | 测试 |",
+            "|---|---|---|---|---|---|---|---|",
         ])
         for row in rows:
             lines.append(
                 f"| {row['requirement_id']} | {row['kind']} | {_md(row['title'])} | "
-                f"{row['confidence']} | {row['status']} | {_md(row['files']) or '—'} | "
-                f"{_md(row['tests']) or '—'} |"
+                f"{row['confidence']} | {row['status']} | {row.get('verification', '')} | "
+                f"{_md(row['files']) or '—'} | {_md(row['tests']) or '—'} |"
             )
         lines.extend([
             "",
@@ -286,6 +291,7 @@ class ReportBuilder:
         buffer = io.StringIO()
         writer = csv.DictWriter(buffer, fieldnames=[
             "requirement_id", "kind", "title", "confidence", "status",
+            "mapped", "verified", "verification",
             "components", "files", "tests", "evidence", "source",
         ], lineterminator="\r\n")
         writer.writeheader()
@@ -297,13 +303,15 @@ class ReportBuilder:
         return {
             "schema_version": "1.0",
             "run": {
-                "status": self.outcome.status,
+                "status": self.final_status,
+                "agent_status": self.outcome.status,
                 "mode": self.mode,
                 "started_at": self.started_at,
                 "finished_at": time.time(),
                 "duration_s": round(time.time() - self.started_at, 2),
                 "steps": self.outcome.steps,
                 "tool_calls": self.outcome.tool_calls,
+                "models_used": self.outcome.models_used,
                 "phases": self.phases,
                 "errors": self.errors + self.outcome.errors,
                 "missing": self.delivery.missing,
@@ -312,6 +320,7 @@ class ReportBuilder:
             },
             "model": {
                 "name": self.config.model,
+                "returned_models": self.outcome.models_used,
                 "base_url": self.config.base_url,
                 "reasoning_effort": self.config.reasoning_effort,
                 "mock": self.config.mock_mode,

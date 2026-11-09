@@ -50,9 +50,14 @@ class DeliveryValidator:
         self.plan = plan
         self.config = config or AppConfig()
         self.files = files
+        self.test_results: list[dict] = []
 
     # ------------------------------------------------------------------ #
-    def evaluate(self) -> DeliveryReport:
+    def evaluate(self, test_results: list[dict] | None = None) -> DeliveryReport:
+        if test_results is not None:
+            self.test_results = list(test_results)
+        tests_ran = bool(self.test_results)
+        tests_passed = tests_ran and all(item.get("passed") is True for item in self.test_results)
         report = DeliveryReport()
         entries = list(self.policy.iter_files(".", "**/*", limit=5000))
         report.files = entries
@@ -117,7 +122,7 @@ class DeliveryValidator:
 
         mappings = self._map_requirements(paths)
         report.mappings = mappings
-        coverage = self._coverage(mappings, paths)
+        coverage = self._coverage(mappings, paths, tests_ran, tests_passed)
         report.coverage = coverage
         core_fr = [req for req in self.requirements.requirements if req.kind == "FR"]
         unmapped_fr = [req.id for req in core_fr if not mappings.get(req.id)]
@@ -173,45 +178,74 @@ class DeliveryValidator:
                         mappings[req.id].append(path)
         return mappings
 
-    def _coverage(self, mappings: dict[str, list[str]], paths: set[str]) -> dict:
+    def _coverage(self, mappings: dict[str, list[str]], paths: set[str],
+                  tests_ran: bool = False, tests_passed: bool = False) -> dict:
         total = len(self.requirements.requirements)
-        implemented = partial = missing = 0
+        mapped = implemented = verified = unverified = failed = missing = 0
         for req in self.requirements.requirements:
             files = mappings.get(req.id, [])
             tests = [path for path in files if "test" in path.lower()]
-            if files and req.kind == "FR":
-                implemented += 1
-            elif files and tests:
-                implemented += 1
-            elif files:
-                partial += 1
-            else:
+            if not files:
                 missing += 1
+                continue
+            mapped += 1
+            implemented += 1
+            if tests and tests_ran and tests_passed:
+                verified += 1
+            elif tests and tests_ran and not tests_passed:
+                failed += 1
+            else:
+                unverified += 1
         return {
             "total": total,
+            "mapped": mapped,
             "implemented": implemented,
-            "partial": partial,
+            "verified": verified,
+            "unverified": unverified,
+            "failed": failed,
+            "partial": unverified,
             "missing": missing,
-            "percent": round(100.0 * implemented / total, 1) if total else 0.0,
+            "tests_ran": tests_ran,
+            "tests_passed": tests_passed,
+            "percent": round(100.0 * mapped / total, 1) if total else 0.0,
+            "verified_percent": round(100.0 * verified / total, 1) if total else 0.0,
         }
 
-    def apply(self) -> dict:
+    def apply(self, test_results: list[dict] | None = None) -> dict:
         """Write mapping/status back onto the normalized requirement objects."""
-        report = self.evaluate()
+        report = self.evaluate(test_results)
+        tests_ran = bool(self.test_results)
+        tests_passed = tests_ran and all(item.get("passed") is True for item in self.test_results)
         for req in self.requirements.requirements:
             files = report.mappings.get(req.id, [])
             tests = [path for path in files if "test" in path.lower()]
             req.files = sorted(files)
             req.tests = sorted(tests)
-            if files and (req.kind == "FR" or tests):
-                req.status = "implemented"
-            elif files:
-                req.status = "partial"
-            else:
+            req.mapped = bool(files)
+            if not files:
                 req.status = "missing"
+                req.verified = False
+                req.verification = "no_source"
+            elif tests and tests_ran and tests_passed:
+                req.status = "verified"
+                req.verified = True
+                req.verification = "passed"
+            elif tests and tests_ran and not tests_passed:
+                req.status = "failed"
+                req.verified = False
+                req.verification = "failed"
+            elif tests:
+                req.status = "implemented"
+                req.verified = False
+                req.verification = "not_run"
+            else:
+                req.status = "implemented"
+                req.verified = False
+                req.verification = "no_tests"
             req.evidence = ("源码: " + ", ".join(req.files[:4])) if files else "未找到对应实现"
             if tests:
                 req.evidence += "；测试: " + ", ".join(tests[:3])
+            req.evidence += f"；验证: {req.verification}"
         self.requirements.stats = dict(self.requirements.stats)
         self.requirements.stats["coverage"] = report.coverage
         return report.as_dict()
@@ -225,6 +259,9 @@ class DeliveryValidator:
                 "title": req.title,
                 "confidence": req.confidence,
                 "status": req.status,
+                "mapped": req.mapped,
+                "verified": req.verified,
+                "verification": req.verification,
                 "components": "; ".join(req.components),
                 "files": "; ".join(req.files),
                 "tests": "; ".join(req.tests),

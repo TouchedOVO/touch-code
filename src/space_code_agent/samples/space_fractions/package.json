@@ -7,8 +7,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test tests/unit services/question-service/tests services/game-service/tests services/user-service/tests",
-    "test:e2e": "node --test tests/e2e",
+    "test": "node --test tests/unit/http.test.js tests/unit/schema.test.js services/question-service/tests/questions.test.js services/game-service/tests/game.test.js services/user-service/tests/auth.test.js",
+    "test:e2e": "node --test tests/e2e/flow.test.js",
     "start:questions": "node services/question-service/src/server.js",
     "start:game": "node services/game-service/src/server.js",
     "start:users": "node services/user-service/src/server.js",

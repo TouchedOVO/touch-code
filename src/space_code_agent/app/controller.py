@@ -11,13 +11,14 @@ forwards events and requests cancellation.
 
 from __future__ import annotations
 
+import json
 import re
 import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Callable
+from typing import Any, Callable
 
 from ..agent.orchestrator import AgentOrchestrator, RunOutcome
 from ..agent.planner import Planner, PlanError, ProjectPlan, fallback_plan, validate_plan
@@ -53,6 +54,8 @@ class RunRequest:
     api_key: str = ""
     approve: Callable[[str, str], bool] | None = None
     cancel: threading.Event = field(default_factory=threading.Event)
+    provider_override: Any = None
+    plan_override: Any = None
 
 
 @dataclass
@@ -117,9 +120,12 @@ class Controller:
     # ------------------------------------------------------------------ #
     def _run_inner(self, request: RunRequest, result: ControllerResult) -> ControllerResult:
         config = request.config
+        problems = config.validate()
+        if problems:
+            raise ControllerError("invalid_config", "；".join(problems))
         redactor = SecretRedactor([request.api_key] if request.api_key else [])
         cancel = request.cancel
-        provider: LLMProvider | None = None
+        provider: LLMProvider | None = request.provider_override
 
         self._phase("VALIDATING_INPUT", "校验输入文档与输出目录")
         doc_path = Path(request.doc_path).expanduser()
@@ -130,7 +136,7 @@ class Controller:
             raise ControllerError("view_missing", f"UML 视图文档不存在：{view_path}")
         if doc_path.resolve() == view_path.resolve():
             raise ControllerError("same_input", "两份输入文档不能是同一个文件。")
-        if not config.mock_mode and not request.api_key:
+        if not config.mock_mode and not request.api_key and provider is None:
             raise ControllerError("missing_api_key", "真实模式需要 DeepSeek API Key；也可勾选 Mock 模式。")
         output_root = self._prepare_output(Path(request.output_dir).expanduser())
         result.output_dir = str(output_root)
@@ -167,18 +173,22 @@ class Controller:
         registry = build_registry(config)
 
         self._phase("PLANNING", "生成结构化实施计划")
-        if config.mock_mode:
+        if request.plan_override is not None:
+            plan = request.plan_override
+            self._emit("log", "使用外部注入的计划（测试/恢复模式）。", "info")
+        elif config.mock_mode:
             plan = build_sample_plan(requirements)
             self._emit("log", "Mock 模式：使用内置 Space Fractions 计划（真实工具落盘）。", "info")
         else:
-            assert request.api_key
-            provider = DeepSeekProvider(
-                request.api_key, config, redactor,
-                on_retry=lambda attempt, delay, code, message: self._emit(
-                    "log", f"API {code}，第 {attempt} 次退避 {delay:.1f}s：{message}", "warn"
-                ),
-            )
-            self._active_provider = provider
+            if provider is None:
+                assert request.api_key
+                provider = DeepSeekProvider(
+                    request.api_key, config, redactor,
+                    on_retry=lambda attempt, delay, code, message: self._emit(
+                        "log", f"API {code}，第 {attempt} 次退避 {delay:.1f}s：{message}", "warn"
+                    ),
+                )
+                self._active_provider = provider
             try:
                 plan = Planner(provider, config, self.emit, cancel, redactor).generate(requirements)
             except ProviderError as exc:
@@ -233,27 +243,29 @@ class Controller:
         errors.extend(orchestration_result.errors)
         result.outcome = orchestration_result
 
-        # ---------------------------------------------------------- repair
+        # ------------------------------------------------ verify + repair
+        self._phase("VERIFYING", "静态检查与本地测试")
+        context = orchestrator.context
+        context.step = orchestration_result.steps
+        static_checks, static_failed, test_results = self._verify_project(
+            config, request, registry, context, output_root, delivery, requirements,
+        )
+        delivery_report = delivery.evaluate(test_results)
         repair_round = 0
         while (
             not cancel.is_set()
-            and orchestration_result.status not in {"cancelled"}
+            and orchestration_result.status not in {"cancelled", "failed"}
             and repair_round < config.max_repair_rounds
         ):
-            report = delivery.evaluate()
-            if report.ok:
+            tests_failed_now = any(item.get("passed") is False for item in test_results)
+            if delivery_report.ok and not static_failed and not tests_failed_now:
+                break
+            if config.mock_mode:
+                self._emit("log", "Mock 模式没有额外修复脚本，跳过修复并如实报告。", "warn")
                 break
             repair_round += 1
             self._phase("REPAIRING", f"第 {repair_round}/{config.max_repair_rounds} 轮修复")
-            if config.mock_mode:
-                self._emit("log", "Mock 模式没有额外修复脚本，跳过修复。", "warn")
-                break
-            footer = (
-                "## 修复轮次\n"
-                f"本地验收未通过（第 {repair_round} 轮）。请先 list_files/read_file 检查现有文件，"
-                "只修复缺失或错误的部分，不要重复创建已完成的文件。\n\n缺失项：\n- "
-                + "\n- ".join(report.missing[:15])
-            )
+            footer = self._repair_footer(repair_round, delivery_report, static_checks, test_results)
             repair_orchestrator = AgentOrchestrator(
                 provider=provider,
                 registry=registry,
@@ -273,35 +285,48 @@ class Controller:
             repair_outcome = repair_orchestrator.run()
             self._merge_outcome(orchestration_result, repair_outcome)
             errors.extend(repair_outcome.errors)
-            self._emit("log", f"修复轮 {repair_round} 结束：{repair_outcome.status}", "info")
-            if repair_outcome.status == "completed":
+            self._emit("log", f"修复轮 {repair_round} 结束：{repair_outcome.status}，重新验证。", "info")
+            if repair_outcome.status == "cancelled":
                 break
+            context = repair_orchestrator.context
+            context.step = orchestration_result.steps
+            static_checks, static_failed, test_results = self._verify_project(
+                config, request, registry, context, output_root, delivery, requirements,
+            )
+            delivery_report = delivery.evaluate(test_results)
 
-        # ------------------------------------------------------- verify
-        self._phase("VERIFYING", "静态检查与本地测试")
-        ensure_assumptions_file(policy, requirements)
-        delivery.apply()
-        context = orchestrator.context
-        context.step = orchestration_result.steps
-        inspection = registry.execute(
-            "inspect_project",
-            {"checks": ["structure", "json", "python", "js", "links", "requirements"]},
-            context,
-        )
-        static_checks = inspection.get("checks", [])
-        static_failed = any(check.get("status") == "fail" for check in static_checks)
-        self._emit("log", "静态检查：" + ", ".join(
-            f"{check['id']}={check['status']}" for check in static_checks
-        ), "success" if not static_failed else "warn")
-
-        test_results = self._maybe_run_tests(config, request, registry, context, output_root)
-        tests_failed = any(result.get("passed") is False for result in test_results)
+        tests_failed = any(item.get("passed") is False for item in test_results)
+        tests_not_run = not test_results and self._has_test_profile(output_root)
         if tests_failed:
-            errors.append("自动化测试未通过；报告保留原始输出，完成状态降级为 partial。")
+            errors.append("自动化测试未通过（已用尽修复预算或 Mock 无法修复）；完成状态降级为 partial。")
+        elif tests_not_run:
+            errors.append("检测到测试入口，但测试未执行（未授权/缺少运行时）；不得标记为完全成功。")
+        delivery.apply(test_results)
+        delivery_report = delivery.evaluate(test_results)
+        if orchestration_result.status == "cancelled":
+            final_status = "cancelled"
+        elif not delivery_report.files:
+            final_status = "failed"
+        elif orchestration_result.status != "completed":
+            final_status = "partial"
+        elif not delivery_report.ok or static_failed or tests_failed or tests_not_run:
+            final_status = "partial"
+        else:
+            final_status = "completed"
+        result.status = final_status
+        problems = list(delivery_report.missing)
+        if static_failed:
+            problems.append("静态检查存在失败项")
+        if tests_failed:
+            problems.append("自动化测试未通过")
+        if tests_not_run:
+            problems.append("测试未运行（not run）")
+        if final_status == "partial" and orchestration_result.status != "completed":
+            problems.append(f"Agent 内部状态为 {orchestration_result.status}")
+        result.error = "" if final_status == "completed" else "; ".join(problems[:6])
 
         # ------------------------------------------------------- report
         self._phase("REPORTING", "生成报告与追溯矩阵")
-        delivery_report = delivery.evaluate()
         builder = ReportBuilder(
             policy=policy,
             requirements=requirements,
@@ -318,25 +343,11 @@ class Controller:
             test_results=test_results,
             inputs=[doc.stats, view.stats],
             errors=errors,
+            final_status=final_status,
         )
         paths = builder.write()
         result.report_paths = paths
         result.coverage = delivery_report.coverage
-
-        if orchestration_result.status == "cancelled":
-            final_status = "cancelled"
-        elif tests_failed:
-            final_status = "partial"
-        elif delivery_report.ok and not static_failed:
-            final_status = "completed"
-        elif delivery_report.files:
-            final_status = "partial"
-        else:
-            final_status = "failed"
-        if orchestration_result.status == "budget_exhausted" and final_status == "completed":
-            final_status = "partial"
-        result.status = final_status
-        result.error = "" if final_status == "completed" else "; ".join(delivery_report.missing[:5])
 
         session.write_json("controller_result.json", result.as_dict())
         session.close()
@@ -383,6 +394,7 @@ class Controller:
     def _safe_config(config: AppConfig) -> dict:
         return {
             "model": config.model,
+            "allow_model_override": config.allow_model_override,
             "base_url": config.base_url,
             "reasoning_effort": config.reasoning_effort,
             "max_agent_steps": config.max_agent_steps,
@@ -400,9 +412,74 @@ class Controller:
         target.usage.merge(extra.usage)
         target.elapsed_s += extra.elapsed_s
         target.compactions += extra.compactions
-        if extra.status == "completed":
+        for model in extra.models_used:
+            if model not in target.models_used:
+                target.models_used.append(model)
+        if extra.status == "cancelled":
+            target.status = "cancelled"
+        elif extra.status == "completed" and target.status != "cancelled":
             target.status = "completed"
         target.finish_summary = extra.finish_summary or target.finish_summary
+
+    def _verify_project(self, config: AppConfig, request: RunRequest, registry,
+                        context, output_root: Path, delivery, requirements) -> tuple[list[dict], bool, list[dict]]:
+        ensure_assumptions_file(context.policy, requirements)
+        delivery.apply()
+        inspection = registry.execute(
+            "inspect_project",
+            {"checks": ["structure", "json", "python", "js", "links", "requirements"]},
+            context,
+        )
+        checks = inspection.get("checks", [])
+        failed = any(check.get("status") == "fail" for check in checks)
+        self._emit("log", "静态检查：" + ", ".join(
+            f"{check['id']}={check['status']}" for check in checks
+        ), "success" if not failed else "warn")
+        tests = self._maybe_run_tests(config, request, registry, context, output_root)
+        return checks, failed, tests
+
+    @staticmethod
+    def _repair_footer(round_number: int, delivery_report, static_checks: list[dict],
+                       test_results: list[dict]) -> str:
+        lines = [
+            "## 修复轮次",
+            f"第 {round_number} 轮：本地验收未通过。请先 list_files/read_file 检查现有文件，"
+            "只修复失败项，不要重建已完成文件。",
+            "",
+        ]
+        if delivery_report.missing:
+            lines.append("### 缺失交付物")
+            lines.extend(f"- {item}" for item in delivery_report.missing[:12])
+            lines.append("")
+        failed_checks = [check for check in static_checks if check.get("status") == "fail"]
+        if failed_checks:
+            lines.append("### 静态检查失败")
+            for check in failed_checks[:8]:
+                detail = json.dumps(check.get("details", {}), ensure_ascii=False)
+                lines.append(f"- {check.get('id')}: {detail[:800]}")
+            lines.append("")
+        failed_tests = [item for item in test_results if item.get("passed") is not True]
+        if failed_tests:
+            lines.append("### 自动化测试失败（必须修复并重测）")
+            for item in failed_tests[:3]:
+                lines.append(
+                    f"- profile={item.get('profile')} exit={item.get('exit_code')} "
+                    f"timed_out={item.get('timed_out')}"
+                )
+                output = (item.get("output") or "").strip()
+                if output:
+                    lines.extend(["```text", output[-2500:], "```"])
+            lines.append("")
+        lines.append("修复后必须重新运行相关测试，最后再次调用 finish_task。")
+        return "\n".join(lines)
+
+    @staticmethod
+    def _has_test_profile(output_root: Path) -> bool:
+        return (
+            (output_root / "package.json").is_file()
+            or (output_root / "requirements.txt").is_file()
+            or (output_root / "pyproject.toml").is_file()
+        )
 
     def _maybe_run_tests(self, config: AppConfig, request: RunRequest, registry,
                          context, output_root: Path) -> list[dict]:

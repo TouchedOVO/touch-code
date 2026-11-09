@@ -32,6 +32,7 @@ def app_data_dir() -> Path:
 class AppConfig:
     # --- model -----------------------------------------------------------
     model: str = DEFAULT_MODEL
+    allow_model_override: bool = False
     base_url: str = DEFAULT_BASE_URL
     reasoning_effort: str = "high"
     temperature: float | None = None
@@ -82,6 +83,8 @@ class AppConfig:
         problems: list[str] = []
         if not self.model.strip():
             problems.append("模型名称不能为空")
+        if not self.allow_model_override and self.model != DEFAULT_MODEL:
+            problems.append(f"正式模式必须使用 {DEFAULT_MODEL}（如需实验模型请显式允许覆盖）")
         if not self.base_url.startswith(("https://", "http://")):
             problems.append("API 端点必须以 http(s):// 开头")
         if self.reasoning_effort not in {"none", "low", "medium", "high", "max"}:

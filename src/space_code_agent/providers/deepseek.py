@@ -117,12 +117,12 @@ class DeepSeekProvider(LLMProvider):
     def test_connection(self) -> tuple[bool, str]:
         models = self.list_models()
         if not models:
-            return True, "连接成功（模型列表为空）。"
+            return False, "API 可访问，但模型列表为空，无法确认指定模型可用。"
         if self._config.model in models:
             return True, f"连接成功，模型 {self._config.model} 可用。"
-        return True, (
-            f"连接成功，但模型列表中未找到 {self._config.model}；"
-            f"可用: {', '.join(models[:8])}"
+        return False, (
+            f"API 连接成功，但模型列表中未确认 {self._config.model} 可用；"
+            f"可见模型: {', '.join(models[:8])}"
         )
 
     def close(self) -> None:

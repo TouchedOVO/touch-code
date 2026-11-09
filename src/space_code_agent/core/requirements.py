@@ -32,7 +32,10 @@ class RequirementItem(BaseModel):
     components: list[str] = Field(default_factory=list)
     artifacts: list[str] = Field(default_factory=list)
     test_types: list[str] = Field(default_factory=list)
-    status: str = "unmapped"          # unmapped | planned | implemented | partial | missing
+    status: str = "unmapped"          # unmapped | implemented | verified | failed | missing
+    mapped: bool = False              # source files found
+    verified: bool = False            # source + test + tests actually passed
+    verification: str = "not_run"     # passed | failed | not_run | no_tests | no_source
     files: list[str] = Field(default_factory=list)
     tests: list[str] = Field(default_factory=list)
     evidence: str = ""

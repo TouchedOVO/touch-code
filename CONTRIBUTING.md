@@ -24,8 +24,11 @@ Please also run the sample tests if you changed anything under
 
 ```powershell
 cd src\space_code_agent\samples\space_fractions
-node --test tests/unit services\question-service\tests services\game-service\tests services\user-service\tests
-node --test tests/e2e
+node --test tests/unit/http.test.js tests/unit/schema.test.js `
+  services\question-service\tests\questions.test.js `
+  services\game-service\tests\game.test.js `
+  services\user-service\tests\auth.test.js
+node --test tests\e2e\flow.test.js
 ```
 
 ## Guidelines

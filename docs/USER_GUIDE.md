@@ -17,7 +17,7 @@ cd space-code-agent
 
 1. **DeepSeek API Key**：`sk-...`，仅保存在本次进程内存；日志、报告、manifest 自动脱敏。
    勾选“显示”可核对；不勾选时为圆点掩码。
-2. **模型**：默认 `deepseek-v4-pro`，可切换 `deepseek-flash`。
+2. **模型**：锁定 `deepseek-v4-pro`（任务要求，GUI 中不可替换）。
 3. **思考强度**：默认 `high`；复杂规划可用 `max`（费用更高）。
 4. **Mock 模式**：无需 Key，使用内置 Space Fractions 样例；仍执行真实文件工具、校验、测试与报告。
 5. **允许运行项目测试**：默认关闭。开启后每次执行前弹窗授权，仅允许 `node --test` /

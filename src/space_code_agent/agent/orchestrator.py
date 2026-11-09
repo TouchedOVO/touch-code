@@ -35,6 +35,7 @@ class RunOutcome:
     elapsed_s: float = 0.0
     compactions: int = 0
     last_message: str = ""
+    models_used: list[str] = field(default_factory=list)
 
     def as_dict(self) -> dict:
         return {
@@ -47,6 +48,7 @@ class RunOutcome:
             "missing": self.missing,
             "elapsed_s": round(self.elapsed_s, 2),
             "compactions": self.compactions,
+            "models_used": self.models_used,
         }
 
 
@@ -158,6 +160,10 @@ class AgentOrchestrator:
 
             outcome.usage.merge(response.usage)
             outcome.last_message = response.text
+            if response.model and response.model not in outcome.models_used:
+                outcome.models_used.append(response.model)
+            if response.model and response.model != self.config.model:
+                self._emit("log", f"服务端返回模型 {response.model}，与配置 {self.config.model} 不一致。", "warn")
             if response.output_items:
                 self.history.extend(response.output_items)
                 try:

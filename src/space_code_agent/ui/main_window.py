@@ -185,9 +185,11 @@ class MainWindow(QMainWindow):
 
         grid.addWidget(QLabel("模型"), 1, 0)
         self.model_combo = QComboBox()
-        self.model_combo.setEditable(True)
-        self.model_combo.addItems(["deepseek-v4-pro", "deepseek-flash"])
+        self.model_combo.setEditable(False)
+        self.model_combo.addItems(["deepseek-v4-pro"])
         self.model_combo.setCurrentText(self.config.model)
+        self.model_combo.setEnabled(False)
+        self.model_combo.setToolTip("任务要求锁定 deepseek-v4-pro；不支持在 GUI 中替换模型。")
         grid.addWidget(self.model_combo, 1, 1)
 
         grid.addWidget(QLabel("思考强度"), 1, 2)
@@ -672,7 +674,9 @@ class MainWindow(QMainWindow):
                 self,
                 "生成完成",
                 f"项目已生成并通过本地验收。\n\n输出目录：\n{result.output_dir}\n\n"
-                f"需求覆盖率：{coverage.get('percent', 0)}%（{coverage.get('implemented', 0)}/"
+                f"文件映射：{coverage.get('percent', 0)}%（{coverage.get('mapped', 0)}/"
+                f"{coverage.get('total', 0)}）\n"
+                f"测试验证：{coverage.get('verified_percent', 0)}%（{coverage.get('verified', 0)}/"
                 f"{coverage.get('total', 0)}）\n\n可在「报告」标签查看 GENERATION_REPORT.md。",
             )
         elif result.status == "cancelled":

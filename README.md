@@ -1,11 +1,11 @@
-# SpaceCode Agent
+﻿# SpaceCode Agent
 
 **Architecture-document-driven code agent for Windows** — turns two architecture Markdown files into a
 real, tested project, then reports exactly what was implemented.
 
 [![Python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PySide6](https://img.shields.io/badge/PySide6-6.12-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qtforpython-6/)
-[![Tests](https://img.shields.io/badge/tests-80%20passed-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-82%20passed-brightgreen)](#testing)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 SpaceCode Agent reads `Architecture_Documentation.md` and `Architecture_View.md`, normalizes requirements
@@ -65,7 +65,7 @@ git clone https://github.com/<your-account>/space-code-agent.git
 cd space-code-agent
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 python -m space_code_agent
 ```
 
@@ -98,7 +98,9 @@ python -m space_code_agent --run .\out\real `
 ```
 
 The endpoint is fixed to `https://api.deepseek.com`; the default model is `deepseek-v4-pro` and the
-reasoning effort is `high` (switchable to `max` in the GUI). No proxy or fallback model is used.
+reasoning effort is `high` (switchable to `max` in the GUI). The GUI locks the model; the CLI only
+accepts another model when `--allow-model-override` is passed explicitly. No proxy or fallback model is
+used in formal mode.
 
 > A real API run is not included in this repository. See [TEST_REPORT](docs/TEST_REPORT.md) for what
 > was actually executed and what is explicitly marked `not run`.
@@ -126,14 +128,17 @@ python -m pytest tests -q
 
 The suite covers parsing (including the 13 PlantUML blocks), conflict detection, path attacks, tool
 schema errors, retry/auth handling, cancellation, budgets, repair-on-rejection, Mock end-to-end and GUI
-smoke tests. Current status: **80 passed**.
+smoke tests. Current status: **82 passed**.
 
 The built-in Space Fractions project has its own zero-dependency test suite (Node.js ≥ 20):
 
 ```powershell
 cd src\space_code_agent\samples\space_fractions
-node --test tests/unit services\question-service\tests services\game-service\tests services\user-service\tests
-node --test tests/e2e
+node --test tests/unit/http.test.js tests/unit/schema.test.js `
+  services\question-service\tests\questions.test.js `
+  services\game-service\tests\game.test.js `
+  services\user-service\tests\auth.test.js
+node --test tests\e2e\flow.test.js
 ```
 
 ## Project layout

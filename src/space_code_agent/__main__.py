@@ -62,6 +62,7 @@ def _headless(argv: list[str]) -> int | None:
     parser.add_argument("--max-steps", type=int, default=0)
     parser.add_argument("--max-repair-rounds", type=int, default=-1)
     parser.add_argument("--model", default="deepseek-v4-pro")
+    parser.add_argument("--allow-model-override", action="store_true")
     parser.add_argument("--effort", default="high")
     args, unknown = parser.parse_known_args(argv)
     if unknown:
@@ -72,10 +73,18 @@ def _headless(argv: list[str]) -> int | None:
     if not args.doc or not args.uml:
         print("--doc 与 --uml 必填。", file=sys.stderr)
         return 2
-    from .app.config import AppConfig
+    from .app.config import DEFAULT_MODEL, AppConfig
     from .app.controller import Controller, RunRequest
 
-    config = AppConfig(model=args.model, reasoning_effort=args.effort)
+    if args.model != DEFAULT_MODEL and not args.allow_model_override:
+        print(f"正式模式必须使用 {DEFAULT_MODEL}；如确需实验模型，请显式加 --allow-model-override。",
+              file=sys.stderr)
+        return 2
+    config = AppConfig(
+        model=args.model,
+        allow_model_override=args.allow_model_override,
+        reasoning_effort=args.effort,
+    )
     if args.max_steps:
         config.max_agent_steps = args.max_steps
     if args.max_repair_rounds >= 0:

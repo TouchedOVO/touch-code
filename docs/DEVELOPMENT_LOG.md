@@ -26,7 +26,7 @@
 | M4 规划与生成 | ✅ | Planner、Controller、内置 Space Fractions 样例 | 完整工程文件结构 + README/依赖/测试 | 样例 33 文件 / 2558 行；Mock 35 步 / 35 工具调用；文件映射 100%，测试验证 100%（有 Node 时）；16 项 Node 测试 |
 | M5 校验与修复 | ✅ | 静态校验、测试运行器、验收器、修复回路 | 人为失败可修复或如实报告 | 6 类静态检查；node/pytest 白名单；3 轮修复上限；测试失败→反馈→重测用例 |
 | M6 GUI 与发布 | ✅ | Worker/审批桥、进度/日志/文件/报告、EXE | 双击 EXE 完成生成 | one-file 61.0 MB；冷启动 3.1 s；EXE 全流程 14.2 s；GitHub Actions 构建与 smoke 通过 |
-| M7 验收与收尾 | ✅（T14 待 Key） | 测试报告、用户手册、样例输出、风险清单 | T01–T15 可复现 | 82 项 pytest 全绿；CI 三作业全绿、EXE artifact 已上传；真实 API 端到端待用户 Key |
+| M7 验收与收尾 | ⚠️ | 测试报告、用户手册、样例输出、风险清单 | T01–T15 可复现 | 82 项 pytest 全绿；CI 三作业全绿、EXE artifact 已上传；真实 API 已跑通但生成项目无浏览器 UI（T14 功能部分通过） |
 
 ## 2. 各阶段详情
 
@@ -97,7 +97,8 @@ Agent Loop 覆盖成功/参数错误/取消/步数预算/完成拒绝→修复/�
 
 ### M7 验收与收尾
 - 82 项 pytest 全绿；样例 16 项 Node 测试全绿；EXE one-file 全流程退出码 0。
-- T01–T13、T15（本机）通过；T14 真实 DeepSeek 端到端因缺少 API Key 未执行，已明确标注。
+- T01–T13、T15（本机）通过；T14 真实 DeepSeek 调用已执行并生成可运行后端，19/19 测试通过，
+  但生成项目没有浏览器 UI，功能验收为 partial，证据见 `docs/evidence/t14-real/`。
 - 产出 `docs/TEST_REPORT.md`、`docs/USER_GUIDE.md`、截图、样例工程、构建脚本。
 
 ## 3. 最终指标汇总
@@ -113,4 +114,4 @@ Agent Loop 覆盖成功/参数错误/取消/步数预算/完成拒绝→修复/�
 | Mock Token / 估算费用 | 4,200 / $0.001274 |
 | one-file EXE | 58.2 MiB，冷启动 3.1 s |
 | 安全测试 | 11 类路径攻击拒绝 + 密钥脱敏 + 覆盖保护 |
-| 真实 API | 未运行（缺 Key）；协议层 9 项测试通过 |
+| 真实 API | 已执行（deepseek-v4-pro，37 步 / 1,428,876 tokens / $0.0815）；生成项目 19/19 测试通过，但无浏览器 UI |

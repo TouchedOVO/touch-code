@@ -1,7 +1,8 @@
 # 测试与验收报告
 
 运行环境：Windows 11 x64，Python 3.14.3，PySide6 6.12.0，PyInstaller 6.22.3，
-Node.js **22.23.4 / 26.13.0**（生成项目测试）。DeepSeek API Key：**未提供**。
+Node.js **22.23.4 / 26.13.0**（生成项目测试）。DeepSeek API Key：由用户在本机环境变量中提供，
+**未写入仓库**。
 
 ## 1. 执行证据
 
@@ -13,19 +14,40 @@ Node.js **22.23.4 / 26.13.0**（生成项目测试）。DeepSeek API Key：**未
 | `SpaceCodeAgent.exe --smoke-test`（one-file） | 退出码 **0**，冷启动 **3.1 s** |
 | `SpaceCodeAgent.exe --mock-run … --allow-tests`（one-file） | 退出码 **0**，**14.2 s**，状态 `completed`，映射/验证均 **100%** |
 | 生成项目内 `node --test`（由 Agent 实际执行） | **16 passed / 0 failed**，manifest `exit_code=0` |
+| **真实 `deepseek-v4-pro` 运行** | 退出码 **0**，Agent `completed`，19/19 测试通过，1,428,876 tokens / **$0.081532**；生成项目为后端 REST，无浏览器 UI |
 
 one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,014,405 字节（58.2 MiB）**。
 
-### 1.1 GitHub Actions（提交 `9d484d6`）
+### 1.1 GitHub Actions
 
-运行：[Windows build #2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) — **conclusion: success**
+最终 `main` 运行：[Windows build #4](https://github.com/TouchedOVO/touch-code/actions/runs/42620774810) — **conclusion: success**
 
 | 作业 | 结果 | 证据 |
 |---|---|---|
 | `Agent test suite (Windows)` | ✅ success | Python 3.14 + PySide6，82 项 pytest 通过；Node 22 已配置 |
 | `Generated sample tests (Node)` | ✅ success | Node 22：15 项单元/集成 + 1 项 E2E 全绿 |
 | `Build one-file EXE` | ✅ success | PyInstaller 构建 + `--smoke-test` 退出码 0 |
-| Artifact `SpaceCodeAgent-windows-x64` | ✅ 可下载 | 63,659,139 B；SHA-256 `b076a77968f584a1ceee1b4f73818a76a4840f55a36adc531392d249c87624b6` |
+| Artifact `SpaceCodeAgent-windows-x64` | ✅ 可下载 | 63,658,761 B；SHA-256 `59f3c603b04df9cdf92127c35a3b2bdcac5838d1dad06a4eba9388b3543fd1a0` |
+
+代码修复提交 `9d484d6` 的 CI 运行 [#2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) 同样三作业全绿。
+
+### 1.2 真实 DeepSeek 运行（T14）
+
+证据目录：[`docs/evidence/t14-real/`](evidence/t14-real/README.md)
+
+| 指标 | 值 |
+|---|---|
+| 请求模型 / 返回模型 | `deepseek-v4-pro` / `deepseek-v4-pro` |
+| Agent 步数 / 工具调用 / 请求数 | 37 / 57 / 37 |
+| 输入 / 输出 / 缓存 / 推理 tokens | 1,370,537 / 58,339 / 1,296,512 / 31,703 |
+| 总 tokens / 估算费用 | 1,428,876 / **$0.081532** |
+| 独立重跑生成项目测试 | **19 / 19 passed**（Node 22，exit 0） |
+| 静态检查 | structure / json / python / js / links / traceability 全 pass |
+| 报告映射 / 验证 | 7/7 / 7/7（文件与测试映射） |
+
+**功能结论：部分通过（partial）。** 模型生成了可运行的 Space Fractions 后端 REST 项目，但没有生成
+浏览器 UI；其自身 README / ASSUMPTIONS 明确写明 “backend REST API only / No HTML shell”。另外，
+Planner 两次 JSON 解析失败，控制器使用了确定性回退计划（实现代码仍由真实模型生成）。详见证据目录。
 
 ## 2. 验收用例矩阵（对应方案 §12）
 
@@ -44,7 +66,7 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 | T11 | 测试失败/完成被拒 | ✅ PASS | 完成拒绝→补充 README→成功；测试失败→回传 stderr→修复→重测通过；连续 3 次拒绝→`partial`；`test_agent_loop.py` / `test_mock_e2e.py` |
 | T12 | 无 Node/npm 机器 | ✅ PASS | `js_syntax=skipped`、`run_tests=not_available`，报告写 `not run`；生成完成但状态为 `partial`，不误报成功；`test_tool_registry.py` / `test_mock_e2e.py`；EXE 在仅含 System32 的 PATH 下同样如此 |
 | T13 | Mock 模型端到端 | ✅ PASS | 完整文件树、README、依赖、测试、报告；82 项测试中的 `test_mock_e2e.py` |
-| T14 | 真实 DeepSeek 端到端 | ⏸ **NOT RUN** | 无 API Key。代码路径已实现，仅待凭据；不得声称已通过 |
+| T14 | 真实 DeepSeek 端到端 | ⚠️ **PARTIAL** | 真实 `deepseek-v4-pro` 调用成功（37 步 / 1,428,876 tokens / $0.0815），生成项目 19/19 测试通过、7/7 映射与验证；但**未生成浏览器 UI**，且 Planner 回退到确定性计划。证据：`docs/evidence/t14-real/` |
 | T15 | 干净 Windows 双击 EXE | ✅ 本机 PASS / ⚠ 未做全新 VM | CI 构建 + smoke 成功并上传 artifact；本机 one-file `--smoke-test`、GUI 启动（窗口标题可见）、Mock 全流程、最小 PATH 无 Node 生成均通过；未在未安装 Python 的全新虚拟机复测 |
 
 ## 3. 验收门槛核对（方案 §12）
@@ -52,11 +74,12 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 1. **GUI 功能**：Key 输入/显示、模型/思考强度、双文档、输出目录、检查、生成、停止、打开目录、
    日志/任务/文件/验证/报告、Token/费用均可操作；模型名与端点正确。
    - EXE 双击启动已验证进程退出码与窗口构建；截图见 `docs/screenshots/gui-*.png`。
-2. **真实 DeepSeek 生成**：代码已实现，**未执行**（缺 Key）。Mock 全链路证明工具/编排/验收/报告可用。
+2. **真实 DeepSeek 生成**：已用真实 `deepseek-v4-pro` 执行（37 步、1,428,876 tokens、19/19 测试通过），
+   但生成项目仅包含后端 REST、没有浏览器 UI；因此 T14 记为 **PARTIAL**，不能据此宣称完整通过。
 3. **报告追溯**：`GENERATION_REPORT.md` + `traceability_matrix.csv` 展示 7/7 需求的文件与测试映射；
    未实现项与偏离写入 `ASSUMPTIONS.md`（ASM-06）。
-4. **测试证据**：生成项目 16 项 Node 测试由 Agent 实际执行并通过，manifest 记录 `exit_code=0`；
-   未运行场景明确 `not run`，不以“文件存在”代替通过。
+4. **测试证据**：Mock 生成项目 16 项 Node 测试、真实运行生成项目 19 项 Node 测试均由 Agent 实际执行并通过，
+   manifest 记录 `exit_code=0`；未运行场景明确 `not run`，不以“文件存在”代替通过。
 5. **安全与取消**：路径攻击拒绝、原子写入、默认不覆盖、密钥脱敏、取消后保留文件、报告不写入 Key。
 
 ## 4. 针对代码审查问题的修复
@@ -70,12 +93,14 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 | 最终状态可能不一致 | 单一 `final_status` 同时写入 UI/CLI、`GENERATION_REPORT.md`、`run_manifest.json`；manifest 另存 `agent_status` | 测试失败用例断言 `run.status=partial` 且 `agent_status=completed` |
 | 指定模型未锁定 | GUI 模型只读；`AppConfig.validate()` 强制 `deepseek-v4-pro`；CLI 需显式 `--allow-model-override`；`test_connection` 不再把“模型未确认”报成成功 | `test_config_validation` 新增锁定断言 |
 | README 安装步骤不可靠 | 改为 `python -m pip install -e ".[dev]"` 后再运行模块 | 元数据 dry-run + 源码运行 `--version` 通过 |
-| CI 无 EXE 产物 / 作业跳过 | `build-exe` 依赖 Python 与 Node 两个测试作业；仍上传 one-file EXE artifact | GitHub Actions [run #2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) 三作业全绿，artifact `SpaceCodeAgent-windows-x64`（63,659,139 B）可下载 |
+| CI 无 EXE 产物 / 作业跳过 | `build-exe` 依赖 Python 与 Node 两个测试作业；仍上传 one-file EXE artifact | GitHub Actions [run #4](https://github.com/TouchedOVO/touch-code/actions/runs/42620774810) 三作业全绿，artifact `SpaceCodeAgent-windows-x64`（63,658,761 B）可下载 |
+| 真实模型生成缺少独立证据 | 使用用户提供的 Key 执行真实 `deepseek-v4-pro`，保存脱敏日志、manifest、测试输出与生成源码 | 真实运行 `completed`，19/19 测试通过；但模型只生成后端 REST、无浏览器 UI，T14 记为 partial |
 
 ## 5. 已知未覆盖项
 
-- **真实 DeepSeek API 端到端（T14）**：需要用户提供 `DEEPSEEK_API_KEY`。Mock 模式不消耗额度，
-  但不能替代真实模型验收。
+- **真实 DeepSeek API 端到端（T14）**：已执行并保存证据，但模型未生成浏览器 UI，只交付后端 REST；
+  功能验收为 **partial**。这是模型行为/需求覆盖的余留缺口，不是凭据问题。
+- **T14 功能复核**：`7/7 verified` 表示文件与测试映射，不等于人工确认所有用户界面行为；UI 缺失已单列。
 - **全新 Windows 虚拟机（T15 严格版）**：本机已用 one-file EXE 验证，未做干净 VM 快照。
 - **GUI 交互的自动化点击**：已用无头 Qt 驱动完整一次生成并截图；未覆盖真人拖拽/缩放/多显示器。
 - **可取消的 HTTP 请求**：取消在模型调用/工具调用之间生效；单次 HTTP 请求无法中断，

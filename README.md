@@ -103,8 +103,10 @@ reasoning effort is `high` (switchable to `max` in the GUI). The GUI locks the m
 accepts another model when `--allow-model-override` is passed explicitly. No proxy or fallback model is
 used in formal mode.
 
-> A real API run is not included in this repository. See [TEST_REPORT](docs/TEST_REPORT.md) for what
-> was actually executed and what is explicitly marked `not run`.
+> A sanitized real **deepseek-v4-pro** run is included under
+> [`docs/evidence/t14-real`](docs/evidence/t14-real). It completed with 19/19 generated tests, but the
+> model produced a backend-only REST project without a browser UI; the evidence and limitations are
+> documented there. See [TEST_REPORT](docs/TEST_REPORT.md) for what was actually executed.
 
 ## Build the Windows EXE
 

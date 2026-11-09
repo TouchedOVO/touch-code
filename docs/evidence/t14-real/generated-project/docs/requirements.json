@@ -1,0 +1,30 @@
+{
+  "FR-1": {
+    "files": ["src/domain.js", "src/index.js", "tests/domain.test.js", "tests/e2e/flow.test.js"],
+    "evidence": true
+  },
+  "NFR-1": {
+    "files": ["src/domain.js", "src/index.js", "tests/e2e/flow.test.js"],
+    "evidence": true
+  },
+  "ASR-1": {
+    "files": ["src/domain.js", "tests/domain.test.js"],
+    "evidence": true
+  },
+  "ASR-2": {
+    "files": ["src/domain.js", "src/index.js", ".env.example", "tests/domain.test.js", "tests/e2e/flow.test.js"],
+    "evidence": true
+  },
+  "FR-DERIVED-1": {
+    "files": ["src/domain.js", "src/index.js", "tests/domain.test.js", "tests/e2e/flow.test.js"],
+    "evidence": true
+  },
+  "FR-DERIVED-2": {
+    "files": ["src/domain.js", "src/index.js", "tests/domain.test.js", "tests/e2e/flow.test.js"],
+    "evidence": true
+  },
+  "FR-DERIVED-3": {
+    "files": ["src/domain.js", "src/index.js", "tests/e2e/flow.test.js"],
+    "evidence": true
+  }
+}

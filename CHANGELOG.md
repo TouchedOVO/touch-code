@@ -25,8 +25,9 @@ Initial public release.
 
 ### Known limitations
 
-- Real DeepSeek API end-to-end was not executed in the build environment because no API key was
-  available; the report marks this as `not run`.
+- A real `deepseek-v4-pro` run is included under `docs/evidence/t14-real/`. It completed with
+  19/19 generated tests, but the model produced a backend-only REST project without a browser UI,
+  so functional acceptance for T14 is recorded as **partial**.
 - The generated demo uses `node:http` instead of Express and in-memory repositories instead of a live
   PostgreSQL cluster; see the generated `ASSUMPTIONS.md` (major deviation).
 - Session-resume UI, diff preview and streaming reasoning display are not implemented.

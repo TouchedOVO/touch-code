@@ -16,6 +16,17 @@ Node.js **22.23.4 / 26.13.0**（生成项目测试）。DeepSeek API Key：**未
 
 one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,014,405 字节（58.2 MiB）**。
 
+### 1.1 GitHub Actions（提交 `9d484d6`）
+
+运行：[Windows build #2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) — **conclusion: success**
+
+| 作业 | 结果 | 证据 |
+|---|---|---|
+| `Agent test suite (Windows)` | ✅ success | Python 3.14 + PySide6，82 项 pytest 通过；Node 22 已配置 |
+| `Generated sample tests (Node)` | ✅ success | Node 22：15 项单元/集成 + 1 项 E2E 全绿 |
+| `Build one-file EXE` | ✅ success | PyInstaller 构建 + `--smoke-test` 退出码 0 |
+| Artifact `SpaceCodeAgent-windows-x64` | ✅ 可下载 | 63,659,139 B；SHA-256 `b076a77968f584a1ceee1b4f73818a76a4840f55a36adc531392d249c87624b6` |
+
 ## 2. 验收用例矩阵（对应方案 §12）
 
 | 编号 | 测试内容 | 结果 | 证据 |
@@ -34,7 +45,7 @@ one-file 构建产物（`dist/` 不入库）：`dist/SpaceCodeAgent.exe`，**61,
 | T12 | 无 Node/npm 机器 | ✅ PASS | `js_syntax=skipped`、`run_tests=not_available`，报告写 `not run`；生成完成但状态为 `partial`，不误报成功；`test_tool_registry.py` / `test_mock_e2e.py`；EXE 在仅含 System32 的 PATH 下同样如此 |
 | T13 | Mock 模型端到端 | ✅ PASS | 完整文件树、README、依赖、测试、报告；82 项测试中的 `test_mock_e2e.py` |
 | T14 | 真实 DeepSeek 端到端 | ⏸ **NOT RUN** | 无 API Key。代码路径已实现，仅待凭据；不得声称已通过 |
-| T15 | 干净 Windows 双击 EXE | ✅ 本机 PASS / ⚠ 未做全新 VM | one-file `--smoke-test`、GUI 启动（窗口标题可见）、Mock 全流程、最小 PATH 无 Node 生成均通过；未在未安装 Python 的全新虚拟机复测 |
+| T15 | 干净 Windows 双击 EXE | ✅ 本机 PASS / ⚠ 未做全新 VM | CI 构建 + smoke 成功并上传 artifact；本机 one-file `--smoke-test`、GUI 启动（窗口标题可见）、Mock 全流程、最小 PATH 无 Node 生成均通过；未在未安装 Python 的全新虚拟机复测 |
 
 ## 3. 验收门槛核对（方案 §12）
 

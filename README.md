@@ -1,4 +1,4 @@
-﻿# SpaceCode Agent
+# SpaceCode Agent
 
 **Architecture-document-driven code agent for Windows** — turns two architecture Markdown files into a
 real, tested project, then reports exactly what was implemented.
@@ -6,6 +6,7 @@ real, tested project, then reports exactly what was implemented.
 [![Python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PySide6](https://img.shields.io/badge/PySide6-6.12-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qtforpython-6/)
 [![Tests](https://img.shields.io/badge/tests-82%20passed-brightgreen)](#testing)
+[![Windows build](https://github.com/TouchedOVO/touch-code/actions/workflows/windows-build.yml/badge.svg)](https://github.com/TouchedOVO/touch-code/actions/workflows/windows-build.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 SpaceCode Agent reads `Architecture_Documentation.md` and `Architecture_View.md`, normalizes requirements

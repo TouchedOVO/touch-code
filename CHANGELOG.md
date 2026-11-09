@@ -1,4 +1,4 @@
-﻿# Changelog
+# Changelog
 
 ## 1.0.0 — 2026-11-09
 
@@ -18,6 +18,8 @@ Initial public release.
   machine-readable run manifest.
 - Built-in zero-dependency Space Fractions sample (33 files, 16 Node tests) for offline Mock runs.
 - PyInstaller one-file/one-dir build script, icon, version metadata and Windows CI workflow.
+  CI run [#2](https://github.com/TouchedOVO/touch-code/actions/runs/42619336153) passes Python tests,
+  Node 22 tests, EXE build, smoke test and uploads the `SpaceCodeAgent-windows-x64` artifact.
 - 82 pytest tests covering parsing, security, tools, provider retries, cancellation, budgets,
   repair-on-rejection, Mock end-to-end and GUI smoke.
 

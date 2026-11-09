@@ -1,0 +1,148 @@
+name: T15 clean Windows runner
+
+# Runs the built EXE on a fresh Windows runner after removing Python and Qt.
+# This is the closest reproducible substitute for a clean Windows VM that has
+# no Python/Qt preinstalled. Triggered manually and when this file changes.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/t15-clean-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  clean-run:
+    name: EXE without Python/Qt
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build one-file EXE
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File .\scripts\build_windows.ps1 -Clean
+
+      - name: Remove Python, virtualenv and Python launchers
+        shell: powershell
+        run: |
+          $node = (Get-Command node).Source
+          $nodeDir = Split-Path $node
+          $targets = @(
+            (Join-Path $env:RUNNER_TOOL_CACHE 'Python'),
+            (Join-Path $env:USERPROFILE 'AppData\Local\Programs\Python'),
+            (Join-Path $env:ProgramFiles 'Python314'),
+            (Join-Path $env:ProgramFiles 'Python313'),
+            (Join-Path $env:ProgramFiles 'Python312'),
+            (Join-Path ${env:ProgramFiles(x86)} 'Python314'),
+            (Join-Path ${env:ProgramFiles(x86)} 'Python313'),
+            (Join-Path $env:GITHUB_WORKSPACE '.venv')
+          )
+          foreach ($target in $targets) {
+            if ($target -and (Test-Path $target)) {
+              Remove-Item -Recurse -Force $target -ErrorAction SilentlyContinue
+            }
+          }
+          foreach ($exe in @('C:\Windows\py.exe', 'C:\Windows\python.exe', 'C:\Windows\python3.exe')) {
+            if (Test-Path $exe) { Remove-Item -Force $exe -ErrorAction SilentlyContinue }
+          }
+          $env:PATH = "C:\Windows\System32;C:\Windows;$nodeDir"
+          "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "NODE_DIR=$nodeDir" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          if (Get-Command python -ErrorAction SilentlyContinue) {
+            throw "python is still on PATH after removal"
+          }
+          Write-Host "Python runtime removed; node remains at $node"
+
+      - name: Verify Qt/Python packages are gone
+        shell: powershell
+        run: |
+          if (Get-Command python -ErrorAction SilentlyContinue) { throw "python still available" }
+          if (Get-Command pip -ErrorAction SilentlyContinue) { throw "pip still available" }
+          Write-Host "No python/pip command available."
+          Get-ChildItem "C:\Program Files" -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -like 'Python*' } |
+            ForEach-Object { throw "found $($_.FullName)" }
+          Write-Host "No Python installation under Program Files."
+
+      - name: EXE smoke test (headless Qt)
+        shell: powershell
+        run: |
+          $exe = Join-Path $env:GITHUB_WORKSPACE 'dist\SpaceCodeAgent.exe'
+          if (-not (Test-Path $exe)) { throw "EXE missing" }
+          $p = Start-Process -FilePath $exe -ArgumentList '--smoke-test' -Wait -PassThru
+          Write-Host "smoke exit=$($p.ExitCode)"
+          if ($p.ExitCode -ne 0) { throw "smoke test failed: $($p.ExitCode)" }
+
+      - name: Launch GUI and observe process
+        shell: powershell
+        run: |
+          $exe = Join-Path $env:GITHUB_WORKSPACE 'dist\SpaceCodeAgent.exe'
+          $gui = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 6
+          $gui.Refresh()
+          $alive = -not $gui.HasExited
+          $title = $gui.MainWindowTitle
+          Write-Host "gui_alive=$alive title='$title'"
+          if ($alive) { Stop-Process -Id $gui.Id -Force }
+          if (-not $alive) { throw "GUI process exited immediately" }
+
+      - name: Full Mock generation without Python
+        shell: powershell
+        run: |
+          $exe = Join-Path $env:GITHUB_WORKSPACE 'dist\SpaceCodeAgent.exe'
+          $out = Join-Path $env:RUNNER_TEMP 't15-clean-output'
+          if (Test-Path $out) { Remove-Item -Recurse -Force $out }
+          $args = @(
+            '--mock-run', $out,
+            '--doc', (Join-Path $env:GITHUB_WORKSPACE 'examples\inputs\Architecture_Documentation.md'),
+            '--uml', (Join-Path $env:GITHUB_WORKSPACE 'examples\inputs\Architecture_View.md'),
+            '--allow-tests'
+          )
+          $p = Start-Process -FilePath $exe -ArgumentList $args -Wait -PassThru
+          Write-Host "mock exit=$($p.ExitCode)"
+          if ($p.ExitCode -ne 0) { throw "mock run failed: $($p.ExitCode)" }
+          $resultFile = "$out-agent-result.json"
+          if (-not (Test-Path $resultFile)) { throw "result JSON missing" }
+          $result = Get-Content $resultFile -Raw -Encoding UTF8 | ConvertFrom-Json
+          Write-Host "status=$($result.status) coverage=$($result.coverage.percent) tests=$($result.outcome.status)"
+          if ($result.status -ne 'completed') { throw "status is $($result.status)" }
+          if ($result.coverage.percent -ne 100) { throw "coverage is $($result.coverage.percent)" }
+          $manifest = Get-Content (Join-Path $out 'run_manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+          if (-not $manifest.validation.tests -or -not $manifest.validation.tests[0].passed) {
+            throw "generated tests did not pass"
+          }
+          $evidence = Join-Path $env:GITHUB_WORKSPACE 't15-evidence'
+          New-Item -ItemType Directory -Force -Path $evidence | Out-Null
+          Copy-Item $resultFile (Join-Path $evidence 'agent-result.json')
+          Copy-Item (Join-Path $out 'run_manifest.json') (Join-Path $evidence 'run_manifest.json')
+          Copy-Item (Join-Path $out 'GENERATION_REPORT.md') (Join-Path $evidence 'GENERATION_REPORT.md')
+          Copy-Item (Join-Path $out 'traceability_matrix.csv') (Join-Path $evidence 'traceability_matrix.csv')
+          @{
+            python_available = $false
+            node_version = (& node --version)
+            exe_sha256 = (Get-FileHash $exe -Algorithm SHA256).Hash
+            mock_status = $result.status
+            coverage_percent = $result.coverage.percent
+            generated_tests_passed = $manifest.validation.tests[0].passed
+            github_run = $env:GITHUB_RUN_ID
+            runner = $env:RUNNER_OS
+          } | ConvertTo-Json | Set-Content (Join-Path $evidence 't15-result.json') -Encoding UTF8
+          "## T15 clean runner: PASS" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "Python removed before EXE run; Mock generation completed; generated tests passed." |
+            Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: T15-clean-windows-evidence
+          path: t15-evidence/
+          if-no-files-found: error
+          retention-days: 30
